@@ -3,13 +3,21 @@ import "@/styles/globals.css";
 import { AppProvider } from "@/providers/AppProvider";
 
 export const metadata: Metadata = {
-  title: "🚀 Next Seed Template",
+  title: "Tripio",
   description:
-    "A fast, scalable, and modern Next.js 16 template with FSD architecture.",
+    "Tripio es un planificador de viajes que te ayuda a organizar tu viaje con tus amigos, familia y compañeros de viaje.",
   openGraph: {
-    title: "Next Seed",
-    description: "Start your new project without boilerplate friction.",
+    title: "Tripio",
+    description:
+      "Tripio es un planificador de viajes que te ayuda a organizar tu viaje con tus amigos, familia y compañeros de viaje.",
     type: "website",
+  },
+  manifest: "/manifest.json",
+  themeColor: "#001523",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Tripio",
   },
 };
 

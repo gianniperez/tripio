@@ -1,14 +1,14 @@
-# Next Seed
+# Tripio
 
 ## Introducción
 
-Este proyecto es un Template para crear aplicaciones web modernas, rápidas y escalables.
+**Tripio** es una PWA (Progressive Web App) colaborativa diseñada para resolver el problema universal de organizar viajes grupales (amigos, familiares o parejas).
 
-**¿Para qué sirve?**
-Sirve para no arrancar desde cero cada vez que tengamos una idea. Ya tiene configurado todo lo molesto: estilos, manejadores de estado, reglas de calidad de código y una arquitectura que no colapsa cuando el proyecto crece.
+**¿Qué problema resuelve?**
+Evita el caos de los grupos de WhatsApp, hojas de cálculo desactualizadas y deudas cruzadas. Tripio centraliza la logística de transporte, alojamiento, división de tareas (qué lleva quién) y el control estricto del presupuesto o "vaquita" de los participantes en tiempo real.
 
-**¿Cómo está diseñado?**
-Está pensado para ser **predecible**. Utilizamos una arquitectura llamada **Feature-Sliced Design (FSD)**. En lugar de agrupar archivos por su "tipo" (todos los botones juntos, todas las llamadas a base de datos juntas), agrupamos las cosas por **Funcionalidad (Feature)**. Así, si estamos construyendo una tienda, todo lo relacionado al "Carrito de Compras" vive en su propia burbuja y no contamina el resto del sitio.
+**¿Cómo está diseñado el código?**
+A nivel técnico, Tripio está pensado para ser **altamente escalable y mantenible**. Utilizamos una arquitectura llamada **Feature-Sliced Design (FSD)**. En lugar de agrupar archivos por su "tipo", agrupamos las cosas por **Funcionalidad (Feature)**. Así, todo lo relacionado al "Módulo de Economía" vive en su propia burbuja y no contamina el módulo de "Logística" ni rompe el resto del sitio.
 
 ---
 

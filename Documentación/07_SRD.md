@@ -135,18 +135,44 @@ Login (Firebase Auth) -> Mis Viajes
     ├── 🏠 Home (Resumen Ejecutivo, Próximos Pasos, Budget Glance)
     ├── 🗺️ Timeline (Flujo secuencial narrativo + Vista Calendario Dual)
     ├── 💡 Propuestas (Pool de ideas categorizadas + Encuestas)
-    ├── ✅ Decidido (Logística confirmada: Alojamiento, Transporte, Ítems)
-    └── ➕ Proponer (Acceso rápido al formulario de ideas/encuesta)
+    │   └── ➕ Acción: FAB (Floating Action Button) de "Proponer Idea"
+    └── ✅ Decidido (Logística confirmada: Alojamiento, Transporte, Ítems)
 ```
 
-*Nota: La gestión detallada de Economía y Logística se integra dentro de 'Home' (Resumen) y 'Decidido' (Detalles confirmados).*
+_Nota: La gestión detallada de Economía y Logística se integra dentro de 'Home' (Resumen) y 'Decidido' (Detalles confirmados)._
+
+#### Comportamiento Global de la UI Móvil (Header y Bottom NavBar)
+
+- **Header:** El Header (con el Nombre del viaje y contexto) permanece fijo (Sticky) en la parte superior en todo momento.
+- **Bottom NavBar:** Por temas de inmersión y aprovechar la pantalla vertical para el Timeline o el Calendario, la barra de navegación inferior deberá ocultarse gradualmente al hacer **Scroll hacia abajo (scroll down)** y reaparecer instantáneamente al hacer **Scroll hacia arriba (scroll up)** o llegar al final de la página.
 
 ### 3.2 Stack Tecnológico
 
-- **Frontend:** Next.js / TypeScript.
+- **Frontend:** Next.js (App Router) / TypeScript.
 - **Backend/DB:** Firebase (Firestore, Auth).
+- **State Management:** Zustand (UI local) + TanStack Query (server state).
+- **Forms & Validation:** React Hook Form + Zod.
+- **Utilities:** `date-fns` (manejo de fechas), `lucide-react` (iconografía).
+- **UI:** Tailwind CSS v4.
 - **Deployment:** Vercel o Firebase Hosting.
 - **Offline (Post-MVP):** Service Workers para lectura cacheada.
+
+### 3.3 Arquitectura y Convenciones (FSD & Tooling)
+
+El proyecto hereda las estrictas normativas del boilerplate fundacional (`next-seed`), garantizando un crecimiento escalable y libre de deuda técnica:
+
+1. **Estructura FSD (Feature-Sliced Design):**
+   - `src/app/`: Exclusivamente Rutas, Páginas (Next.js App Router) y Layouts.
+   - `src/components/`: **Solo** UI genérica, agnóstica al negocio (Botones, Modales Base, Inputs).
+   - `src/features/`: **El corazón del dominio**. Aquí viven funciones complejas aisladas (ej: `auth`, `viajes`, `propuestas`). Cada feature tiene sus propios `components/`, `types/`, `stores/` y `api/`.
+   - `src/providers/`: Contextos globales (Zustand, TanStack Query, Tema).
+   - `src/utils/` y `src/hooks/`: Lógica compartida, global y pura.
+2. **Generación Automatizada (Plop.js):** Está **estrictamente prohibido** crear componentes o features a mano. Toda nueva pieza de UI debe inicializarse usando `npm run generate` / `npx plop` para garantizar la estructura base (Component, Types e Index de exportación).
+3. **Exportaciones de Barril (Barrel Files):** Las importaciones a una feature o componente interno siempre deben realizarse apuntando a su puerta principal (el `index.ts`), nunca buceando profundamente en archivos anidados.
+4. **Manejo de Estado (Boundaries):**
+   - **TanStack Query:** Único responsable de la interacción con Firebase Firestore (Server State, Caching, Mutations).
+   - **Zustand:** Único responsable del estado efímero de la UI (Client State) como "menús abiertos", "modo oscuro", e interconexión de componentes hermanos.
+5. **Calidad Asistida (Husky & Lint-staged):** El código debe pasar por Prettier, ESLint y Vitest (si aplica) antes de cada commit. Errores de tipado bloquearán el push.
 
 ---
 
@@ -159,6 +185,34 @@ Login (Firebase Auth) -> Mis Viajes
   - **Hitos de Grupo:** Barras de progreso por categorías (Logística completa, Finanzas cerradas).
   - **Badges:** Iconos lúdicos por completar tareas o ser el primero en hacer RSVP.
   - **Mascota (Future Scope):** Un guía lúdico que celebra hitos (no incluido en MVP).
+
+### 4.2 Sistema de Diseño (Design Tokens)
+
+Las variables globales de diseño (Tokens) se definirán en la configuración de Tailwind CSS (`globals.css` / `tailwind config`) para asegurar la consistencia.
+
+#### 1. Tipografía (Fonts)
+
+- **Primary Font (Headings & UI):** Nunito (San-serif redondeada, amigable y con mucha personalidad para títulos y botones).
+- **Secondary Font (Body/Lectura):** Inter (Diseñada específicamente para pantallas, máxima legibilidad y neutralidad para lectura densa).
+
+#### 2. Paleta de Colores (Theme)
+
+Tripio debe transmitir emoción por viajar, organización y calma.
+
+- **Primary (Brand):** Tono vibrantes: Naranja (`#F46A1F`), Turquesa (`#1A8C8C`), Azul oscuro (`#075056`).
+- **Secondary (Accents):** Colores complementarios para destacar estados (ej: verde para "Decidido", rojo para "Alertas de Budget").
+- **Backgrounds (Surface):** Fondo limpio (`#FFFAF5`) para evitar fatiga visual ante tanto contenido.
+- **Text & Borders:** Escala de grises semánticos (`slate` o `gray` de Tailwind) y/o azules oscuros (`#001523`).
+
+#### 3. Forma y Profundidad (Borders & Shadows)
+
+- **Border Radius:** `Rounded-2xl` o `Rounded-xl` exagerados (16px a 24px) para dar una sensación "App-like" amigable, similar a iOS.
+- **Elevación (Shadows):** Sombras difusas y suaves (`shadow-lg`, `shadow-soft`) para módulos flotantes (como el Bottom NavBar y las alertas).
+- **Bordes:** Finos (`1px solid`) para dividir secciones en lugar de usar fondos oscuros.
+
+#### 4. Spacing (Whitespace)
+
+- Se priorizará un margen holgado (padding generoso como `p-4` o `p-6` en containers) para evitar agrupamiento en pantallas chicas, haciendo la app 100% "Tap-friendly".
 
 ---
 
@@ -173,13 +227,13 @@ Login (Firebase Auth) -> Mis Viajes
 
 ## 6. Notificaciones e Interacciones
 
-| Trigger | Condición | Acción |
-| :--- | :--- | :--- |
-| **Nuevo Participante** | Unión vía link. | Mail al Admin / Toast en App. |
-| **Gasto/Update** | Cambio en costos. | Recálculo de "Total Cost" y alerta si supera el **Budget Limit**. |
-| **Tarea Asignada** | Creación o asignación. | Mail al responsable. |
-| **Propuesta Confirmada** | Propuesta pasa a `Confirmed`. | Se crea Event en Timeline + notificación al grupo. |
-| **Deadline de Encuesta** | Se cumple el deadline de votación. | Notificación recordatorio a quienes no votaron. |
+| Trigger                  | Condición                          | Acción                                                            |
+| :----------------------- | :--------------------------------- | :---------------------------------------------------------------- |
+| **Nuevo Participante**   | Unión vía link.                    | Mail al Admin / Toast en App.                                     |
+| **Gasto/Update**         | Cambio en costos.                  | Recálculo de "Total Cost" y alerta si supera el **Budget Limit**. |
+| **Tarea Asignada**       | Creación o asignación.             | Mail al responsable.                                              |
+| **Propuesta Confirmada** | Propuesta pasa a `Confirmed`.      | Se crea Event en Timeline + notificación al grupo.                |
+| **Deadline de Encuesta** | Se cumple el deadline de votación. | Notificación recordatorio a quienes no votaron.                   |
 
 ---
 
@@ -188,7 +242,7 @@ Login (Firebase Auth) -> Mis Viajes
 - **Máximo Participantes:** 20 usuarios por viaje.
 - **Plataforma:** PWA Mobile-First + Web responsive para Desktop.
 - **Offline:** No disponible para MVP.
-- **Notificaciones:** Email para MVP (Push post-MVP).
+- **Notificaciones (Mail Engine):** Firebase Extension "Trigger Email" (integrado vía SMTP con Resend o SendGrid). Envío estructurado generando un documento en una colección raíz `mail`. No aplica push notifications para el MVP.
 
 ---
 
@@ -197,6 +251,9 @@ Login (Firebase Auth) -> Mis Viajes
 ### 8.1 Estructura General
 
 Los datos se organizan usando **subcolecciones anidadas dentro de cada viaje**. Esto garantiza seguridad natural, queries eficientes y aislamiento de datos entre viajes.
+
+> **Nota Arquitectónica (Sobre los IDs):**  
+> Para todas las colecciones y subcolecciones listadas en esta sección, se asume implícitamente que cada documento posee una propiedad **`id` obligatoria** (tipo `string`) al nivel de la aplicación, que corresponde directamente al **Document ID** asignado por Firestore. Esta no se guarda como campo interno en la BD, sino que el cliente la extrae del metadato del Snapshot.
 
 ```text
 /users/{userId}                          ← Colección raíz
@@ -214,147 +271,146 @@ Los datos se organizan usando **subcolecciones anidadas dentro de cada viaje**. 
 
 Perfil básico sincronizado con Firebase Auth.
 
-| Campo | Tipo | Requerido | Descripción |
-|---|---|---|---|
-| `uid` | `string` | ✅ | Firebase Auth UID (= document ID) |
-| `displayName` | `string` | ✅ | Nombre visible |
-| `email` | `string` | ✅ | Email del usuario |
-| `photoURL` | `string \| null` | ❌ | Avatar |
-| `createdAt` | `timestamp` | ✅ | Fecha de registro |
+| Campo         | Tipo             | Requerido | Descripción                       |
+| ------------- | ---------------- | --------- | --------------------------------- |
+| `uid`         | `string`         | ✅        | Firebase Auth UID (= document ID) |
+| `displayName` | `string`         | ✅        | Nombre visible                    |
+| `email`       | `string`         | ✅        | Email del usuario                 |
+| `photoURL`    | `string \| null` | ❌        | Avatar                            |
+| `createdAt`   | `timestamp`      | ✅        | Fecha de registro                 |
 
 ### 8.3 Colección: `trips`
 
 El contenedor raíz de cada viaje.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `name` | `string` | ✅ | — | Nombre del viaje |
-| `destination` | `string` | ✅ | — | Destino principal |
-| `description` | `string \| null` | ❌ | `null` | Descripción opcional |
-| `startDate` | `timestamp` | ✅ | — | Fecha de inicio |
-| `endDate` | `timestamp` | ✅ | — | Fecha de fin |
-| `status` | `string` | ✅ | `'planning'` | `'planning'` \| `'active'` \| `'archived'` |
-| `dailyBudget` | `number \| null` | ❌ | `null` | Monto diario por persona |
-| `currency` | `string` | ✅ | `'USD'` | Moneda del viaje |
-| `coverImage` | `string \| null` | ❌ | `null` | URL de imagen de portada |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
-| `updatedAt` | `timestamp` | ✅ | — | Última modificación |
+| Campo         | Tipo             | Requerido | Default      | Descripción                                |
+| ------------- | ---------------- | --------- | ------------ | ------------------------------------------ |
+| `name`        | `string`         | ✅        | —            | Nombre del viaje                           |
+| `destination` | `string`         | ✅        | —            | Destino principal                          |
+| `description` | `string \| null` | ❌        | `null`       | Descripción opcional                       |
+| `startDate`   | `timestamp`      | ✅        | —            | Fecha de inicio                            |
+| `endDate`     | `timestamp`      | ✅        | —            | Fecha de fin                               |
+| `status`      | `string`         | ✅        | `'planning'` | `'planning'` \| `'active'` \| `'archived'` |
+| `dailyBudget` | `number \| null` | ❌        | `null`       | Monto diario por persona                   |
+| `currency`    | `string`         | ✅        | `'USD'`      | Moneda del viaje                           |
+| `coverImage`  | `string \| null` | ❌        | `null`       | URL de imagen de portada                   |
+| `createdBy`   | `string`         | ✅        | —            | UID del creador                            |
+| `createdAt`   | `timestamp`      | ✅        | —            | Fecha de creación                          |
+| `updatedAt`   | `timestamp`      | ✅        | —            | Última modificación                        |
 
 ### 8.4 Subcolección: `participants`
 
-Membresía del viaje. El `participantId` es igual al `userId`.
+Membresía del viaje. El `participantId` (Document ID) equivale al UID del usuario.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `userId` | `string` | ✅ | — | Referencia al usuario |
-| `role` | `string` | ✅ | `'member'` | `'admin'` \| `'member'` |
-| `budgetLimit` | `number \| null` | ❌ | `null` | Budget Limit personal |
-| `joinedAt` | `timestamp` | ✅ | — | Fecha en que se unió |
-| `invitedBy` | `string` | ✅ | — | UID de quien invitó |
+| Campo         | Tipo             | Requerido | Default    | Descripción             |
+| ------------- | ---------------- | --------- | ---------- | ----------------------- |
+| `role`        | `string`         | ✅        | `'member'` | `'admin'` \| `'member'` |
+| `budgetLimit` | `number \| null` | ❌        | `null`     | Budget Limit personal   |
+| `joinedAt`    | `timestamp`      | ✅        | —          | Fecha en que se unió    |
+| `invitedBy`   | `string`         | ✅        | —          | UID de quien invitó     |
 
 ### 8.5 Subcolección: `events`
 
 Actividades del timeline vinculadas a un día específico.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `title` | `string` | ✅ | — | Nombre del evento |
-| `description` | `string \| null` | ❌ | `null` | Detalles |
-| `date` | `timestamp` | ✅ | — | Día del evento |
-| `startTime` | `timestamp \| null` | ❌ | `null` | Hora inicio (opcional) |
-| `endTime` | `timestamp \| null` | ❌ | `null` | Hora fin (opcional) |
-| `location` | `string \| null` | ❌ | `null` | Ubicación (texto) |
-| `locationUrl` | `string \| null` | ❌ | `null` | Google Maps o link |
-| `category` | `string` | ✅ | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'other'` |
-| `costImpact` | `number \| null` | ❌ | `null` | Costo estimado del evento |
-| `rsvp` | `map<userId, boolean>` | ✅ | `{}` | Confirmaciones de asistencia |
-| `linkedProposalId` | `string \| null` | ❌ | `null` | Propuesta de origen |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo              | Tipo                   | Requerido | Default   | Descripción                                                                 |
+| ------------------ | ---------------------- | --------- | --------- | --------------------------------------------------------------------------- |
+| `title`            | `string`               | ✅        | —         | Nombre del evento                                                           |
+| `description`      | `string \| null`       | ❌        | `null`    | Detalles                                                                    |
+| `date`             | `timestamp`            | ✅        | —         | Día del evento                                                              |
+| `startTime`        | `timestamp \| null`    | ❌        | `null`    | Hora inicio (opcional)                                                      |
+| `endTime`          | `timestamp \| null`    | ❌        | `null`    | Hora fin (opcional)                                                         |
+| `location`         | `string \| null`       | ❌        | `null`    | Ubicación (texto)                                                           |
+| `locationUrl`      | `string \| null`       | ❌        | `null`    | Google Maps o link                                                          |
+| `category`         | `string`               | ✅        | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'other'` |
+| `costImpact`       | `number \| null`       | ❌        | `null`    | Costo estimado del evento                                                   |
+| `rsvp`             | `map<userId, boolean>` | ✅        | `{}`      | Confirmaciones de asistencia                                                |
+| `linkedProposalId` | `string \| null`       | ❌        | `null`    | Propuesta de origen                                                         |
+| `createdBy`        | `string`               | ✅        | —         | UID del creador                                                             |
+| `createdAt`        | `timestamp`            | ✅        | —         | Fecha de creación                                                           |
 
 ### 8.6 Subcolección: `proposals`
 
 Ideas y encuestas del grupo.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `title` | `string` | ✅ | — | Título de la propuesta |
-| `description` | `string \| null` | ❌ | `null` | Contexto |
-| `type` | `string` | ✅ | — | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'poll'` \| `'other'` |
-| `status` | `string` | ✅ | `'draft'` | `'draft'` \| `'voted'` \| `'confirmed'` \| `'rejected'` |
-| `location` | `string \| null` | ❌ | `null` | Ubicación |
-| `locationUrl` | `string \| null` | ❌ | `null` | Google Maps link |
-| `startDate` | `timestamp \| null` | ❌ | `null` | Fecha/hora inicio |
-| `endDate` | `timestamp \| null` | ❌ | `null` | Fecha/hora fin |
-| `estimatedCost` | `number \| null` | ❌ | `null` | Impacto económico |
-| `accessible` | `boolean` | ✅ | `false` | Plan 100% accesible |
-| `referenceUrl` | `string \| null` | ❌ | `null` | Link externo |
-| `votes` | `map<userId, boolean>` | ✅ | `{}` | Interés/RSVP (propuestas ricas) |
-| `options` | `string[] \| null` | ❌ | `null` | Opciones (solo tipo `poll`) |
-| `optionVotes` | `map<string, string[]> \| null` | ❌ | `null` | Votos por opción (índice → userIds) |
-| `deadline` | `timestamp \| null` | ❌ | `null` | Deadline de votación |
-| `linkedEventId` | `string \| null` | ❌ | `null` | Event creado al confirmar |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo           | Tipo                            | Requerido | Default   | Descripción                                                                             |
+| --------------- | ------------------------------- | --------- | --------- | --------------------------------------------------------------------------------------- |
+| `title`         | `string`                        | ✅        | —         | Título de la propuesta                                                                  |
+| `description`   | `string \| null`                | ❌        | `null`    | Contexto                                                                                |
+| `type`          | `string`                        | ✅        | —         | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'poll'` \| `'other'` |
+| `status`        | `string`                        | ✅        | `'draft'` | `'draft'` \| `'voted'` \| `'confirmed'` \| `'rejected'`                                 |
+| `location`      | `string \| null`                | ❌        | `null`    | Ubicación                                                                               |
+| `locationUrl`   | `string \| null`                | ❌        | `null`    | Google Maps link                                                                        |
+| `startDate`     | `timestamp \| null`             | ❌        | `null`    | Fecha/hora inicio                                                                       |
+| `endDate`       | `timestamp \| null`             | ❌        | `null`    | Fecha/hora fin                                                                          |
+| `estimatedCost` | `number \| null`                | ❌        | `null`    | Impacto económico                                                                       |
+| `accessible`    | `boolean`                       | ✅        | `false`   | Plan 100% accesible                                                                     |
+| `referenceUrl`  | `string \| null`                | ❌        | `null`    | Link externo                                                                            |
+| `votes`         | `map<userId, boolean>`          | ✅        | `{}`      | Interés/RSVP (propuestas ricas)                                                         |
+| `options`       | `string[] \| null`              | ❌        | `null`    | Opciones (solo tipo `poll`)                                                             |
+| `optionVotes`   | `map<string, string[]> \| null` | ❌        | `null`    | Votos por opción (índice → userIds)                                                     |
+| `deadline`      | `timestamp \| null`             | ❌        | `null`    | Deadline de votación                                                                    |
+| `linkedEventId` | `string \| null`                | ❌        | `null`    | Event creado al confirmar                                                               |
+| `createdBy`     | `string`                        | ✅        | —         | UID del creador                                                                         |
+| `createdAt`     | `timestamp`                     | ✅        | —         | Fecha de creación                                                                       |
 
 ### 8.7 Subcolección: `costs`
 
 Gastos fijos y proyectados (el presupuesto diario se define en el Trip).
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `description` | `string` | ✅ | — | Descripción del gasto |
-| `amount` | `number` | ✅ | — | Monto |
-| `type` | `string` | ✅ | — | `'fixed'` \| `'projected'` |
-| `category` | `string` | ✅ | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'other'` |
-| `linkedEventId` | `string \| null` | ❌ | `null` | Evento asociado |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo           | Tipo             | Requerido | Default   | Descripción                                                                 |
+| --------------- | ---------------- | --------- | --------- | --------------------------------------------------------------------------- |
+| `description`   | `string`         | ✅        | —         | Descripción del gasto                                                       |
+| `amount`        | `number`         | ✅        | —         | Monto                                                                       |
+| `type`          | `string`         | ✅        | —         | `'fixed'` \| `'projected'`                                                  |
+| `category`      | `string`         | ✅        | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'other'` |
+| `linkedEventId` | `string \| null` | ❌        | `null`    | Evento asociado                                                             |
+| `createdBy`     | `string`         | ✅        | —         | UID del creador                                                             |
+| `createdAt`     | `timestamp`      | ✅        | —         | Fecha de creación                                                           |
 
 ### 8.8 Subcolección: `inventory`
 
 Ítems grupales compartidos.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `name` | `string` | ✅ | — | Nombre del ítem |
-| `description` | `string \| null` | ❌ | `null` | Detalles |
-| `assignedTo` | `string \| null` | ❌ | `null` | UID del responsable |
-| `status` | `string` | ✅ | `'needed'` | `'needed'` \| `'assigned'` \| `'confirmed'` |
-| `linkedTaskId` | `string \| null` | ❌ | `null` | Tarea auto-generada |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo          | Tipo             | Requerido | Default    | Descripción                                 |
+| -------------- | ---------------- | --------- | ---------- | ------------------------------------------- |
+| `name`         | `string`         | ✅        | —          | Nombre del ítem                             |
+| `description`  | `string \| null` | ❌        | `null`     | Detalles                                    |
+| `assignedTo`   | `string \| null` | ❌        | `null`     | UID del responsable                         |
+| `status`       | `string`         | ✅        | `'needed'` | `'needed'` \| `'assigned'` \| `'confirmed'` |
+| `linkedTaskId` | `string \| null` | ❌        | `null`     | Tarea auto-generada                         |
+| `createdBy`    | `string`         | ✅        | —          | UID del creador                             |
+| `createdAt`    | `timestamp`      | ✅        | —          | Fecha de creación                           |
 
 ### 8.9 Subcolección: `tasks`
 
 Tareas del grupo con vínculos a eventos o inventario.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `title` | `string` | ✅ | — | Nombre de la tarea |
-| `description` | `string \| null` | ❌ | `null` | Detalles |
-| `assignee` | `string \| null` | ❌ | `null` | UID del responsable |
-| `status` | `string` | ✅ | `'pending'` | `'pending'` \| `'in-progress'` \| `'done'` |
-| `dueDate` | `timestamp \| null` | ❌ | `null` | Fecha límite |
-| `linkedToType` | `string \| null` | ❌ | `null` | `'event'` \| `'inventory'` |
-| `linkedToId` | `string \| null` | ❌ | `null` | ID del evento o ítem |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo          | Tipo                | Requerido | Default     | Descripción                                |
+| -------------- | ------------------- | --------- | ----------- | ------------------------------------------ |
+| `title`        | `string`            | ✅        | —           | Nombre de la tarea                         |
+| `description`  | `string \| null`    | ❌        | `null`      | Detalles                                   |
+| `assignee`     | `string \| null`    | ❌        | `null`      | UID del responsable                        |
+| `status`       | `string`            | ✅        | `'pending'` | `'pending'` \| `'in-progress'` \| `'done'` |
+| `dueDate`      | `timestamp \| null` | ❌        | `null`      | Fecha límite                               |
+| `linkedToType` | `string \| null`    | ❌        | `null`      | `'event'` \| `'inventory'`                 |
+| `linkedToId`   | `string \| null`    | ❌        | `null`      | ID del evento o ítem                       |
+| `createdBy`    | `string`            | ✅        | —           | UID del creador                            |
+| `createdAt`    | `timestamp`         | ✅        | —           | Fecha de creación                          |
 
 ### 8.10 Subcolección: `transport`
 
 Medios de transporte registrados para el viaje.
 
-| Campo | Tipo | Requerido | Default | Descripción |
-|---|---|---|---|---|
-| `name` | `string` | ✅ | — | Nombre (ej. "Auto Pedro") |
-| `type` | `string` | ✅ | `'car'` | `'car'` \| `'bus'` \| `'plane'` \| `'other'` |
-| `capacity` | `number` | ✅ | — | Capacidad máxima de pasajeros |
-| `passengers` | `string[]` | ✅ | `[]` | UIDs de pasajeros asignados |
-| `owner` | `string \| null` | ❌ | `null` | UID del dueño (si aplica) |
-| `createdBy` | `string` | ✅ | — | UID del creador |
-| `createdAt` | `timestamp` | ✅ | — | Fecha de creación |
+| Campo        | Tipo             | Requerido | Default | Descripción                                  |
+| ------------ | ---------------- | --------- | ------- | -------------------------------------------- |
+| `name`       | `string`         | ✅        | —       | Nombre (ej. "Auto Pedro")                    |
+| `type`       | `string`         | ✅        | `'car'` | `'car'` \| `'bus'` \| `'plane'` \| `'other'` |
+| `capacity`   | `number`         | ✅        | —       | Capacidad máxima de pasajeros                |
+| `passengers` | `string[]`       | ✅        | `[]`    | UIDs de pasajeros asignados                  |
+| `owner`      | `string \| null` | ❌        | `null`  | UID del dueño (si aplica)                    |
+| `createdBy`  | `string`         | ✅        | —       | UID del creador                              |
+| `createdAt`  | `timestamp`      | ✅        | —       | Fecha de creación                            |
 
 ---
 
@@ -367,29 +423,29 @@ Medios de transporte registrados para el viaje.
 
 ### 9.2 Matriz de Permisos
 
-| Operación | Admin | Member |
-|---|---|---|
-| **Viaje** | | |
-| Crear viaje | ✅ (se convierte en Admin) | ✅ (se convierte en Admin) |
-| Editar viaje (nombre, fechas, destino) | ✅ | ❌ |
-| Archivar viaje | ✅ | ❌ |
-| Abandonar viaje | ❌ (creador) / ✅ (elevado) | ✅ |
-| **Participantes** | | |
-| Invitar participantes | ✅ | ❌ |
-| Remover participantes | ✅ | ❌ |
-| Elevar miembro a Admin | ✅ | ❌ |
-| **Contenido (Eventos, Costos, Propuestas)** | | |
-| Crear / Editar / Eliminar eventos | ✅ | ✅ |
-| Crear / Editar / Eliminar costos | ✅ | ✅ |
-| Crear propuestas y encuestas | ✅ | ✅ |
-| Votar / RSVP | ✅ | ✅ |
-| Confirmar / Rechazar propuesta | ✅ | ✅ |
-| **Logística** | | |
-| Agregar / Editar ítems de inventario | ✅ | ✅ |
-| Asignarse a un ítem | ✅ | ✅ |
-| Crear / Editar / Completar tareas | ✅ | ✅ |
-| Agregar / Editar transporte | ✅ | ✅ |
-| Asignar pasajeros a transporte | ✅ | ✅ |
+| Operación                                   | Admin                       | Member                     |
+| ------------------------------------------- | --------------------------- | -------------------------- |
+| **Viaje**                                   |                             |                            |
+| Crear viaje                                 | ✅ (se convierte en Admin)  | ✅ (se convierte en Admin) |
+| Editar viaje (nombre, fechas, destino)      | ✅                          | ❌                         |
+| Archivar viaje                              | ✅                          | ❌                         |
+| Abandonar viaje                             | ❌ (creador) / ✅ (elevado) | ✅                         |
+| **Participantes**                           |                             |                            |
+| Invitar participantes                       | ✅                          | ❌                         |
+| Remover participantes                       | ✅                          | ❌                         |
+| Elevar miembro a Admin                      | ✅                          | ❌                         |
+| **Contenido (Eventos, Costos, Propuestas)** |                             |                            |
+| Crear / Editar / Eliminar eventos           | ✅                          | ✅                         |
+| Crear / Editar / Eliminar costos            | ✅                          | ✅                         |
+| Crear propuestas y encuestas                | ✅                          | ✅                         |
+| Votar / RSVP                                | ✅                          | ✅                         |
+| Confirmar / Rechazar propuesta              | ✅                          | ✅                         |
+| **Logística**                               |                             |                            |
+| Agregar / Editar ítems de inventario        | ✅                          | ✅                         |
+| Asignarse a un ítem                         | ✅                          | ✅                         |
+| Crear / Editar / Completar tareas           | ✅                          | ✅                         |
+| Agregar / Editar transporte                 | ✅                          | ✅                         |
+| Asignar pasajeros a transporte              | ✅                          | ✅                         |
 
 ### 9.3 Reglas Especiales
 
@@ -404,59 +460,59 @@ Medios de transporte registrados para el viaje.
 
 ### 10.1 Módulo: Viaje
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Crear viaje | name, destination, dates | Trip + Participant(admin) | Cualquier usuario auth | Creador se agrega como Admin |
-| Editar viaje | tripId, campos editables | Trip actualizado | Admin | `updatedAt` se actualiza |
-| Archivar viaje | tripId | Trip(status='archived') | Admin | Todo queda read-only |
+| Operación      | Input                    | Output                    | Quién                  | Side Effects                 |
+| -------------- | ------------------------ | ------------------------- | ---------------------- | ---------------------------- |
+| Crear viaje    | name, destination, dates | Trip + Participant(admin) | Cualquier usuario auth | Creador se agrega como Admin |
+| Editar viaje   | tripId, campos editables | Trip actualizado          | Admin                  | `updatedAt` se actualiza     |
+| Archivar viaje | tripId                   | Trip(status='archived')   | Admin                  | Todo queda read-only         |
 
 ### 10.2 Módulo: Participantes
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Invitar (Magic Link) | tripId, email, role | Invitation URL | Admin | — |
-| Unirse al viaje | inviteToken | Participant creado | Usuario invitado | Notificación al Admin |
-| Remover participante | tripId, userId | — | Admin | Recálculo costos, desasignar tareas/ítems/transporte |
-| Elevar a Admin | tripId, userId | Participant(role='admin') | Admin | — |
+| Operación            | Input               | Output                    | Quién          | Side Effects                                         |
+| -------------------- | ------------------- | ------------------------- | -------------- | ---------------------------------------------------- |
+| Invitar (Magic Link) | tripId, email, role | URL `/invite/[token]`     | Admin          | Se genera JWT o token en DB con caducidad (72hs).    |
+| Unirse al viaje      | `token` param       | Participant creado        | Usuario (Auth) | Si no auth, URL redirige a Login y conserva token.   |
+| Remover participante | tripId, userId      | —                         | Admin          | Recálculo costos, desasignar tareas/ítems/transporte |
+| Elevar a Admin       | tripId, userId      | Participant(role='admin') | Admin          | —                                                    |
 
 ### 10.3 Módulo: Timeline & Eventos
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Crear evento | tripId, event data | Event creado | Admin, Member | Aparece en Timeline |
-| Editar evento | eventId, campos | Event actualizado | Admin, Member | — |
-| Eliminar evento | eventId | — | Admin, Member | Tareas vinculadas se desvinculan (no se borran) |
-| RSVP | eventId, attending | RSVP actualizado | Admin, Member | — |
+| Operación       | Input              | Output            | Quién         | Side Effects                                    |
+| --------------- | ------------------ | ----------------- | ------------- | ----------------------------------------------- |
+| Crear evento    | tripId, event data | Event creado      | Admin, Member | Aparece en Timeline                             |
+| Editar evento   | eventId, campos    | Event actualizado | Admin, Member | —                                               |
+| Eliminar evento | eventId            | —                 | Admin, Member | Tareas vinculadas se desvinculan (no se borran) |
+| RSVP            | eventId, attending | RSVP actualizado  | Admin, Member | —                                               |
 
 ### 10.4 Módulo: Propuestas
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Crear propuesta/encuesta | tripId, proposal data | Proposal(draft) | Admin, Member | — |
-| Votar | proposalId, vote | Votes actualizados | Admin, Member | Status cambia a `voted` en primer voto |
-| Confirmar propuesta | proposalId | Proposal(confirmed) | Admin, Member | Se crea un Event en el Timeline |
-| Rechazar propuesta | proposalId | Proposal(rejected) | Admin, Member | — |
+| Operación                | Input                 | Output              | Quién         | Side Effects                           |
+| ------------------------ | --------------------- | ------------------- | ------------- | -------------------------------------- |
+| Crear propuesta/encuesta | tripId, proposal data | Proposal(draft)     | Admin, Member | —                                      |
+| Votar                    | proposalId, vote      | Votes actualizados  | Admin, Member | Status cambia a `voted` en primer voto |
+| Confirmar propuesta      | proposalId            | Proposal(confirmed) | Admin, Member | Se crea un Event en el Timeline        |
+| Rechazar propuesta       | proposalId            | Proposal(rejected)  | Admin, Member | —                                      |
 
 ### 10.5 Módulo: Economía
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Agregar costo | tripId, cost data | Cost creado | Admin, Member | Recálculo Total Cost |
-| Editar costo | costId, campos | Cost actualizado | Admin, Member | Recálculo Total Cost |
-| Eliminar costo | costId | — | Admin, Member | Recálculo Total Cost |
-| Set Daily Budget | tripId, amount | Trip actualizado | Admin | Recálculo Total Cost |
-| Set Budget Limit | tripId, userId, amount | Participant actualizado | Propio usuario | Alerta si Total Cost > Limit |
+| Operación        | Input                  | Output                  | Quién          | Side Effects                                                                            |
+| ---------------- | ---------------------- | ----------------------- | -------------- | --------------------------------------------------------------------------------------- |
+| Agregar costo    | tripId, cost data      | Cost creado             | Admin, Member  | Recálculo Total Cost vía Snapshot                                                       |
+| Editar costo     | costId, campos         | Cost actualizado        | Admin, Member  | Recálculo Total Cost vía Snapshot                                                       |
+| Eliminar costo   | costId                 | —                       | Admin, Member  | Recálculo Total Cost vía Snapshot                                                       |
+| Set Daily Budget | tripId, amount         | Trip actualizado        | Admin          | Recálculo Total Cost vía Snapshot                                                       |
+| Set Budget Limit | tripId, userId, amount | Participant actualizado | Propio usuario | Alerta mediante un **Observer** (ej: Zustand) global que confronta Total Cost vs Limit. |
 
 ### 10.6 Módulo: Logística
 
-| Operación | Input | Output | Quién | Side Effects |
-|---|---|---|---|---|
-| Agregar ítem inventario | tripId, item data | Item(needed) | Admin, Member | — |
-| Asignar ítem | itemId, userId | Item(assigned) | Admin, Member | Auto-crea Task vinculada |
-| Desasignar ítem | itemId | Item(needed) | Admin, Member | Elimina Task vinculada |
-| Agregar transporte | tripId, transport data | Transport creado | Admin, Member | — |
-| Asignar pasajero | transportId, userId | Passengers actualizado | Admin, Member | **Error 409 si capacity alcanzada** |
-| Desasignar pasajero | transportId, userId | Passengers actualizado | Admin, Member | — |
+| Operación               | Input                  | Output                 | Quién         | Side Effects                        |
+| ----------------------- | ---------------------- | ---------------------- | ------------- | ----------------------------------- |
+| Agregar ítem inventario | tripId, item data      | Item(needed)           | Admin, Member | —                                   |
+| Asignar ítem            | itemId, userId         | Item(assigned)         | Admin, Member | Auto-crea Task vinculada            |
+| Desasignar ítem         | itemId                 | Item(needed)           | Admin, Member | Elimina Task vinculada              |
+| Agregar transporte      | tripId, transport data | Transport creado       | Admin, Member | —                                   |
+| Asignar pasajero        | transportId, userId    | Passengers actualizado | Admin, Member | **Error 409 si capacity alcanzada** |
+| Desasignar pasajero     | transportId, userId    | Passengers actualizado | Admin, Member | —                                   |
 
 ---
 
@@ -598,17 +654,17 @@ service cloud.firestore {
 
 ## 13. Edge Cases y Manejo de Errores
 
-| Escenario | Comportamiento |
-|---|---|
-| **Admin creador intenta abandonar** | ❌ No permitido. Debe archivar el viaje. |
-| **Último Admin elevado abandona** | ✅ Permitido. El creador siempre permanece como Admin. |
-| **Evento eliminado con tareas vinculadas** | Las tareas se preservan y se desvinculan (`linkedToId` = `null`). |
-| **Participante removido** | Recálculo automático de Total Cost. Desasignación de tareas, ítems y asientos de transporte. |
-| **Budget Limit excedido** | Notificación de alta visibilidad (banner + mail). No se bloquea la carga de costos. |
-| **Transporte sobre-asignado** | Error 409. La operación no se ejecuta si `passengers.length >= capacity`. |
-| **Escritura en viaje archivado** | Error 403. Firestore Rules impiden cualquier mutación en viajes `archived`. |
-| **Propuesta confirmada dos veces** | No-op. Si `status = confirmed`, la operación se ignora. |
-| **Voto después de deadline** | Error 400. No se registran votos si `now > deadline`. |
+| Escenario                                  | Comportamiento                                                                               |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| **Admin creador intenta abandonar**        | ❌ No permitido. Debe archivar el viaje.                                                     |
+| **Último Admin elevado abandona**          | ✅ Permitido. El creador siempre permanece como Admin.                                       |
+| **Evento eliminado con tareas vinculadas** | Las tareas se preservan y se desvinculan (`linkedToId` = `null`).                            |
+| **Participante removido**                  | Recálculo automático de Total Cost. Desasignación de tareas, ítems y asientos de transporte. |
+| **Budget Limit excedido**                  | Notificación de alta visibilidad (banner + mail). No se bloquea la carga de costos.          |
+| **Transporte sobre-asignado**              | Error 409. La operación no se ejecuta si `passengers.length >= capacity`.                    |
+| **Escritura en viaje archivado**           | Error 403. Firestore Rules impiden cualquier mutación en viajes `archived`.                  |
+| **Propuesta confirmada dos veces**         | No-op. Si `status = confirmed`, la operación se ignora.                                      |
+| **Voto después de deadline**               | Error 400. No se registran votos si `now > deadline`.                                        |
 
 ---
 

@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Users ---
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // --- Trips ---
+    match /trips/{tripId} {
+      
+      // Helper: ¿Es participante?
+      function isParticipant() {
+        return request.auth != null && exists(/databases/$(database)/documents/trips/$(tripId)/participants/$(request.auth.uid));
+      }
+      
+      // Helper: ¿Es admin?
+      function isAdmin() {
+        return request.auth != null && get(/databases/$(database)/documents/trips/$(tripId)/participants/$(request.auth.uid)).data.role == 'admin';
+      }
+      
+      // Helper: ¿Está archivado?
+      function isArchived() {
+        return resource != null && resource.data.status == 'archived';
+      }
+
+      allow read: if isParticipant();
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && isAdmin() && !isArchived();
+      allow delete: if false; // Los viajes no se eliminan, se archivan
+
+      // --- Participants ---
+      match /participants/{participantId} {
+        allow read: if isParticipant();
+        // Permite creación si es Admin que invita o si es el usuario uniéndose (first join, en ese caso todavía no es participante pero auth.uid == participantId si usa un token validado, u otra lógica en Cloud Functions, asuminos lo más permisivo o requerido)
+        allow create: if request.auth != null && (isAdmin() || request.auth.uid == participantId); 
+        allow update: if request.auth != null && isAdmin() && !isArchived();
+        allow delete: if request.auth != null && isAdmin() && !isArchived();
+      }
+
+      // --- Content Subcollections (events, costs, proposals, inventory, tasks, transport) ---
+      match /{subcollection}/{docId} {
+        allow read: if isParticipant();
+        allow create: if isParticipant() && !isArchived();
+        allow update: if isParticipant() && !isArchived();
+        allow delete: if isParticipant() && !isArchived();
+      }
+    }
+  }
+}

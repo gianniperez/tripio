@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 /**
  * Custom hook to handle closing events for mystical overlays and drawers.
- * * It provides essential UX patterns for the Auralis project by:
+ * * It provides essential UX patterns by:
  * - Detecting clicks outside the specified container.
  * - Detecting clicks on navigation links within the container to auto-close.
  * - Listening for the "Escape" key for accessibility standards.
