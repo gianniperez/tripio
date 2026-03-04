@@ -17,7 +17,7 @@ La organización de viajes grupales suele ser caótica cuando se maneja a travé
 
 La aplicación brindará a los grupos de amigos, familias o colegas una única fuente de verdad para su viaje, agilizando la planificación mediante:
 
-- Herramientas democráticas (encuestas con deadlines) para la toma de decisiones.
-- Trazabilidad y claridad financiera (gestión de presupuesto y división de pagos asimétricos).
+- Herramientas democráticas (propuestas colaborativas con RSVP y encuestas integradas) para la toma de decisiones.
+- Trazabilidad y claridad financiera (presupuesto estructurado en 3 niveles: Fijos, Proyectados y Diarios).
 - Organización logística detallada (asignación de vehículos, asientos y recolección de equipaje/provisiones).
-- Accesibilidad universal (uso desde navegador de escritorio/móvil o instalación directa en el teléfono como PWA, sin requerir descargas desde las tiendas de aplicaciones).
+- Accesibilidad universal (PWA Mobile-First instalable en el teléfono, con soporte responsive para navegador Desktop, sin requerir descargas desde las tiendas de aplicaciones).
