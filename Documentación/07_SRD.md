@@ -1,6 +1,6 @@
 # Documento de Requerimientos del Sistema (DRS) - Proyecto Tripio
 
-> **Versión:** 1.0  
+> **Versión:** 2.0  
 > **Estado:** Draft  
 > **Basado en:** Lineamientos de Antigravity DRS
 
@@ -8,15 +8,15 @@
 
 ## 1. Resumen Ejecutivo
 
-Este documento sintetiza el plan para **Tripio**, un organizador integral de viajes grupales. El producto no es una app fragmentada (solo finanzas o solo encuestas), sino un **contenedor de viaje colaborativo**, donde cada experiencia funciona como un ecosistema autónomo con su propio destino, timeline, presupuesto estructurado y logística de inventario/transporte. Incorpora:
+Este documento sintetiza el plan para **Tripio**, un organizador integral de viajes grupales. El producto es un **contenedor de viaje colaborativo**, donde cada experiencia funciona como un ecosistema autónomo con su propio destino, timeline, presupuesto estructurado y logística.
 
-- **Autenticación Simplificada** mediante Google (SSO) y Email.
-- **Toma de Decisiones Democrática** (encuestas de impacto real para decisiones sin fricción externa).
-- **Gestión Económica de 3 Niveles** (Costos fijos, proyectados y presupuestos individuales).
-- **Logística Operativa** para la asignación de transporte e inventarios (separando responsabilidades personales de elementos grupales).
-- **Timeline Narrativo y Calendario Hub** (Visualización dual tipo calendario y secuencial, agrupando todas las tareas y eventos).
-- **Feed Colaborativo y Sistema de Tareas** (Muro de recursos y delegación accionable).
-- **Overview Global y Resguardo Histórico** (Trazabilidad completa pasada y presente y modo "Viaje en Curso" en tiempo real).
+**Puntos Clave del MVP:**
+
+- **PWA (Mobile First):** Enfocado 100% en dispositivos móviles.
+- **Autenticación:** Firebase Auth (Google y Email).
+- **Base de Datos:** Firebase Firestore.
+- **Gestión Económica:** Fijos, Proyectados y Diarios.
+- **Logística & Tareas:** Timeline interactivo y asignación de recursos vinculada.
 
 ---
 
@@ -24,268 +24,170 @@ Este documento sintetiza el plan para **Tripio**, un organizador integral de via
 
 ### 2.1 El Viaje como Contenedor Autónomo (Core)
 
-**Definición:** El viaje es el núcleo del ecosistema organizativo. Almacena la historia completa (destino, grupo, economía temporal y logística) preservando contexto a futuro de viajes cerrados/pasados.
-**Alcance:** Es el contenedor raíz del cual heredan todos los submódulos.
+El viaje es el núcleo del ecosistema. Almacena la historia completa, preservando el contexto para el futuro.
 
-**Flujo principal:**
+**Ciclo de Vida:**
 
-1. Usuario crea o accede al histórico para visualizar Viajes Activos/Pasados.
-2. Todo módulo navegado dentro de este viaje es contextual, incluyendo un panel de **Overview Global** (A dónde, con quién, cómo, cuándo, costo y recursos).
+1. **`Planning` (Planificación Activa):** Estado inicial de alta mutabilidad.
+2. **`Active` (Viaje en Curso):** Se activa automáticamente en la `startDate`. La UI prioriza la información del día.
+3. **`Archived` (Cierre/Archivo):** Solo lectura tras la finalización.
 
-**Manejo de Participantes:**
+### 2.2 Timeline y Vista Dual (Calendario Hub)
 
-- Admite invitación asíncrona (Link) o directa (Email), permitiendo armar el grupo en paralelo a la planificación misma.
-- La mentalidad es colaborativa; todos ven el Overview Global y el Timeline.
+El sistema ofrece dos formas de visualizar la secuencia temporal del viaje.
 
-### 2.2 Timeline y Calendario como Eje del Sistema
+#### Vista Calendario Clásico (Grid)
 
-**Definición:** El viaje tiene una secuencia narrativa temporal. El Calendario no es solo para visualizar, es el **eje organizador madre**. A cada día se le pueden vincular: Actividades, Costos derivados, Encuestas, Tareas, Recordatorios y Recursos compartidos.
-**Flujos principales:**
+- **Elementos:** Cuadrícula mensual/semanal.
+- **Visualización:** Iconos rápidos sobre cada día indicando cantidad de actividades, tareas pendientes y presupuesto proyectado del día.
+- **Interacción:** Click en un día abre el modal de "Detalle del Día".
 
-- Soportar viajes simples e itinerantes (Múltiples estadías).
-- **Vista Dual de Lectura:** El usuario puede alternar entre "Vista Calendario Clásico" y "Vista Timeline Secuencial Narrativo".
-- **Modo "Viaje en Curso":** Una vez que el `startDate` del viaje coincide con el hoy, la UI del Viaje muta. Deja de ser una herramienta de "Planificación Futura" y pasa a enfocarse en "Modo Acompañamiento": Destaca el cronograma de hoy, el clima actual y la próxima actividad inminente.
+#### Vista Timeline Secuencial (Narrativo)
 
-### 2.3 Gestión Económica Multinivel
+- **Elementos:** Lista vertical cronológica.
+- **Detalle:** Muestra tarjetas extendidas de Actividades (con RSVP), Tareas (con responsable), y Notas del Feed.
+- **Visualización:** Línea de tiempo que conecta visualmente los hitos (ej. "Transfer -> Check-in -> Cena").
 
-**Definición:** Herramienta de previsión de caja compartida e individual.
-**Alcance:** Modelado en tres capas de control financiero y trazabilidad de aportes.
+#### Dashboard "Active" (En Curso)
 
-**Granularidad:**
+Cuando el estado es `Active`, el Dashboard principal resalta:
 
-1. **Costos Fijos:** Dinero duro/comprometido (Ej: Pasajes de avión, Reserva de cabaña, Excursiones pactadas).
-2. **Costos Proyectados (Flexibles):** Techos o estimados dinámicos (Ej: Comida diaria estimada por día x personas, Fondo para gasolina).
-3. **Presupuesto Individual:** Pantalla resumen de cada persona mostrando su TCO (Total Cost of Ownership) del viaje. Muestra "Su cuota parte de Fijos + Su proyección personal".
+- **Próximos Pasos:** La actividad inmediata y la logística de transporte asociada.
+- **Tareas del Día:** Links directos para marcar como "Completado".
+- **Gasto Diario:** Recordatorio del monto proyectado disponible.
 
-> **Aclaración sobre MVP:** La gestión de deuda cruzada interna (ej. "Juan le debe a María por el supermercado") queda totalmente excluida del diseño inicial y los cálculos. El sistema es puramente de *previsión y declaración de costos*, no un motor de liquidación de gastos divisibles entre participantes.
+### 2.3 Gestión Económica (Total Cost)
 
-**Errores y edge cases:**
+Previsión financiera dividida en tres capas de control:
 
-- *Eliminación de Costo Fijo:* Cuando un costo fijo grupal se elimina, debe impactar de recálculo directo al TCO de todo el grupo.
+1. **Costos Fijos:** Gastos ya comprometidos (Ej: Alojamiento).
+2. **Costos Proyectados:** Estimaciones para variables grupales (Ej: Combustible).
+3. **Presupuesto Diario:** Monto fijo por día (ej. $50 USD) que escala según la duración. No se cargan tickets individuales.
 
-### 2.4 Destino y Encuestas de Impacto Real
+El **Total Cost** individual es la suma de su parte proporcional de fijos, proyectados y su total de diarios.
 
-**Definición:** Herramienta de toma de decisiones que ejecuta mutaciones directas sobre el Viaje.
-**Flujo principal:**
+### 2.4 Destino y Actividades
 
-- Permite la asignación unilateral directa o apertura de Encuestas.
-- **Ejecución Automática / Activities Hub:** Si una encuesta "Destino del Martes" gana la opción "Kayak al lago", al momento del Deadline, el sistema inyecta en el *Calendario Hub* del Martes la Actividad "Kayak al lago". **Pasado el Deadline, los votos son congelados (Locked) y no se pueden modificar.**
-- **Asistencia (RSVP) a Actividades:** Una vez creada la actividad (ya sea por encuesta ganadora o por imposición directa del Admin), todos los usuarios deben poder marcar proactivamente su status: *"Voy / No asisto"*. Esto permite dimensionar la logística particular de ese evento (ej: cuántos kayaks rentar emparejado a la actividad de calendario).
+Repositorio de qué hacer, con confirmación de asistencia (**RSVP**) para dimensionar la logística.
 
 ### 2.5 Logística Integrada (Transporte e Inventario)
 
-**Definición:** Coordinador del "Cómo vamos" y "Qué llevamos".
-**Alcance:** Totalmente dependiente de la temporalidad del viaje. En viajes itinerantes aplican recalculos base.
+#### Medios de Transporte
 
-**Módulo de Transporte:**
+En lugar de gestionar activos físicos complejos, el sistema registra:
 
-- Registra medios físicos (Autos propios, colectivos, aviones).
-- Asigna individuos (asientos) a vehículos agrupándolos visualmente en el Overview para rastrear al grupo en ruta.
-- Soporte visual de "4 en este Auto A y 2 viajan por Avión B".
+- **Medio:** (Auto Pedro, Avión, Micro).
+- **Capacidad:** Cuántos entran.
+- **Pasajeros:** Quién viaja con quién para rastrear al grupo.
 
-**Módulo Inventario a Dos Capas:**
+#### Inventario Grupal (Shared Items)
 
-1. **Inventario Personal:** Checklist autogestionado (Abrigo, cepillo). Individual y no publicable/votable por el resto, salvo como sugerencia global.
-2. **Inventario Grupal:** Repositorio crítico (Carpa, Hielo, Parlante). Funcionan bajo el ciclo de vida: `Propuesta -> Asignación de Responsabilidad (Quien lo lleva)` para erradicar el vacío logístico.
+Repositorio de ítems necesarios (Carpa, Parlante).
 
-**Reglas Canónicas:**
+- **Opcionalidad:** Siempre debe estar la opción de indicar quién lo lleva, pero no es obligatorio para el MVP que todos los ítems tengan dueño.
+- **Vínculo con Tareas:** Si se asigna un responsable a un ítem, automáticamente se genera una **Tarea** asociada.
 
-- Límite de capacidad real para impedir la autoasignación en vehículos excedidos.
+### 2.6 Sistema de Tareas Inteligentes
 
-### 2.6 Sistema de Tareas Asignables y Feed Colaborativo
+Las tareas son el motor de acción del grupo.
 
-**Definición:** Herramientas de activación social y delegación para estructurar el ecosistema del viaje sin depender de un chat desorganizado.
-**Módulo Feed (El Muro):**
-
-- Muro de novedades no estructuradas y links. No pretende ser mensajería instántanea estilo WhatsApp, sino un repositorio de propuestas ricas (Links de Instagram de cabañas, PDFs tarifarios).
-**Módulo Tareas:**
-- Creación de tareas atómicas (`Reservar Combis`, `Comprar hielo`) asignables a usuarios responsables.
-- Se vinculan al Timeline/Día específico. Disparan Recordatorios Notificables a sus designados próximos al vencimiento.
-
-### 2.7 Notificaciones Inteligentes
-
-**Definición:** Sistema asíncrono de alertas push/email.
-**Comportamiento esperado:** Alertas exclusivas de valor. "Deadline de Encuesta se acerca", "Se te ha asignado una Tarea Nueva", o "El Modo Viaje en Curso sugiere salir hacia el Aeropuerto".
+- **Vínculo con Calendario:** Una tarea puede nacer de un evento (ej. "Comprar carbón" para el evento "Parrillada").
+- **Vínculo con Inventario:** Una tarea puede nacer de un ítem (ej. "Conseguir Carpa").
+- **Visualización:** Aparecen en el Módulo de Tareas y también dentro del detalle del Evento o Ítem relacionado.
 
 ---
 
-## 3. Arquitectura
+## 3. Arquitectura y UX/UI
 
-### 3.1 Navegación y Jerarquía
+### 3.1 Navegación y Jerarquía (PWA Focus)
 
 ```text
-App / PWA
-├── Autenticación (Login / Register)
+Login (Firebase Auth) -> Mis Viajes
 │
-├── Mis Viajes (Históricos y Activos)
-│   └── ⚙️ Perfil / Configuración global
-│
-└── 🛫 Viaje [ID_Viaje] (Dashboard)
-    ├── 🌟 Overview Global (Dash consolidado) / ⚡ Modo "Viaje En Curso"
-    ├── 🗺️ El Viaje (Calendario/Timeline Hub, Tareas, Muro/Feed)
-    ├── 📊 Tribuna (Encuestas Executables)
-    ├── 💰 Tesorería (Gastos Fijos, Techos Proyectados, Mi Saldo)
-    └── 📦 Logística & Transportes (Inventario Grupal, Mi Mochila y Vehículos)
+└── Viaje Dashboard [ID] (Mobile NavBar)
+    ├── 🏠 Home (Overview: Estado actual, Total Cost personal, Próxima Actividad)
+    ├── 📅 Planner (Switch Dual: Calendario Grid / Timeline Vertical)
+    │   └── Detalle de Día (Actividades, Tareas, Feed relacionado)
+    ├── 💰 Economy (Costos Fijos, Proyectados, Límite de Presupuesto)
+    └── 🎒 Logistics (Transporte, Inventario Grupal e Individual, Tareas)
 ```
 
-### 3.2 Modelo de Datos (PostgreSQL Core)
+### 3.2 Stack Tecnológico
 
-*Esquema Lógico Principal (simplificado)*:
-
-```text
-users
-  - id, email, name, avatarUrl
-
-trips
-  - id, title, defaultCurrency, status (Planning|Active|Archived)
-
-trip_participations
-  - tripId, userId, role
-
-locations_and_stages (Itinerarios/Estadías)
-  - id, tripId, name (ej: Cabaña Bariloche), address
-  - startDate, endDate
-  - orderIndex // Clave para los saltos organizacionales del viaje
-
-trip_events (Timeline / Actividades)
-  - id, tripId, stageId (Opcional, a dónde pertenece)
-  - title, dateTime, duracionEstimada
-
-event_attendees (RSVP)
-  - eventId, userId, isAttending (boolean)
-
-polls & poll_options & votes (Tablas de Encuestas, sin cambios)
-  - id...
-
-expenses // Costos Fijos e Historial
-  - id, tripId, isProjected (Boolean: Si es 'true' es un techo de presupuesto)
-  - title, amount, paidByUserId, stageId (Si el costo es propio de una itinerancia)
-
-expense_splits // Atribución económica
-  - expenseId, userId, owedAmount
-
-logistics_vehicles
-  - id, tripId, name, type (Car/Plane), capacityProviderUserId
-
-vehicle_passengers
-  - vehicleId, userId
-
-inventory_items
-  - id, tripId, name, type (PersonalChecklist|GrupalShared)
-  - ownerUserId, assignedToUserId (En caso compartido, el voluntario)
-
-trip_tasks
-  - id, tripId, eventId (Vinculación opcional al Calendario)
-  - description, assignedToUserId, status (Todo|Done)
-  - deadlineAt
-
-trip_feed_posts
-  - id, tripId, authorUserId, content
-  - linkUrl, linkMetadata (Para previsualizar embeds externos)
-  - createdAt
-```
+- **Frontend:** Next.js / TypeScript.
+- **Backend/DB:** Firebase (Firestore, Auth).
+- **Deployment:** Vercel o Firebase Hosting.
+- **Offline (Post-MVP):** Service Workers para lectura cacheada.
 
 ---
 
-## 4. Fases de Implementación
+## 4. UX/UI General
 
-### Fase 0: Estructura e Identidad
+### 4.1 Principios de Diseño
 
-- Setup Supabase, Autenticación y Layout General.
-- Creación de colecciones de Viajes, Usuarios y el **Feed Colaborativo** base.
-
-### Fase 1: El Timeline como Corazón
-
-- CRUD de Viajes Múltiples y Participantes.
-- Creación de Vista Dual (Calendario + Timeline).
-- Lógica generadora del **"Modo Viaje en Curso"** interceptando fechas actuales.
-
-### Fase 2: Tribuna, Encuestas de Impacto y Tareas
-
-- Módulo Encuestas.
-- Workers/Hooks para que las encuestas ganadoras alteren la base de datos de Eventos del Timeline.
-- CRUD de Tareas atadas al calendario y responsables.
-
-### Fase 3: Módulo Financiero a 3 Niveles
-
-- Componente de Costos Fijos vs Proyectados.
-- UI de TCO Individual de Presupuesto.
-
-### Fase 4: Logística (Transporte e Inventarios Separados)
-
-- Altas de Vehículos y asignaciones de asientos.
-- Tableros privados de Inventario vs "Lo que el grupo necesita".
+- **Mobile-First PWA:** Diseñado para pulgar, botones grandes, feedback táctil.
+- **Gamificación Proactiva:**
+  - **Hitos de Grupo:** Barras de progreso por categorías (Logística completa, Finanzas cerradas).
+  - **Badges:** Iconos lúdicos por completar tareas o ser el primero en hacer RSVP.
+  - **Mascota (Future Scope):** Un guía lúdico que celebra hitos (no incluido en MVP).
 
 ---
 
-## 5. Lo que NO Cambia
+## 5. Fases de Implementación (Firebase Focus)
 
-*(Por el momento no hay decisiones arquitectónicas inamovibles, a la espera de confirmación del equipo).*
-
----
-
-## 6. Caso de Uso End-to-End
-
-**Escenario:** "Roadtrip al Valle" para 10 personas. Una estadía única pero compleja.
-
-**Problema Inicial:** Juan organiza, tiene 10 confirmados. Hay 2 autos y no se tiene control visible del presupuesto real personal, o de los elementos que faltan.
-
-**Flujo en App Tripio:**
-
-1. **Creación y Unión:** Juan nombra el proyecto "Roadtrip al Valle". Comparte el link en WhatsApp. El resto entra al Dash, donde el *Overview Global* domina la pantalla principal de todos, marcando `Estado: Planificación`.
-2. **Timeline y Fijos:** Juan marca fecha y sube el "Costo de Reserva Cabaña" (\$200,000 en total) en el módulo de Economía. El sistema divide los \$20,000 de Base a cada uno.
-3. **Previsiones y Personalización:** El sistema proyecta la "Comida" (\$15,000 por persona por día). María abre *"Mi Presupuesto"* y el sistema le responde en pantalla: "María, tu TCO (Total Esperado) para este fin de semana es \$45,000".
-4. **Inventario, Transporte y Tareas:** En el apartado logístico se registran los dos Autos. En **Inventario Grupal**, Juan sube ficha vacía pidiendo *"Parrilla y Carbón"*, el sistema insta a voluntarios y Pedro hace "Take responsibility". Además, Juan asigna una *Tarea* a María: "Averiguar pasajes extras".
-5. **Decisiones (Encuesta) y Timeline Automático:** Juan crea encuesta "¿A dónde vamos el viernes?" con cierre Miércoles. El miércoles gana *Kayak*, automáticamente en la Vista Timeline del Viernes aparece el Evento `Kayak`.
-
-**Resultado esperado:**  
-En la vista central del día viernes (estando ya en **Modo Viaje En Curso**), todos abren la app celular en el auto, miran a qué hora inicia el Kayak y comprueban en el Inventario que Pedro trajo la parrilla, sabiendo que económicamente están dentro del TCO pautado.
+- **Fase 0:** Setup de proyecto (Next.js + Firebase Auth/Firestore).
+- **Fase 1:** El Viaje y Timeline (Vista Dual básica).
+- **Fase 2:** Economía (3 niveles + Límite de Presupuesto + Notificaciones Mail).
+- **Fase 3:** Logística e Inventario vinculado a Tareas.
 
 ---
 
-## 7. Definiciones Canónicas y Reglas Estrictas
+## 6. Notificaciones e Interacciones
 
-1. **Jerarquía Presupuestaria de 3 Capas:** Gasto Fijo real vs Gasto Proyectado Estimativo vs TCO Individual. Nunca se deben pisar en pantalla; el usuario debe saber claramente qué dinero debe "depositar ya" vs "guardar en el bolsillo para mañana".
-2. **Timeline Hub Infranqueable:** Todas las Tareas, Eventos Y Encuestas pivotan visualmente o contextualmente en torno a fechas de la Estadía. Si se cambia el día de una estadía, todo se desplaza contextualmente.
-3. **Inventario Privado Mantenido:** Módulos como "Items Personales" (El traje de baño de Pedro) nunca se listan o resumen en la pantalla grupal general para reducir ruido visual, aislándose solo al dashboard de Pedro.
-4. **Bloqueo Asimétrico Asientos:** La cantidad de *VehiclePassengers* vinculados no puede superar la declaración en `vehicles.capacity`. Retornará un error `HTTP 409 Conflict - Vehicle Full`.
-
-### 7.1 Permisos por Rol
-
-| Acción | Admin (Dueño) | Member (Participante) | Notas |
-| :--- | :---: | :---: | :--- |
-| **Editar Detalles del Viaje** | ✅ | ✅ | Todos pueden colaborar ajustando nombre, descripción y portada. |
-| **Borrar Contenedor del Viaje** | ✅ | ❌ | Por seguridad, solo el creador original o Administradores. |
-| **Invitar Nuevos Usuarios** | ✅ | ✅ | Cualquier participante puede generar enlaces o invitar por mail. |
-| **Expulsar Usuarios** | ✅ | ❌ | La eliminación forzada de miembros se restringe a Admins. |
-| **Crear Encuesta/Tarea/Evento** | ✅ | ✅ | Fomentando la colaboración sin fricción. |
-| **Borrar Gasto Fijo/Proyectado**| ✅ | ✅ | *Excepción:* Solo el Admin, o el *Member que creó* ese gasto (Dueño del Gasto). |
-| **Modificar Timeline Base** | ✅ | ✅ | Todos pueden ajustar fechas de estadías e inicio/fin bajo cultura de consenso. |
-
-### 7.2 Mapa de Eventos y Notificaciones (Triggers)
-
-| Tipo (Trigger) | Condición | Acción / Evento Disparado |
+| Trigger | Condición | Acción |
 | :--- | :--- | :--- |
-| **Encuesta Resuelta** | Llega el `deadlineAt` de la Votación. | Si gana una *Actividad/Destino*, inyecta Evento al Timeline de forma autómata. Dispara Notificación In-App *"Votación cerrada"*. |
-| **Nuevo Participante** | Un usuario usa el "Magic Link" de la PWA. | Crea registro en `trip_participations`. Dispara Push general *"Juan se acaba de unir al viaje"*. |
-| **Recordatorio Tarea** | 24hs antes de una `trip_task`. | Dispara Push Directa a `assignedToUserId`: *"Tarea por Vencer: Comprar Hielo"*. |
-| **Nuevo Gasto** | Member crea un Gasto y divide a todos. | Actualiza en la UI del Viaje los montos `owedAmount`. Dispara Push si el nuevo monto adeudado del receptor supera > $0. |
-
-### 7.3 Límites Técnicos del Sistema
-
-- **Máximo Participantes por Viaje:** 100 usuarios activos.
-- **Máximo de Opciones por Encuesta:** 15.
-- **Máximo Tamaño de Archivo (Uploads del Feed):** 10 MB (Prioridad texto y links).
-- **Duración Histórica del Viaje:** Los viajes cerrados/pasados cambian de `status` a "Archivado" y pasan a solo-lectura perpetua (ReadOnly) luego de 30 días de su fecha de finalización.
+| **Nuevo Participante** | Unión vía link. | Mail al Admin / Toast en App. |
+| **Gasto/Update** | Cambio en costos. | Recálculo de "Total Cost" y alerta si supera el **Budget Limit**. |
+| **Tarea Asignada** | Creación o asignación. | Mail al responsable. |
 
 ---
 
-## 8. Pendientes de Definir
+## 7. Límites Técnicos
 
-*(Decisiones técnicas pausadas a la espera de revisión y confirmación en conjunto)*
+- **Máximo Participantes:** 20 usuarios.
+- **Plataforma:** PWA (Navegador móvil). No Desktop.
+- **Offline:** No disponible para MVP.
+- **Notificaciones:** Email para MVP (Push post-MVP).
 
-- **Estrategia PWA / Desktop:** Confirmar si el foco será 100% Mobile (PWA) u ofrecer una experiencia Desktop más robusta.
-- **Base de Datos y Autenticación:** Evaluar si se utilizará Supabase (BaaS) u otra alternativa.
-- **Formato Offline:** Debido a que en camping la gente pierde señal, deberíamos evaluar habilitar Service Workers de Next.js (`next-pwa`) para cachear al menos el "Estado de lectura".
-- **Notificaciones Dinámicas (Emails? Push?):** Determinar en Fase 3 si para los "Deadlines de encuestas" y asignaciones de Tareas usaremos Cronjobs Serverless para enviar recordatorios periódicos.
-- **V2: Algoritmo *Splitwise* (Simplificación de Deuda Interna) / MVP+1:** Actualmente excluido del core. En el radar para integrarse post-MVP, permitiendo dividir tickets de gastos entre miembros específicos y simplificar trayectos de deuda viva.
+---
+
+## 8. Reglas Canónicas (Single Source of Truth)
+
+1. **Centralización Temporal:** Todo elemento (Tarea, Gasto, Ítem) debe poder vincularse a un punto en el tiempo (Día/Evento) o al contenedor general del viaje.
+2. **Jerarquía Presupuestaria:** El **Total Cost** se calcula como `Fijos/n + Proyectados/n + (Diarios * días)`.
+3. **No-Goal (Gastos Diarios):** Prohibida la carga de gastos hormiga/tickets. Se asumen cubiertos por el "Presupuesto Diario".
+4. **Validación de Capacidad:** El transporte no puede ser sobre-asignado (Error 409).
+5. **Prioridad de Alerta:** El exceso de `Budget Limit` es una notificación crítica de alta visibilidad.
+6. **Interactividad de Tareas:** Una tarea marcada como "Done" en el Módulo de Tareas debe actualizar automáticamente el status del Ítem o Evento vinculado.
+
+---
+
+## 9. Decisiones Técnicas Decididas
+
+- **Database:** Firebase Firestore (NoSQL).
+- **Auth:** Firebase Auth (SSO Google + Email/Password).
+- **UI:** Tailwind CSS (si aplica) o Vanilla CSS Premium.
+- **PWA:** PWA nativa sin soporte Desktop dedicado.
+
+---
+
+## 10. Glosario de Definiciones
+
+- **Viaje (Travel Container):** La entidad raíz que agrupa todo el ecosistema.
+- **Economía Temporal (Temporal Economy):** Integración del presupuesto con la línea de tiempo.
+- **Total Cost:** Costo estimado final para un usuario (Fijos + Proyectados + Diarios).
+- **Daily Projected Cost:** Monto diario fijo escalable por la duración del viaje.
+- **Budget Limit:** Monto máximo auto-impuesto por el usuario.
+- **RSVP:** Confirmación binaria de asistencia a una actividad.
+- **Vista Dual:** Capacidad de alternar entre una grilla de Calendario y una lista de Timeline.
+- **Ítem Grupal:** Recurso compartido que puede disparar Tareas de transporte/compra.
