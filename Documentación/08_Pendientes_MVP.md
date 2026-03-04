@@ -1,62 +1,99 @@
-# Pendientes para el Lanzamiento del MVP - Tripio
+# Roadmap de Implementación MVP - Tripio
 
-Este documento centraliza las tareas técnicas, de diseño y de producto necesarias para iniciar la fase de desarrollo del MVP, basándose en el **SRD v2.0**.
-
----
-
-## 1. Infraestructura y Setup Técnico
-
-- [ ] **Configuración de Proyecto Next.js:**
-  - Inicializar el repositorio con la última versión de Next.js (App Router).
-  - Configurar ESLint y Prettier bajo estándares de Antigravity.
-- [ ] **Configuración de Firebase:**
-  - Crear proyecto en la Consola de Firebase.
-  - Habilitar **Firebase Auth** (Google y Email/Password).
-  - Habilitar **Cloud Firestore** en modo de prueba.
-  - Habilitar **Firebase Hosting** para el despliegue de la PWA.
-- [ ] **Arquitectura de Datos (Firestore Schema):**
-  - Definir el esquema de documentos para las colecciones `trips`, `participations`, `events`, `inventory` y `tasks`.
-  - Implementar las Reglas de Seguridad básicas de Firestore coincidiendo con los roles definidos.
+Este documento centraliza el paso a paso técnico para llevar Tripio de un boilerplate a un MVP funcional, basado en el **SRD v3.0**.
 
 ---
 
-## 2. Diseño de Interfaz (UX/UI)
+## 🚀 Fase 0: Setup & Branding (Sprint 0)
 
-- [ ] **Sistema de Diseño (Tokens):**
-  - Definir paleta de colores (Soft Modern & Lúdico).
-  - Configurar tipografía (Outfit o similar geométrica).
-  - Crear librería de componentes base (Botones rounded-2xl, tarjetas con sombras difusas).
-- [ ] **Mockups de Pantallas Clave:**
-  - **Dashboard del Viaje:** Vista del "Total Cost" y estado actual.
-  - **Planificador Dual:** Maquetación del switch entre Calendario y Timeline.
-  - **Gestión de Gastos:** Pantalla de configuración de los 3 niveles económicos.
-- [ ] **Identidad Visual MVP:**
-  - Logo provisional y favicon lúdico.
+*Objetivo: Preparar el terreno y conectar la infraestructura base.*
 
----
+- [ ] **Alineación de Identidad:**
+  - [ ] Renombrar proyecto en `package.json` ("next-app-template" → "tripio").
+  - [ ] Actualizar Metadata en `src/app/layout.tsx` (título, descripción, OG tags).
+  - [ ] Limpiar referencias a otros proyectos en comments (ej. `onCloseEvents.ts`).
+  - [ ] Actualizar `README.md` con la descripción real de Tripio.
 
-## 3. Lógica de Negocio y Funcionalidades Core
+- [ ] **Infraestructura Firebase:**
+  - [ ] Instalar SDK de Firebase (`npm install firebase`).
+  - [ ] Crear archivo de configuración `src/lib/firebase.ts`.
+  - [ ] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
 
-- [ ] **Motor de Cálculo del "Total Cost":**
-  - Función de servidor/cliente que compute `Fijos/n + Proyectados/n + (Diarios * días)`.
-  - Implementar watcher para disparar la alerta de `Budget Limit`.
-- [ ] **Módulo de Vínculos Inteligentes:**
-  - Lógica que permita "spawnear" una tarea desde un ítem de inventario o un evento.
-- [ ] **Flujo de Invitación:**
-  - Generación de "Magic Links" dinámicos para unir participantes a un contenedor de viaje.
+- [ ] **Configuración PWA:**
+  - [ ] Generar e incluir `manifest.json`.
+  - [ ] Configurar soporte básico para instalación en mobile.
 
 ---
 
-## 4. Definiciones de Producto Pendientes
+## 🏗️ Fase 1: El Viaje y Timeline (Core)
 
-- [ ] **Definir frecuencia de alertas:** ¿Las notificaciones por exceso de presupuesto son push inmediatas o se agrupan en un resumen diario por mail?
-- [ ] **Confirmar Módulo de Encuestas:** Validar si el sistema de votación (para destino/fecha) entra en el primer sprint o se posterga para la Phase 2.
-- [ ] **Validar pasarela de mails:** Elegir proveedor para las notificaciones del MVP (ej. Firebase Extension: Trigger Email o Resend).
+*Objetivo: La "unidad atómica" de la app funcionando con persistencia real.*
+
+- [ ] **Seguridad y Modelado:**
+  - [ ] Implementar Firestore Security Rules detalladas en el SRD v3.0.
+  - [ ] Crear tipos TypeScript para todas las colecciones anidadas.
+
+- [ ] **Autenticación:**
+  - [ ] Configurar Firebase Auth (Google + Email/Password).
+  - [ ] Guardar perfil de usuario en colección `users` al primer login.
+
+- [ ] **Gestor de Viajes:**
+  - [ ] CRUD de Viajes (Crear, Editar, Listar).
+  - [ ] Generación de "Magic Links" de invitación.
+  - [ ] Lógica de membresía (unirse a viaje vía link).
+
+- [ ] **Layout & Navegación:**
+  - [ ] Header con contexto de viaje (Nombre + Fecha).
+  - [ ] Sticky Bottom NavBar (Home, Timeline, Propuestas, Decidido).
+
+- [ ] **Visualización del Itinerario:**
+  - [ ] Vista Timeline (lista vertical secuencial).
+  - [ ] Vista Calendario (grid mensual/semanal).
+  - [ ] Switch de alternancia entre vistas.
 
 ---
 
-## 5. Próximo Paso Sugerido (Sprint 0)
+## 💰 Fase 2: Economía Temporal
 
-1. **Kick-off Técnico:** Creación del proyecto y conexión con Firebase.
-2. **Modelado:** Escritura de los esquemas NoSQL finales.
-3. **Layout General:** Header y NavBar de la PWA funcionando.
+*Objetivo: Control financiero proyectado según duración del viaje.*
+
+- [ ] **Motor Económico:**
+  - [ ] Configuración de Presupuesto Diario y Budget Limit en el viaje.
+  - [ ] CRUD de Gastos Fijos y Proyectados.
+  - [ ] Lógica de cálculo del "Total Cost" (Fijos/n + Proyectados/n + Diarios*días).
+
+- [ ] **Alertas de Presupuesto:**
+  - [ ] Watcher de gastos que dispara banner de advertencia si se excede el límite personal.
+
+---
+
+## 💡 Fase 3: Propuestas y Logística
+
+*Objetivo: Colaboración activa y organización de recursos.*
+
+- [ ] **Módulo de Propuestas Unificado:**
+  - [ ] Creación de Propuestas Ricas (costo, ubicación, links).
+  - [ ] Creación de Encuestas Simples (opciones votables).
+  - [ ] RSVP/Votación y cierre automático de propuestas.
+  - [ ] Lógica de "Confirmar Propuesta" → Auto-crear evento en Timeline.
+
+- [ ] **Logística de Transporte:**
+  - [ ] Registro de vehículos y capacidad.
+  - [ ] Asignación de pasajeros (con validación de límite).
+
+- [ ] **Inventario e ítems:**
+  - [ ] Checklist de ítems necesarios.
+  - [ ] Vínculo Ítem → Tarea automática al asignar responsable.
+
+---
+
+## 📢 Fase 4: Notificaciones y Pulido
+
+*Objetivo: Comunicación y calidad final.*
+
+- [ ] **Módulo de Mails:**
+  - [ ] Notificación por nueva invitación.
+  - [ ] Notificación por tarea asignada o deadline de encuesta.
+- [ ] **Branding Final:**
+  - [ ] Sistema de diseño (colores y tipografía definitiva).
+  - [ ] Logo y Favicon oficial.
