@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tripio - Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- App Shell -->
+    <div id="app">
+        <!-- Sticky Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="trip-info">
+                    <h1 id="current-trip-name">Cargando viaje...</h1>
+                    <span id="trip-dates">-- al --</span>
+                </div>
+                <div class="user-avatar">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Avatar">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="fade-in">
+            <!-- Content will be injected here by app.js -->
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-screen="home">
+                <span class="icon">🏠</span>
+                <span class="label">Inicio</span>
+            </button>
+            <button class="nav-item" data-screen="proposals">
+                <span class="icon">💡</span>
+                <span class="label">Ideas</span>
+            </button>
+            <button class="nav-item" data-screen="decided">
+                <span class="icon">✅</span>
+                <span class="label">Logística</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Modals Overlay -->
+    <div id="modal-container" class="hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <!-- Modal content injected here -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

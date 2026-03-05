@@ -34,20 +34,23 @@ El viaje es el núcleo del ecosistema. Almacena la historia completa, preservand
 2. **`Active` (Viaje en Curso):** Se activa automáticamente en la `startDate`. La UI prioriza la información del día.
 3. **`Archived` (Cierre/Archivo):** Solo lectura tras la finalización.
 
-#### Dashboard "Overview" (Resumen Ejecutivo)
+#### Dashboard "Overview" (Resumen Ejecutivo / Home)
 
-Tanto en estado `Planning` como `Active`, el Dashboard principal ofrece un resumen de alto nivel:
+Tanto en estado `Planning` como `Active`, el Dashboard principal ofrece un resumen de alto nivel y actúa como centro gerencial del viaje:
 
-- **Nombre y Fecha:** Identificación clara del viaje y cuenta regresiva.
+- **Nombre y Fechas:** Identificación clara del viaje. Al crear el viaje, las fechas no son obligatorias, pero al fijarse organizan el Timeline.
 - **Alojamiento:** Indicador de estado (ej: "2/3 noches definidas" o "Pendiente").
-- **Budget Hub:** Visualización del gasto total vs. Budget Limit.
-- **Próxima Acción:** Acceso directo a la actividad inmediata o tarea crítica.
+- **Presupuestos:** Visualización del gasto total vs. Budget Limit. El presupuesto diario y el límite total no son obligatorios al crear el viaje.
+- **Próximas Actividades:** Extracto directo del Timeline con los eventos más inmediatos.
+- **Alertas / Avisos:** Indicadores de estado de tareas pendientes o propuestas en "Ideas" requeridas para decisión.
 
 #### Vista Timeline Secuencial (Narrativo)
 
+- **Enfoque en Fechas del Viaje:** El timeline abarca estrictamente el rango de fechas definidas para el viaje (`startDate` a `endDate`), adaptando su vista a esa ventana temporal real de forma dinámica.
+- **Contenido Confirmado:** Solo muestra eventos y actividades que hayan sido formalmente **confirmados**.
+- **Vista Visual de Progreso:** Los elementos que ya pasaron o se completaron aparecen tachados o con opacidad reducida.
 - **Estética:** Línea vertical con conectores visuales que narran el flujo del viaje.
-- **Tarjetas Dinámicas:** Actividades (con RSVP), Tareas (con responsable), y Logística (Check-in/out).
-- **Interacción:** Scroll fluido para ver el pasado y futuro del itinerario.
+- **Tarjetas Dinámicas:** Actividades, Tareas (con responsable), y Logística (Check-in/out).
 
 #### Vista Calendario Clásico (Grid)
 
@@ -71,15 +74,22 @@ El **Total Cost** individual es la suma de su parte proporcional de fijos, proye
 
 Repositorio de qué hacer, con confirmación de asistencia (**RSVP**) para dimensionar la logística.
 
-### 2.4 Logística Integrada (Transporte e Inventario)
+### 2.4 Logística (Alojamientos, Transporte e Inventario)
+
+La vista de **Logística** es el espacio oficial que aloja las decisiones confirmadas sobre "Dónde nos quedamos" y "Cómo vamos".
+
+#### Alojamientos
+
+- Definición de lugares donde pernoctar, requiriendo **Fecha de Inicio** y **Fecha de Fin**.
+- Los alojamientos no se pisan, sino que se complementan (ej. 5 días en Logia A, 5 días en Logia B).
+- **Entrada Directa:** Solo los **Admins** pueden crear una entrada directa de alojamiento. Los Members deben proponerlo en "Ideas" primero.
 
 #### Medios de Transporte
 
 En lugar de gestionar activos físicos complejos, el sistema registra:
 
 - **Medio:** (Auto Pedro, Avión, Micro).
-- **Capacidad:** Cuántos entran.
-- **Pasajeros:** Quién viaja con quién para rastrear al grupo.
+- **Capacidad y Auto-Asignación:** Los usuarios deben poder **asignarse a sí mismos** a un transporte libre (ej: "Sumarme a este Auto") hasta llenar la capacidad.
 
 #### Inventario Grupal (Shared Items)
 
@@ -96,12 +106,15 @@ Las tareas son el motor de acción del grupo.
 - **Vínculo con Inventario:** Una tarea puede nacer de un ítem (ej. "Conseguir Carpa").
 - **Visualización:** Aparecen en el Módulo de Tareas y también dentro del detalle del Evento o Ítem relacionado.
 
-### 2.6 Módulo de Propuestas (Ideas + Encuestas Unificadas)
+### 2.6 Módulo de Ideas / Propuestas
 
-Espacio para la co-creación del viaje antes de formalizar el timeline. Este módulo unifica dos mecánicas:
+Espacio asíncrono y no bloqueante para la co-creación del viaje antes de formalizar el timeline y la logística. Aquí se toman las decisiones grupales.
 
-- **Propuesta Rica:** Idea completa con ubicación, costo, fecha, link de referencia.
-- **Encuesta Simple (Poll):** Pregunta con opciones y deadline opcional (ej. "¿Bariloche o Mendoza?").
+- **Filtrado y Orden:** Permite categorizar y ordenar ideas (por categoría, más votadas, fechas, etc.).
+- **Visualización Completada:** Las ideas resueltas se muestran visualmente tachadas.
+- **Flujo de Decisión:**
+  - **Alojamientos:** Se proponen con fechas estimadas. Si se confirman, pasan automáticamente a la sección **Logística**.
+  - **Actividades:** Si se confirman, se agendan como eventos oficiales en el **Timeline**.
 
 #### Formulario de Propuesta
 
@@ -131,20 +144,59 @@ Espacio para la co-creación del viaje antes de formalizar el timeline. Este mó
 ```text
 Login (Firebase Auth) -> Mis Viajes
 │
-└── Viaje Dashboard [ID] (Sticky Bottom NavBar)
-    ├── 🏠 Home (Resumen Ejecutivo, Próximos Pasos, Budget Glance)
-    ├── 🗺️ Timeline (Flujo secuencial narrativo + Vista Calendario Dual)
-    ├── 💡 Propuestas (Pool de ideas categorizadas + Encuestas)
-    │   └── ➕ Acción: FAB (Floating Action Button) de "Proponer Idea"
-    └── ✅ Decidido (Logística confirmada: Alojamiento, Transporte, Ítems)
+└── Viaje [ID] (Sticky Bottom NavBar — 3 botones)
+    ├── 🏠 Inicio
+    ├── 💡 Ideas
+    └── ✅ Logística
 ```
 
-_Nota: La gestión detallada de Economía y Logística se integra dentro de 'Home' (Resumen) y 'Decidido' (Detalles confirmados)._
+_La Bottom NavBar contiene exactamente 3 íconos. No existe un botón flotante global de "+" en la barra._
+
+#### Vista: 🏠 Inicio (Home + Timeline unificado)
+
+El Home actúa como el centro de control del viaje. Contiene:
+
+- **Resumen del Viaje:** Nombre, rango de fechas, moneda configurada.
+- **Dashboard Cards:** Conteo de Alojamientos, Vehículos e Ideas Pendientes (clickeables para navegar a la vista correspondiente).
+- **Presupuesto:** Gasto acumulado vs. límite personal, con la moneda del viaje.
+- **Timeline Inline:** Debajo del dashboard se despliega el Timeline completo con las actividades confirmadas (ordenadas cronológicamente). Incluye un **toggle pill (Timeline / Calendario)** para alternar entre la vista de lista cronológica y la grilla de calendario mensual, todo dentro del Home sin cambiar de pantalla. Si no hay actividades confirmadas, se muestra un estado vacío con CTA para ir a Ideas o configurar fechas.
+- **Botón ⚙️ Editar Viaje:** Abre un modal para editar nombre, fechas, moneda, presupuesto y eliminar el viaje.
+
+#### Vista: 💡 Ideas / Propuestas
+
+Espacio asíncrono de brainstorming y toma de decisiones grupales.
+
+- **Filtros:** Todas, Alojamientos, Actividades, Transporte.
+- **FAB (Floating Action Button):** El botón "+" para proponer una nueva idea vive fijado en la esquina inferior derecha **únicamente dentro de esta vista**.
+- **Tarjetas de Ideas:** Muestran tipo, título, costo, fecha, y estado con un botón de voto a la derecha.
+- **Ideas Confirmadas:** Al confirmarse, el badge cambia a "CONFIRMADO ✅", el título se tacha, y el botón de voto es reemplazado por un indicador visual estático (✅ + conteo de votos). No se puede seguir votando.
+- **Formulario de Nueva Idea:** Al publicar, el modal se cierra automáticamente. La fecha sugerida toma como `min` y `value` predeterminado la fecha de inicio del viaje (si existe).
+
+#### Vista: ✅ Logística (Decidido)
+
+Fuente de verdad para alojamientos y transporte confirmados.
+
+- **Sección Alojamientos:**
+  - Solo los **Admins** ven el botón (+) para añadir alojamiento directo (bypass de Ideas).
+  - El calendario de ingreso/salida inicia en la fecha de inicio del viaje si está definida.
+  - Los alojamientos pueden complementarse (Ej: Días 1-5 Hostel A, Días 5-10 Hotel B).
+- **Sección Transportes:**
+  - Cualquier usuario puede añadir un transporte.
+  - **"Detalles Extras" es opcional** en el formulario.
+  - Se debe seleccionar el **Tipo de Transporte**: `Ida`, `Vuelta`, o `Interno`.
+  - Los usuarios pueden **auto-asignarse** ("Sumarme") y **des-inscribirse** ("Salir") de un transporte.
+
+#### Validaciones de Formulario de Viaje (Crear / Editar)
+
+- Si se carga Fecha Inicio, se exige Fecha Fin (y viceversa). Ambas vacías es válido.
+- Fecha Fin nunca puede ser anterior a Fecha Inicio.
+- Moneda del viaje seleccionable: USD, EUR, ARS, BRL.
+- Presupuesto Diario y Límite Personal son **opcionales**.
 
 #### Comportamiento Global de la UI Móvil (Header y Bottom NavBar)
 
 - **Header:** El Header (con el Nombre del viaje y contexto) permanece fijo (Sticky) en la parte superior en todo momento.
-- **Bottom NavBar:** Por temas de inmersión y aprovechar la pantalla vertical para el Timeline o el Calendario, la barra de navegación inferior deberá ocultarse gradualmente al hacer **Scroll hacia abajo (scroll down)** y reaparecer instantáneamente al hacer **Scroll hacia arriba (scroll up)** o llegar al final de la página.
+- **Bottom NavBar:** Por temas de inmersión y aprovechar la pantalla vertical, la barra de navegación inferior deberá ocultarse gradualmente al hacer **Scroll hacia abajo (scroll down)** y reaparecer instantáneamente al hacer **Scroll hacia arriba (scroll up)** o llegar al final de la página.
 
 ### 3.2 Stack Tecnológico
 
@@ -186,9 +238,9 @@ El proyecto hereda las estrictas normativas del boilerplate fundacional (`next-s
   - **Badges:** Iconos lúdicos por completar tareas o ser el primero en hacer RSVP.
   - **Mascota (Future Scope):** Un guía lúdico que celebra hitos (no incluido en MVP).
 
-### 4.2 Sistema de Diseño (Design Tokens)
+### 4.2 Sistema de Diseño (Design Tokens - Neumorfismo Lúdico)
 
-Las variables globales de diseño (Tokens) se definirán en la configuración de Tailwind CSS (`globals.css` / `tailwind config`) para asegurar la consistencia.
+Las variables globales de diseño (Tokens) se definirán en la configuración de Tailwind CSS (`globals.css` / `tailwind config`) para asegurar la consistencia del efecto neumórfico.
 
 #### 1. Tipografía (Fonts)
 
@@ -204,11 +256,14 @@ Tripio debe transmitir emoción por viajar, organización y calma.
 - **Backgrounds (Surface):** Fondo limpio (`#FFFAF5`) para evitar fatiga visual ante tanto contenido.
 - **Text & Borders:** Escala de grises semánticos (`slate` o `gray` de Tailwind) y/o azules oscuros (`#001523`).
 
-#### 3. Forma y Profundidad (Borders & Shadows)
+#### 3. Forma y Profundidad (Neumorfismo Lúdico)
 
-- **Border Radius:** `Rounded-2xl` o `Rounded-xl` exagerados (16px a 24px) para dar una sensación "App-like" amigable, similar a iOS.
-- **Elevación (Shadows):** Sombras difusas y suaves (`shadow-lg`, `shadow-soft`) para módulos flotantes (como el Bottom NavBar y las alertas).
-- **Bordes:** Finos (`1px solid`) para dividir secciones en lugar de usar fondos oscuros.
+El diseño abandona las tarjetas planas tradicionales a favor de un **Neumorfismo Suave**.
+
+- **Efecto Neumórfico:** Uso de sombras dobles (una sombra clara arriba a la izquierda y una sombra oscura suave abajo a la derecha) sobre elementos que comparten el mismo color de fondo del lienzo, creando la ilusión de que los elementos están "extruidos" del fondo.
+- **Border Radius:** `Rounded-2xl` o `Rounded-xl` exagerados (16px a 24px) para mantener el tono amable, lúdico y "App-like".
+- **Interacciones Táctiles:** Al presionar un botón o tarjeta interactiva, el efecto de sombra cambia a `inset` (hundido), dando un feedback físico y tridimensional excelente.
+- **Bordes:** Se evita usar bordes duros (`border-solid`), el volumen se da exclusivamente con las luces y sombras.
 
 #### 4. Spacing (Whitespace)
 
@@ -406,6 +461,7 @@ Medios de transporte registrados para el viaje.
 | ------------ | ---------------- | --------- | ------- | -------------------------------------------- |
 | `name`       | `string`         | ✅        | —       | Nombre (ej. "Auto Pedro")                    |
 | `type`       | `string`         | ✅        | `'car'` | `'car'` \| `'bus'` \| `'plane'` \| `'other'` |
+| `tripType`   | `string`         | ✅        | `'ida'` | `'ida'` \| `'vuelta'` \| `'interno'`         |
 | `capacity`   | `number`         | ✅        | —       | Capacidad máxima de pasajeros                |
 | `passengers` | `string[]`       | ✅        | `[]`    | UIDs de pasajeros asignados                  |
 | `owner`      | `string \| null` | ❌        | `null`  | UID del dueño (si aplica)                    |
@@ -426,26 +482,29 @@ Medios de transporte registrados para el viaje.
 | Operación                                   | Admin                       | Member                     |
 | ------------------------------------------- | --------------------------- | -------------------------- |
 | **Viaje**                                   |                             |                            |
-| Crear viaje                                 | ✅ (se convierte en Admin)  | ✅ (se convierte en Admin) |
+| Crear viaje (fechas/presupuesto opcionales) | ✅ (se convierte en Admin)  | ✅ (se convierte en Admin) |
 | Editar viaje (nombre, fechas, destino)      | ✅                          | ❌                         |
+| Editar presupuesto límite personal          | ✅                          | ✅ (cada uno el suyo)      |
 | Archivar viaje                              | ✅                          | ❌                         |
 | Abandonar viaje                             | ❌ (creador) / ✅ (elevado) | ✅                         |
 | **Participantes**                           |                             |                            |
 | Invitar participantes                       | ✅                          | ❌                         |
 | Remover participantes                       | ✅                          | ❌                         |
 | Elevar miembro a Admin                      | ✅                          | ❌                         |
-| **Contenido (Eventos, Costos, Propuestas)** |                             |                            |
-| Crear / Editar / Eliminar eventos           | ✅                          | ✅                         |
+| **Contenido (Ideas, Timeline, Costos)**     |                             |                            |
+| Proponer actividades, transportes, comida   | ✅                          | ✅                         |
+| Proponer alojamiento (en Ideas)             | ✅                          | ✅                         |
+| Confirmar/Votar ideas a Timeline/Logística  | ✅                          | ✅                         |
+| Crear / Editar / Eliminar eventos directos  | ✅                          | ✅                         |
 | Crear / Editar / Eliminar costos            | ✅                          | ✅                         |
-| Crear propuestas y encuestas                | ✅                          | ✅                         |
-| Votar / RSVP                                | ✅                          | ✅                         |
-| Confirmar / Rechazar propuesta              | ✅                          | ✅                         |
 | **Logística**                               |                             |                            |
+| Añadir Alojamiento Directo (sin votación)   | ✅                          | ❌                         |
+| Agregar / Editar transporte directo         | ✅                          | ✅                         |
+| Auto-asignarse a transporte (tomar lugar)   | ✅                          | ✅                         |
+| Salirse de un transporte (liberar lugar)    | ✅                          | ✅                         |
 | Agregar / Editar ítems de inventario        | ✅                          | ✅                         |
 | Asignarse a un ítem                         | ✅                          | ✅                         |
 | Crear / Editar / Completar tareas           | ✅                          | ✅                         |
-| Agregar / Editar transporte                 | ✅                          | ✅                         |
-| Asignar pasajeros a transporte              | ✅                          | ✅                         |
 
 ### 9.3 Reglas Especiales
 
@@ -694,16 +753,18 @@ service cloud.firestore {
 
 ## 16. Glosario de Definiciones
 
-- **Viaje (Travel Container):** La entidad raíz que agrupa todo el ecosistema.
-- **Economía Temporal (Temporal Economy):** Integración del presupuesto con la línea de tiempo.
+- **Viaje (Travel Container):** La entidad raíz que agrupa todo el ecosistema. Creación flexible (fechas y presupuestos opcionales).
+- **Dashboard (Home):** Vista gerencial que resume la situación financiera, próximos pasos y alertas (ideas por votar).
+- **Módulo de Ideas / Propuestas:** Espacio asíncrono para brainstorming y toma de decisiones grupales (encuestas, propuestas de alojamiento y actividades).
+- **Logística:** Hub de decisiones confirmadas sobre dónde quedarse (alojamientos) y cómo moverse (transportes con auto-asignación).
+- **Timeline:** Narrativa estrictamente delimitada a las fechas del viaje que muestra visualmente los eventos confirmados y tareas logradas (tachadas).
+- **Economía Temporal:** Integración del presupuesto con la línea de tiempo.
 - **Total Cost:** Costo estimado final para un usuario: `Fijos/n + Proyectados/n + (Diarios * días)`.
-- **Daily Budget:** Monto diario fijo escalable por la duración del viaje.
-- **Budget Limit:** Monto máximo auto-impuesto por cada usuario individual.
-- **RSVP:** Confirmación binaria de asistencia a una actividad o propuesta.
+- **Daily Budget:** Monto diario fijo escalable por la duración del viaje (opcional).
+- **Budget Limit:** Monto máximo auto-impuesto por cada usuario individual (opcional y editable personalmente).
+- **RSVP/Votación:** Mecánica para confirmar interés y pasar una propuesta a estado "Confirmado" (Logística/Timeline).
 - **Vista Dual:** Capacidad de alternar entre una grilla de Calendario y una lista de Timeline.
 - **Ítem Grupal:** Recurso compartido que puede disparar Tareas de transporte/compra.
-- **Propuesta Rica:** Idea completa con ubicación, costo, fecha y link de referencia.
-- **Encuesta (Poll):** Propuesta simplificada con opciones votables y deadline opcional.
 - **Magic Link:** URL dinámica para invitar participantes a un viaje.
-- **Admin (Creator):** Rol permanente e irrevocable del creador del viaje.
+- **Admin (Creator):** Rol permanente e irrevocable del creador del viaje. Posee permisos exclusivos como la adición directa de Alojamientos.
 - **Admin (Elevated):** Rol Admin otorgado a un miembro existente por un Admin.
