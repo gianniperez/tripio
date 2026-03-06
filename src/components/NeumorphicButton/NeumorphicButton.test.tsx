@@ -1,10 +1,10 @@
 import { render } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { HelloWorld } from "./HelloWorld";
+import { NeumorphicButton } from "./NeumorphicButton";
 
-describe("HelloWorld Component", () => {
+describe("NeumorphicButton Component", () => {
   it("renders correctly", () => {
-    const { container } = render(<HelloWorld />);
+    const { container } = render(<NeumorphicButton>Test</NeumorphicButton>);
     expect(container).toBeInTheDocument();
   });
 });

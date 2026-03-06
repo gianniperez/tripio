@@ -1,10 +1,65 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0070f3;
+  /* Colors */
+  --color-primary: #f46a1f;
+  --color-secondary: #1a8c8c;
+  --color-primary-dark: #075056;
+  --color-background: #fffaf5;
+  --color-text-main: #001523;
+
+  /* Accent Colors */
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+
+  /* Typography */
+  --font-nunito: var(--font-nunito), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
+
+  /* Default Font Assignments */
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-nunito);
+
+  /* Shadows for Neumorphism */
+  --shadow-neumorphic: 8px 8px 16px #e4e4e7, -8px -8px 16px #ffffff;
+  --shadow-neumorphic-sm: 4px 4px 8px #e4e4e7, -4px -4px 8px #ffffff;
+  --shadow-neumorphic-inset:
+    inset 8px 8px 16px #e4e4e7, inset -8px -8px 16px #ffffff;
 }
 
 body {
-  background-color: #ffffff;
-  color: #333333;
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+  font-family: var(--font-inter);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-display {
+  font-family: var(--font-nunito);
+}
+
+@layer utilities {
+  .rounded-tripio {
+    border-radius: 1.5rem; /* rounded-2xl */
+  }
+
+  .shadow-neumorphic {
+    box-shadow: var(--shadow-neumorphic);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .shadow-neumorphic-sm {
+    box-shadow: var(--shadow-neumorphic-sm);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .shadow-neumorphic:active,
+  .shadow-neumorphic-inset {
+    box-shadow: var(--shadow-neumorphic-inset);
+  }
 }

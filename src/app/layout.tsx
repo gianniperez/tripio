@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
+import { Inter, Nunito } from "next/font/google";
 import "@/styles/globals.css";
 import { AppProvider } from "@/providers/AppProvider";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const nunito = Nunito({
+  subsets: ["latin"],
+  variable: "--font-nunito",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Tripio",
@@ -27,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es" className={`${inter.variable} ${nunito.variable}`}>
       <body>
         <AppProvider>{children}</AppProvider>
       </body>

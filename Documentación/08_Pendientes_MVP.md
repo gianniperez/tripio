@@ -37,10 +37,10 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
   - [✅] Implementar Firestore Security Rules detalladas en el SRD v3.0.
   - [✅] Crear tipos TypeScript para todas las colecciones anidadas.
 
-- [ ] **Autenticación:**
-  - [ ] Configurar Firebase Auth (Google + Email/Password).
-  - [ ] Crear Pantalla de Login (`/login`) con Auth Providers.
-  - [ ] Guardar perfil de usuario en colección `users` al primer login.
+- [✅] **Autenticación:**
+  - [✅] Configurar Firebase Auth (Google + Email/Password).
+  - [✅] Crear Pantalla de Login (`/login`) con Auth Providers.
+  - [✅] Guardar perfil de usuario en colección `users` al primer login.
 
 - [ ] **Gestor de Viajes (Dashboard):**
   - [ ] Crear la pantalla "Mis Viajes" (`/dashboard`) para listar los trips del usuario.
