@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (firebaseUser) {
         try {
-          const userProfile = await syncUserProfile(firebaseUser, {}, false);
+          const userProfile = await syncUserProfile(firebaseUser, {}, true);
 
           if (userProfile) {
             setUser(userProfile);

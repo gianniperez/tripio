@@ -1,7 +1,7 @@
 import type { Timestamp } from "firebase/firestore";
 
 // --- Enums & Derived Types ---
-export type TripRole = "admin" | "member";
+export type TripRole = "owner" | "admin" | "collaborator" | "viewer";
 export type TripStatus = "planning" | "active" | "archived";
 export type EventCategory =
   | "accommodation"
@@ -22,6 +22,13 @@ export type InventoryStatus = "needed" | "assigned" | "confirmed";
 export type TaskStatus = "pending" | "in-progress" | "done";
 export type TransportType = "car" | "bus" | "plane" | "other";
 export type LinkedToType = "event" | "inventory";
+export type TripPermission =
+  | "edit_itinerary"
+  | "create_proposal"
+  | "vote_proposal"
+  | "manage_logistics"
+  | "view_finances"
+  | "manage_participants";
 
 // --- 8.2 Colección: users ---
 export interface User {
@@ -50,11 +57,13 @@ export interface Trip {
 }
 
 export interface Participant {
-  id: string; // Document ID de Firestore (Que en este caso ES el UID del usuario)
+  id: string; // Document ID de Firestore (UID del usuario)
   role: TripRole;
   budgetLimit: number | null;
   joinedAt: Timestamp;
   invitedBy: string;
+  // Overrides: Permisos específicos que rompen la jerarquía del rol
+  customPermissions?: Partial<Record<TripPermission, boolean>>;
 }
 
 // --- 8.5 Subcolección: events ---

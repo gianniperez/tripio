@@ -12,12 +12,12 @@ _Objetivo: Preparar el terreno y conectar la infraestructura base._
   - [✅] Renombrar proyecto en `package.json` ("next-app-template" → "tripio").
   - [✅] Actualizar Metadata en `src/app/layout.tsx` (título, descripción, OG tags).
   - [✅] Limpiar referencias a otros proyectos en comments (ej. `onCloseEvents.ts`).
-  - [ ] Actualizar `README.md` con la descripción real de Tripio.
+  - [✅] Actualizar `README.md` con la descripción real de Tripio.
 
 - [✅] **Infraestructura Firebase:**
   - [✅] Instalar SDK de Firebase (`npm install firebase`).
   - [✅] Crear archivo de configuración `src/lib/firebase.ts`.
-  - [✅] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
+  - [ ] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
 
 - [✅] **Configuración PWA:**
   - [✅] Generar e incluir `manifest.json`.
@@ -37,23 +37,29 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
   - [✅] Implementar Firestore Security Rules detalladas en el SRD v3.0.
   - [✅] Crear tipos TypeScript para todas las colecciones anidadas.
 
+- [✅] **Sistema de Roles y Permisos (RBAC):**
+  - [✅] Definir tipos de roles (`owner`, `admin`, `collaborator`, `viewer`) y permisos granulares.
+  - [✅] Implementar lógica de validación de permisos (Helper functions).
+  - [✅] Actualizar Firestore Rules con validación híbrida (Rol + Overrides).
+  - [✅] Crear Panel de Gestión de Participantes (UI).
+
 - [✅] **Autenticación:**
   - [✅] Configurar Firebase Auth (Google + Email/Password).
   - [✅] Crear Pantalla de Login (`/login`) con Auth Providers.
   - [✅] Guardar perfil de usuario en colección `users` al primer login.
 
-- [ ] **Gestor de Viajes (Dashboard):**
-  - [ ] Crear la pantalla "Mis Viajes" (`/dashboard`) para listar los trips del usuario.
+- [ ] **Gestor de Viajes (Mis Viajes):**
+  - [ ] Crear la pantalla "Mis Viajes" (`/trips`) para listar los trips del usuario.
   - [ ] Modal/Pantalla para "Crear Nuevo Viaje" (Formulario usando `zod`).
   - [ ] Generación de "Magic Links" de invitación.
-  - [ ] Lógica para unirse a viaje vía link (`/invite/[token]`).
+  - [ ] Lógica para unirse a viaje vía link (`/invite/[token]`). (Pendiente de Backend/Logic)
 
 - [ ] **Layout & Navegación:**
   - [ ] Header con contexto de viaje (Nombre + Fecha).
-  - [ ] Sticky Bottom NavBar (Home, Timeline, Propuestas, Decidido).
+  - [✅] Sticky Bottom NavBar (Inicio, Propuestas, Logística, Participantes).
 
 - [ ] **Visualización del Itinerario:**
-  - [ ] Vista Timeline (lista vertical secuencial).
+  - [/] Vista Timeline (lista vertical secuencial). (Placeholder creado as `/logistics`?)
   - [ ] Vista Calendario (grid mensual/semanal).
   - [ ] Switch de alternancia entre vistas.
 

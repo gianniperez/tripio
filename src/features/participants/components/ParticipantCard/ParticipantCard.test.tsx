@@ -1,0 +1,26 @@
+import { render } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { ParticipantCard } from "./ParticipantCard";
+import { Timestamp } from "firebase/firestore";
+
+describe("ParticipantCard Component", () => {
+  it("renders correctly", () => {
+    const { container } = render(
+      <ParticipantCard
+        participant={{
+          id: "test",
+          role: "viewer",
+          joinedAt: Timestamp.now(),
+          budgetLimit: 0,
+          invitedBy: "system",
+        }}
+        isCurrentUser={false}
+        canManage={true}
+        onUpdateRole={vi.fn()}
+        onUpdatePermissions={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(container).toBeInTheDocument();
+  });
+});

@@ -7,12 +7,7 @@ import Link from "next/link";
 import { NeumorphicCard } from "@/components/NeumorphicCard";
 import { NeumorphicButton } from "@/components/NeumorphicButton";
 import { NeumorphicInput } from "@/components/NeumorphicInput";
-import {
-  signInWithGoogle,
-  loginWithEmail,
-  checkUserExists,
-  logout,
-} from "../../api";
+import { signInWithGoogle, loginWithEmail } from "../../api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Mail } from "lucide-react";
@@ -39,15 +34,8 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormValues) => {
     setError(null);
     try {
-      const user = await loginWithEmail(data.email, data.password);
-      // Verificamos si existe en Firestore
-      const exists = await checkUserExists(user.uid);
-      if (!exists) {
-        await logout();
-        setError("Este usuario no está registrado en Tripio.");
-        return;
-      }
-      router.push("/");
+      await loginWithEmail(data.email, data.password);
+      router.push("/trips");
     } catch (err) {
       const error = err as { code?: string };
       console.error("Login error:", error);
@@ -64,16 +52,8 @@ export function LoginForm() {
   const handleGoogleLogin = async () => {
     setError(null);
     try {
-      const user = await signInWithGoogle();
-      // Verificamos si existe en Firestore
-      const exists = await checkUserExists(user.uid);
-      if (!exists) {
-        // Si no existe, lo deslogueamos de Auth para que no quede "en el limbo"
-        await logout();
-        setError("Este usuario de Google no está registrado en Tripio.");
-        return;
-      }
-      router.push("/");
+      await signInWithGoogle();
+      router.push("/trips");
     } catch (err) {
       console.error("Google login error:", err);
       setError("Error al iniciar sesión con Google.");

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Menu, LogOut, X } from "lucide-react";
 import { useAuthStore } from "@/features/auth/stores";
 import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
 export const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,9 +60,25 @@ export const TopBar = () => {
         <div className="flex-1 overflow-y-auto p-4 flex flex-col">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-6 p-3 bg-gray-50 border border-gray-100">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
-              {user?.displayName?.charAt(0).toUpperCase() || "U"}
-            </div>
+            {user?.photoURL ? (
+              <Image
+                src={user?.photoURL || ""}
+                alt={user?.displayName || "Usuario"}
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
+                <Image
+                  src="/isologo/blue.png"
+                  alt="Tripio Logo"
+                  width={32}
+                  height={32}
+                  className="rounded-md"
+                />
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-900 truncate">
                 {user?.displayName || "Usuario"}

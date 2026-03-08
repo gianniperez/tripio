@@ -2,26 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Package, Lightbulb } from "lucide-react";
+import {
+  LayoutDashboard,
+  Map as MapIcon,
+  Lightbulb,
+  Users,
+} from "lucide-react";
 
-// The bottom bar is extremely limited in space, so we only show the absolute most important routes.
-// "Reportes" might be left for a 'more' menu or just desktop, but let's include it if it fits.
-const MOBILE_NAV = [
-  { name: "Inicio", href: "/", icon: LayoutDashboard },
-  { name: "Propuestas", href: "/proposals", icon: Lightbulb },
-  { name: "Logística", href: "/logistics", icon: Package },
-];
-
-export const BottomBar = () => {
+export const BottomBar = ({ tripId }: { tripId: string }) => {
   const pathname = usePathname();
+
+  const MOBILE_NAV = [
+    { name: "Inicio", href: `/trips/${tripId}`, icon: LayoutDashboard },
+    { name: "Propuestas", href: `/trips/${tripId}/proposals`, icon: Lightbulb },
+    { name: "Logística", href: `/trips/${tripId}/logistics`, icon: MapIcon },
+    {
+      name: "Participantes",
+      href: `/trips/${tripId}/participants`,
+      icon: Users,
+    },
+  ];
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
       <ul className="flex justify-around items-center h-20">
         {MOBILE_NAV.map((item) => {
           const isActive =
-            pathname === item.href ||
-            (item.href !== "/" && pathname.startsWith(item.href));
+            item.href === `/trips/${tripId}`
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
           return (
             <li key={item.name} className="flex-1">
               <Link

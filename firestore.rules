@@ -16,11 +16,44 @@ service cloud.firestore {
         return request.auth != null && exists(/databases/$(database)/documents/trips/$(tripId)/participants/$(request.auth.uid));
       }
       
-      // Helper: ¿Es admin?
-      function isAdmin() {
-        return request.auth != null && get(/databases/$(database)/documents/trips/$(tripId)/participants/$(request.auth.uid)).data.role == 'admin';
+      // Helper: Obtener datos del participante
+      function getParticipantData() {
+        return get(/databases/$(database)/documents/trips/$(tripId)/participants/$(request.auth.uid)).data;
       }
       
+      // Helper: Lógica Híbrida de Permisos (RBAC + Overrides)
+      function hasPermission(permission) {
+        if (!isParticipant()) return false;
+        
+        let pData = getParticipantData();
+        let role = pData.role;
+        
+        // 1. Owner tiene todos los permisos
+        if (role == 'owner') return true;
+        
+        // 2. Revisar Overrides (flags específicos)
+        let hasOverride = pData.keys().hasAll(['customPermissions']) && pData.customPermissions.keys().hasAll([permission]);
+        if (hasOverride) {
+          return pData.customPermissions[permission] == true;
+        }
+        
+        // 3. Permisos por defecto de la jerarquía
+        if (permission == 'edit_itinerary') {
+          return role == 'admin';
+        }
+        if (permission == 'create_proposal' || permission == 'vote_proposal' || permission == 'manage_logistics') {
+          return role == 'admin' || role == 'collaborator';
+        }
+        if (permission == 'view_finances') {
+          return role == 'admin' || role == 'collaborator' || role == 'viewer';
+        }
+        if (permission == 'manage_participants') {
+          return role == 'admin';
+        }
+        
+        return false;
+      }
+
       // Helper: ¿Está archivado?
       function isArchived() {
         return resource != null && resource.data.status == 'archived';
@@ -28,21 +61,37 @@ service cloud.firestore {
 
       allow read: if isParticipant();
       allow create: if request.auth != null;
-      allow update: if request.auth != null && isAdmin() && !isArchived();
+      allow update: if request.auth != null && hasPermission('edit_itinerary') && !isArchived(); // Simplified, generally info editing is restricted
       allow delete: if false; // Los viajes no se eliminan, se archivan
 
       // --- Participants ---
       match /participants/{participantId} {
         allow read: if isParticipant();
-        // Permite creación si es Admin que invita o si es el usuario uniéndose (first join, en ese caso todavía no es participante pero auth.uid == participantId si usa un token validado, u otra lógica en Cloud Functions, asuminos lo más permisivo o requerido)
-        allow create: if request.auth != null && (isAdmin() || request.auth.uid == participantId); 
-        allow update: if request.auth != null && isAdmin() && !isArchived();
-        allow delete: if request.auth != null && isAdmin() && !isArchived();
+        // Permite creación si es Admin/Owner (mediante hasPermission) que invita, o si es el usuario uniéndose a sí mismo
+        allow create: if request.auth != null && (hasPermission('manage_participants') || request.auth.uid == participantId); 
+        allow update: if request.auth != null && hasPermission('manage_participants') && !isArchived();
+        allow delete: if request.auth != null && hasPermission('manage_participants') && !isArchived();
       }
 
       // --- Content Subcollections (events, costs, proposals, inventory, tasks, transport) ---
-      match /{subcollection}/{docId} {
+      match /events/{eventId} {
         allow read: if isParticipant();
+        allow create: if hasPermission('edit_itinerary') && !isArchived();
+        allow update: if hasPermission('edit_itinerary') && !isArchived();
+        allow delete: if hasPermission('edit_itinerary') && !isArchived();
+      }
+      
+      match /proposals/{proposalId} {
+        allow read: if isParticipant();
+        allow create: if hasPermission('create_proposal') && !isArchived();
+        allow update: if hasPermission('vote_proposal') && !isArchived(); // Simplified: update covers voting
+        allow delete: if hasPermission('create_proposal') && !isArchived();
+      }
+      
+      // Default fallback for other content (costs, inventory, tasks, transport)
+      match /{document=**} {
+        allow read: if isParticipant();
+        // Permitting edits generally for participants, more granular control could be added per collection
         allow create: if isParticipant() && !isArchived();
         allow update: if isParticipant() && !isArchived();
         allow delete: if isParticipant() && !isArchived();
@@ -50,3 +99,4 @@ service cloud.firestore {
     }
   }
 }
+

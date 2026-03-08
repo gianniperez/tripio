@@ -142,15 +142,16 @@ Espacio asíncrono y no bloqueante para la co-creación del viaje antes de forma
 ### 3.1 Navegación y Jerarquía (PWA Focus)
 
 ```text
-Login (Firebase Auth) -> Mis Viajes
+Login (Firebase Auth) -> Mis Viajes (/trips)
 │
-└── Viaje [ID] (Sticky Bottom NavBar — 3 botones)
+└── Viaje [ID] (Sticky Bottom NavBar — 4 botones)
     ├── 🏠 Inicio
-    ├── 💡 Ideas
-    └── ✅ Logística
+    ├── 💡 Propuestas
+    ├── ✅ Logística
+    └── 👥 Participantes
 ```
 
-_La Bottom NavBar contiene exactamente 3 íconos. No existe un botón flotante global de "+" en la barra._
+_La Bottom NavBar contiene exactamente 4 íconos. No existe un botón flotante global de "+" en la barra._
 
 #### Vista: 🏠 Inicio (Home + Timeline unificado)
 
@@ -162,7 +163,7 @@ El Home actúa como el centro de control del viaje. Contiene:
 - **Timeline Inline:** Debajo del dashboard se despliega el Timeline completo con las actividades confirmadas (ordenadas cronológicamente). Incluye un **toggle pill (Timeline / Calendario)** para alternar entre la vista de lista cronológica y la grilla de calendario mensual, todo dentro del Home sin cambiar de pantalla. Si no hay actividades confirmadas, se muestra un estado vacío con CTA para ir a Ideas o configurar fechas.
 - **Botón ⚙️ Editar Viaje:** Abre un modal para editar nombre, fechas, moneda, presupuesto y eliminar el viaje.
 
-#### Vista: 💡 Ideas / Propuestas
+#### Vista: 💡 Propuestas
 
 Espacio asíncrono de brainstorming y toma de decisiones grupales.
 
@@ -185,6 +186,14 @@ Fuente de verdad para alojamientos y transporte confirmados.
   - **"Detalles Extras" es opcional** en el formulario.
   - Se debe seleccionar el **Tipo de Transporte**: `Ida`, `Vuelta`, o `Interno`.
   - Los usuarios pueden **auto-asignarse** ("Sumarme") y **des-inscribirse** ("Salir") de un transporte.
+
+#### Vista: 👥 Participantes
+
+Espacio dedicado a la gestión de las personas que conforman el viaje.
+
+- **Listado de Participantes:** Muestra el rol de cada usuario y detalles como "Propietario" o "Permisos especiales".
+- **Gestión de Roles y Permisos:** Los Admins y el Owner pueden modificar los roles y definir overrides de permisos granulares por cada participante directamente desde esta vista.
+- **Invitaciones:** Formulario simple para invitar nuevos miembros proporcionando su correo electrónico y rol inicial asignado.
 
 #### Validaciones de Formulario de Viaje (Crear / Editar)
 
@@ -357,12 +366,13 @@ El contenedor raíz de cada viaje.
 
 Membresía del viaje. El `participantId` (Document ID) equivale al UID del usuario.
 
-| Campo         | Tipo             | Requerido | Default    | Descripción             |
-| ------------- | ---------------- | --------- | ---------- | ----------------------- |
-| `role`        | `string`         | ✅        | `'member'` | `'admin'` \| `'member'` |
-| `budgetLimit` | `number \| null` | ❌        | `null`     | Budget Limit personal   |
-| `joinedAt`    | `timestamp`      | ✅        | —          | Fecha en que se unió    |
-| `invitedBy`   | `string`         | ✅        | —          | UID de quien invitó     |
+| Campo               | Tipo             | Requerido | Default          | Descripción                                              |
+| ------------------- | ---------------- | --------- | ---------------- | -------------------------------------------------------- |
+| `role`              | `string`         | ✅        | `'collaborator'` | `'owner'` \| `'admin'` \| `'collaborator'` \| `'viewer'` |
+| `budgetLimit`       | `number \| null` | ❌        | `null`           | Budget Limit personal                                    |
+| `joinedAt`          | `timestamp`      | ✅        | —                | Fecha en que se unió                                     |
+| `invitedBy`         | `string`         | ✅        | —                | UID de quien invitó                                      |
+| `customPermissions` | `map`            | ❌        | `{}`             | Overrides (permiso -> boolean)                           |
 
 ### 8.5 Subcolección: `events`
 
@@ -472,46 +482,63 @@ Medios de transporte registrados para el viaje.
 
 ## 9. Roles y Permisos (RBAC)
 
-### 9.1 Definición de Roles
+### 9.1 Modelo Híbrido de Permisos
 
-- **Admin:** Creador del viaje o miembro elevado. Puede haber múltiples Admins por viaje. El creador es Admin permanente e irrevocable. Un Admin puede invitar nuevos miembros directamente con rol Admin.
-- **Member:** Participante estándar con permisos de colaboración completa sobre el contenido del viaje.
+Tripio utiliza un sistema de **Roles Base** con capacidad de **Overrides Granulares**. Esto permite asignar un perfil predefinido y, si es necesario, otorgar o quitar capacidades específicas a un participante puntual.
 
-### 9.2 Matriz de Permisos
+#### Roles Base
 
-| Operación                                   | Admin                       | Member                     |
-| ------------------------------------------- | --------------------------- | -------------------------- |
-| **Viaje**                                   |                             |                            |
-| Crear viaje (fechas/presupuesto opcionales) | ✅ (se convierte en Admin)  | ✅ (se convierte en Admin) |
-| Editar viaje (nombre, fechas, destino)      | ✅                          | ❌                         |
-| Editar presupuesto límite personal          | ✅                          | ✅ (cada uno el suyo)      |
-| Archivar viaje                              | ✅                          | ❌                         |
-| Abandonar viaje                             | ❌ (creador) / ✅ (elevado) | ✅                         |
-| **Participantes**                           |                             |                            |
-| Invitar participantes                       | ✅                          | ❌                         |
-| Remover participantes                       | ✅                          | ❌                         |
-| Elevar miembro a Admin                      | ✅                          | ❌                         |
-| **Contenido (Ideas, Timeline, Costos)**     |                             |                            |
-| Proponer actividades, transportes, comida   | ✅                          | ✅                         |
-| Proponer alojamiento (en Ideas)             | ✅                          | ✅                         |
-| Confirmar/Votar ideas a Timeline/Logística  | ✅                          | ✅                         |
-| Crear / Editar / Eliminar eventos directos  | ✅                          | ✅                         |
-| Crear / Editar / Eliminar costos            | ✅                          | ✅                         |
-| **Logística**                               |                             |                            |
-| Añadir Alojamiento Directo (sin votación)   | ✅                          | ❌                         |
-| Agregar / Editar transporte directo         | ✅                          | ✅                         |
-| Auto-asignarse a transporte (tomar lugar)   | ✅                          | ✅                         |
-| Salirse de un transporte (liberar lugar)    | ✅                          | ✅                         |
-| Agregar / Editar ítems de inventario        | ✅                          | ✅                         |
-| Asignarse a un ítem                         | ✅                          | ✅                         |
-| Crear / Editar / Completar tareas           | ✅                          | ✅                         |
+- **`owner` (Creador):** Control absoluto, irrevocable. Único con permiso para transferir propiedad o archivar el viaje.
+  - **Permisos Base:** Todos los disponibles (`*`).
+- **`admin` (Administrador):** Gestión total de contenido y personas. Puede elevar otros miembros y cerrar votaciones.
+  - **Permisos Base:** `edit_itinerary`, `create_proposal`, `vote_proposal`, `manage_logistics`, `view_finances`, `manage_participants`.
+- **`collaborator` (Colaborador - Default):** Participación activa: crea propuestas, vota, asigna transporte e ítems.
+  - **Permisos Base:** `create_proposal`, `vote_proposal`, `manage_logistics`, `view_finances`.
+- **`viewer` (Observador):** Solo lectura. Puede ver el itinerario, logística y presupuesto, pero no puede interactuar.
+  - **Permisos Base:** `view_finances`.
 
-### 9.3 Reglas Especiales
+#### Permisos Granulares (Flags)
 
-1. El **creador del viaje** no puede abandonar el viaje. Debe archivarlo.
-2. Un Admin **elevado** (no creador) sí puede abandonar el viaje.
-3. Un Admin no puede removerse a sí mismo si es el único Admin.
-4. No existe degradación de Admin → Member para el MVP.
+Cualquier rol (excepto `owner`) puede ser modificado mediante los siguientes flags en `customPermissions`:
+
+- `edit_itinerary`: Crear/Editar eventos confirmados.
+- `create_proposal`: Publicar nuevas ideas o encuestas.
+- `vote_proposal`: Participar en votaciones de ideas.
+- `manage_logistics`: Crear transportes o cambiar asignaciones.
+- `view_finances`: Acceder al desglose de costos grupales.
+- `manage_participants`: Invitar o remover personas (reservado para Admin/Owner por defecto).
+
+### 9.2 Matriz de Capacidades por Defecto
+
+| Operación                              | Owner | Admin | Collaborator | Viewer |
+| -------------------------------------- | :---: | :---: | :----------: | :----: |
+| **Viaje & Configuración**              |       |       |              |        |
+| Editar Info Viaje (Nombre, Fechas)     |  ✅   |  ✅   |      ❌      |   ❌   |
+| Archivar / Eliminar Viaje              |  ✅   |  ❌   |      ❌      |   ❌   |
+| Editar Presupuesto Propio              |  ✅   |  ✅   |      ✅      |   ✅   |
+| **Participantes**                      |       |       |              |        |
+| Invitar Participantes                  |  ✅   |  ✅   |      ❌      |   ❌   |
+| Cambiar Roles / Overrides              |  ✅   |  ✅   |      ❌      |   ❌   |
+| Remover Miembros                       |  ✅   |  ✅   |      ❌      |   ❌   |
+| **Contenido & Itinerario**             |       |       |              |        |
+| Crear/Editar Eventos Directos          |  ✅   |  ✅   |      ✅      |   ❌   |
+| Crear Propuestas / Ideas               |  ✅   |  ✅   |      ✅      |   ❌   |
+| Votar Propuestas                       |  ✅   |  ✅   |      ✅      |   ❌   |
+| Confirmar Propuesta (Mover a Timeline) |  ✅   |  ✅   |      ❌      |   ❌   |
+| **Economía & Logística**               |       |       |              |        |
+| Ver Costos Grupales                    |  ✅   |  ✅   |      ✅      |   ✅   |
+| Crear/Editar Gastos Fijos/Proyectados  |  ✅   |  ✅   |      ✅      |   ❌   |
+| Añadir Alojamiento Directo             |  ✅   |  ✅   |      ❌      |   ❌   |
+| Gestionar Transporte (Crear/Asignar)   |  ✅   |  ✅   |      ✅      |   ❌   |
+
+### 9.3 Lógica de Resolución de Permisos
+
+Un usuario puede realizar una acción si:
+
+1. Su **Rol Base** tiene el permiso habilitado Y no hay un override en `false`.
+2. O su **Rol Base** no lo tiene, pero existe un override en `true` para ese permiso específico.
+
+> **Regla de Oro:** El `owner` siempre tiene todos los permisos en `true`. Los overrides de `owner` son ignorados.
 
 ---
 
@@ -519,11 +546,11 @@ Medios de transporte registrados para el viaje.
 
 ### 10.1 Módulo: Viaje
 
-| Operación      | Input                    | Output                    | Quién                  | Side Effects                 |
-| -------------- | ------------------------ | ------------------------- | ---------------------- | ---------------------------- |
-| Crear viaje    | name, destination, dates | Trip + Participant(admin) | Cualquier usuario auth | Creador se agrega como Admin |
-| Editar viaje   | tripId, campos editables | Trip actualizado          | Admin                  | `updatedAt` se actualiza     |
-| Archivar viaje | tripId                   | Trip(status='archived')   | Admin                  | Todo queda read-only         |
+| Operación      | Input                    | Output                    | Quién        | Side Effects                        |
+| -------------- | ------------------------ | ------------------------- | ------------ | ----------------------------------- |
+| Crear viaje    | name, destination, dates | Trip + Participant(owner) | Usuario Auth | Creador se agrega como `owner`.     |
+| Editar viaje   | tripId, campos editables | Trip actualizado          | Owner, Admin | `updatedAt` se actualiza.           |
+| Archivar viaje | tripId                   | Trip(status='archived')   | Owner        | El viaje se vuelve de solo lectura. |
 
 ### 10.2 Módulo: Participantes
 
@@ -658,7 +685,7 @@ Medios de transporte registrados para el viaje.
 
 ### 12.2 Pseudocódigo de Reglas
 
-```
+```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
