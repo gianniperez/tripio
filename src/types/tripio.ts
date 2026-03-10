@@ -6,16 +6,13 @@ export type TripStatus = "planning" | "active" | "archived";
 export type EventCategory =
   | "accommodation"
   | "transport"
-  | "food"
   | "activity"
-  | "other";
+  | "inventory";
 export type ProposalType =
   | "accommodation"
   | "transport"
-  | "food"
   | "activity"
-  | "poll"
-  | "other";
+  | "inventory";
 export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
 export type InventoryStatus = "needed" | "assigned" | "confirmed";
 export type TaskStatus = "pending" | "in-progress" | "done";
@@ -92,7 +89,8 @@ export interface Event {
   locationUrl: string | null;
   category: EventCategory;
   costImpact: number | null;
-  rsvp: Record<string, boolean>; // userId -> asistirá
+  rsvp: Record<string, string>; // userId -> "si" | "no" | "maybe"
+  optionVotes?: Record<string, string[]>; // optionLabel -> userIds
   linkedProposalId: string | null;
   createdBy: string;
   createdAt: Timestamp;
@@ -112,9 +110,12 @@ export interface Proposal {
   estimatedCost: number | null;
   accessible: boolean;
   referenceUrl: string | null;
-  votes: Record<string, boolean>; // Para propuestas ricas: userId -> interés
-  options: string[] | null; // Solo para tipo 'poll'
-  optionVotes: Record<string, string[]> | null; // índice de 'options' -> userIds
+  transportType?: "personal" | "public" | null;
+  capacity?: number | null;
+  quantity?: number | null;
+  votes: Record<string, string>; // userId -> "si" | "no" | "maybe"
+  options: string[] | null;
+  optionVotes: Record<string, string[]>; // optionLabel -> userIds
   deadline: Timestamp | null;
   linkedEventId: string | null;
   createdBy: string;
@@ -141,6 +142,8 @@ export interface InventoryItem {
   id: string;
   name: string;
   description: string | null;
+  quantity: number | null;
+  detail: string | null;
   assignedTo: string | null; // UID del responsable
   status: InventoryStatus;
   linkedTaskId: string | null;
@@ -166,10 +169,24 @@ export interface Task {
 export interface Transport {
   id: string;
   name: string; // ej. "Auto Pedro"
-  type: TransportType;
+  type: "personal" | "public";
   capacity: number;
   passengers: string[]; // UIDs
   owner: string | null; // UID del dueño
+  createdBy: string;
+  createdAt: Timestamp;
+}
+
+// --- 8.11 Subcolección: accommodations ---
+export interface Accommodation {
+  id: string;
+  name: string;
+  description: string | null;
+  location: string | null;
+  locationUrl: string | null;
+  checkIn: Timestamp | null;
+  checkOut: Timestamp | null;
+  cost: number | null;
   createdBy: string;
   createdAt: Timestamp;
 }

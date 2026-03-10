@@ -59,31 +59,29 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
   return (
     <div className="space-y-6">
       {/* View Switcher */}
-      <div className="flex justify-center">
-        <NeumorphicCard className="p-1 flex items-center gap-1 bg-gray-50/50 rounded-2xl">
-          <button
-            onClick={() => setView("timeline")}
-            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              view === "timeline"
-                ? "bg-white shadow-neumorphic-inset-sm text-primary"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
-          >
-            <List size={18} />
-            <span>Timeline</span>
-          </button>
-          <button
-            onClick={() => setView("calendar")}
-            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-              view === "calendar"
-                ? "bg-white shadow-neumorphic-inset-sm text-primary"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
-          >
-            <Calendar size={18} />
-            <span>Calendario</span>
-          </button>
-        </NeumorphicCard>
+      <div className="bg-slate-100 flex p-2 rounded-tripio sticky top-20 z-10 backdrop-blur-sm border border-white/20">
+        <button
+          onClick={() => setView("timeline")}
+          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
+            view === "timeline"
+              ? "bg-white text-primary shadow-soft"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          <List className="w-3.5 h-3.5 mr-1.5" />
+          Timeline
+        </button>
+        <button
+          onClick={() => setView("calendar")}
+          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
+            view === "calendar"
+              ? "bg-white text-primary shadow-soft"
+              : "text-slate-500 hover:text-slate-700"
+          }`}
+        >
+          <Calendar className="w-3.5 h-3.5 mr-1.5" />
+          Calendario
+        </button>
       </div>
 
       {/* View Content */}

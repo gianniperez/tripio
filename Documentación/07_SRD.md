@@ -116,23 +116,32 @@ Espacio asíncrono y no bloqueante para la co-creación del viaje antes de forma
   - **Alojamientos:** Se proponen con fechas estimadas. Si se confirman, pasan automáticamente a la sección **Logística**.
   - **Actividades:** Si se confirman, se agendan como eventos oficiales en el **Timeline**.
 
-#### Formulario de Propuesta
+#### Estructura de Votación Dual
 
-- **Tipo:** Alojamiento, Transporte, Comida, Actividad, Encuesta, Otros.
-- **Título y Descripción:** Contexto de la idea.
-- **Ubicación:** Google Maps Link o texto (opcional para Encuestas).
-- **Temporalidad:** Fecha/Hora inicio y fin (opcionales).
-- **Impacto Económico:** Costo estimado (opcional para Encuestas).
-- **Accesibilidad:** Switch para indicar si el plan es 100% accesible.
-- **Link de Referencia:** Web, PDF o reserva.
-- **Opciones (solo Encuesta):** Lista de alternativas votables.
-- **Deadline (opcional):** Fecha límite para votar.
+Para maximizar la flexibilidad, las propuestas admiten dos capas de votación simultáneas e independientes:
+
+1. **RSVP (Interés General):** Votación obligatoria de nivel superior sobre si el usuario "Se suma" o no al plan.
+   - Opciones fijas: "Sí, me interesa", "No me interesa", "No me sumo".
+2. **Opciones (Votación Específica):** Votación sobre alternativas dentro de la propuesta (ej. "¿A qué hora?", "¿Qué menú?").
+   - Opciones dinámicas definidas por el creador.
+
+#### Mapeo de Campos Condicionales por Tipo
+
+El formulario de propuesta adapta su estructura de datos según el `type` seleccionado para evitar ruidos visuales:
+
+| Tipo                | Campos Relevantes                                       | Acción al Confirmar                      |
+| :------------------ | :------------------------------------------------------ | :--------------------------------------- |
+| **`activity`**      | Título, Descripción, Ubicación, Costo Estimado, Fechas  | Crea Evento en Timeline                  |
+| **`accommodation`** | Título, Descripción, Dirección (Ubicación), Costo Total | Crea Registro en Logística (Alojamiento) |
+| **`transport`**     | Título, Descripción, Ruta (Ubicación), Costo            | Crea Registro en Logística (Transporte)  |
+| **`inventory`**     | Título, Descripción (Cantidad/Nota)                     | Crea Registro en Inventario              |
+| **`other`**         | Título, Descripción                                     | Crea Evento genérico o Tarea             |
 
 #### Ciclo de Vida de la Propuesta
 
 1. **`Draft`:** Solo texto e idea base.
-2. **`Voted`:** Interacción grupal activa (RSVP para propuestas ricas, votación para encuestas).
-3. **`Confirmed`:** Se convierte en un hito del Timeline (crea un Event).
+2. **`Voted`:** Interacción grupal activa (RSVP y/o Votación de opciones).
+3. **`Confirmed`:** Se convierte en un hito oficial (Timeline / Logística).
 4. **`Rejected`:** Descartada por el grupo.
 
 ---
@@ -398,26 +407,26 @@ Actividades del timeline vinculadas a un día específico.
 
 Ideas y encuestas del grupo.
 
-| Campo           | Tipo                            | Requerido | Default   | Descripción                                                                             |
-| --------------- | ------------------------------- | --------- | --------- | --------------------------------------------------------------------------------------- |
-| `title`         | `string`                        | ✅        | —         | Título de la propuesta                                                                  |
-| `description`   | `string \| null`                | ❌        | `null`    | Contexto                                                                                |
-| `type`          | `string`                        | ✅        | —         | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'poll'` \| `'other'` |
-| `status`        | `string`                        | ✅        | `'draft'` | `'draft'` \| `'voted'` \| `'confirmed'` \| `'rejected'`                                 |
-| `location`      | `string \| null`                | ❌        | `null`    | Ubicación                                                                               |
-| `locationUrl`   | `string \| null`                | ❌        | `null`    | Google Maps link                                                                        |
-| `startDate`     | `timestamp \| null`             | ❌        | `null`    | Fecha/hora inicio                                                                       |
-| `endDate`       | `timestamp \| null`             | ❌        | `null`    | Fecha/hora fin                                                                          |
-| `estimatedCost` | `number \| null`                | ❌        | `null`    | Impacto económico                                                                       |
-| `accessible`    | `boolean`                       | ✅        | `false`   | Plan 100% accesible                                                                     |
-| `referenceUrl`  | `string \| null`                | ❌        | `null`    | Link externo                                                                            |
-| `votes`         | `map<userId, boolean>`          | ✅        | `{}`      | Interés/RSVP (propuestas ricas)                                                         |
-| `options`       | `string[] \| null`              | ❌        | `null`    | Opciones (solo tipo `poll`)                                                             |
-| `optionVotes`   | `map<string, string[]> \| null` | ❌        | `null`    | Votos por opción (índice → userIds)                                                     |
-| `deadline`      | `timestamp \| null`             | ❌        | `null`    | Deadline de votación                                                                    |
-| `linkedEventId` | `string \| null`                | ❌        | `null`    | Event creado al confirmar                                                               |
-| `createdBy`     | `string`                        | ✅        | —         | UID del creador                                                                         |
-| `createdAt`     | `timestamp`                     | ✅        | —         | Fecha de creación                                                                       |
+| Campo           | Tipo                    | Requerido | Default   | Descripción                                                                      |
+| --------------- | ----------------------- | --------- | --------- | -------------------------------------------------------------------------------- |
+| `title`         | `string`                | ✅        | —         | Título de la propuesta                                                           |
+| `description`   | `string \| null`        | ❌        | `null`    | Contexto                                                                         |
+| `type`          | `string`                | ✅        | —         | `'accommodation'` \| `'transport'` \| `'inventory'` \| `'activity'` \| `'other'` |
+| `status`        | `string`                | ✅        | `'draft'` | `'draft'` \| `'voted'` \| `'confirmed'` \| `'rejected'`                          |
+| `location`      | `string \| null`        | ❌        | `null`    | Ubicación / Dirección                                                            |
+| `locationUrl`   | `string \| null`        | ❌        | `null`    | Google Maps link                                                                 |
+| `startDate`     | `timestamp \| null`     | ❌        | `null`    | Fecha/hora inicio                                                                |
+| `endDate`       | `timestamp \| null`     | ❌        | `null`    | Fecha/hora fin                                                                   |
+| `estimatedCost` | `number \| null`        | ❌        | `null`    | Impacto económico                                                                |
+| `accessible`    | `boolean`               | ✅        | `false`   | Plan 100% accesible                                                              |
+| `referenceUrl`  | `string \| null`        | ❌        | `null`    | Link externo                                                                     |
+| `votes`         | `map<userId, string>`   | ✅        | `{}`      | **RSVP (V4)**: Almacena la etiqueta elegida ("sí", "no", "meh") por usuario.     |
+| `options`       | `string[] \| null`      | ❌        | `null`    | Opciones personalizadas adicionales.                                             |
+| `optionVotes`   | `map<string, string[]>` | ✅        | `{}`      | **Votos por Opción**: (Etiqueta de opción → array de userIds).                   |
+| `deadline`      | `timestamp \| null`     | ❌        | `null`    | Deadline de votación                                                             |
+| `linkedEventId` | `string \| null`        | ❌        | `null`    | Event creado al confirmar                                                        |
+| `createdBy`     | `string`                | ✅        | —         | UID del creador                                                                  |
+| `createdAt`     | `timestamp`             | ✅        | —         | Fecha de creación                                                                |
 
 ### 8.7 Subcolección: `costs`
 

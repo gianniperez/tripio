@@ -11,14 +11,9 @@ import {
   Wallet,
   ArrowLeft,
 } from "lucide-react";
-import Image from "next/image";
-import { auth } from "@/lib/firebase";
-import { useAuthStore } from "@/features/auth";
 
 export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
   const pathname = usePathname();
-
-  const { user } = useAuthStore();
 
   const NAV_ITEMS = [
     { label: "Inicio", path: "", icon: LayoutDashboard },

@@ -87,11 +87,11 @@ _Objetivo: Control financiero proyectado según duración del viaje._
 
 _Objetivo: Colaboración activa y organización de recursos._
 
-- [ ] **Módulo de Propuestas Unificado:**
-  - [ ] Creación de Propuestas Ricas (costo, ubicación, links).
-  - [ ] Creación de Encuestas Simples (opciones votables).
-  - [ ] RSVP/Votación y cierre automático de propuestas.
-  - [ ] Lógica de "Confirmar Propuesta" → Auto-crear evento en Timeline.
+- [✅] **Módulo de Propuestas Unificado:**
+  - [✅] Creación de Propuestas Ricas (costo, ubicación, links).
+  - [✅] Creación de Encuestas Simples (opciones votables).
+  - [✅] RSVP/Votación y cierre automático de propuestas.
+  - [✅] Lógica de "Confirmar Propuesta" → Auto-crear evento en Timeline.
 
 - [ ] **Logística de Transporte:**
   - [ ] Registro de vehículos y capacidad.
