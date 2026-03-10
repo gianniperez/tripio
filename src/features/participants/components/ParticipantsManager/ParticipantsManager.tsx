@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import type { ParticipantsManagerProps } from "./ParticipantsManager.types";
 import { ParticipantCard } from "../ParticipantCard";
 import { InviteParticipant } from "../InviteParticipant";
 import { NeumorphicCard } from "@/components/NeumorphicCard";
 import { Users } from "lucide-react";
 import { hasPermission } from "@/features/auth/utils/permissions";
+import { Participant } from "@/types/tripio";
 
 export function ParticipantsManager({
   participants,
@@ -15,11 +17,21 @@ export function ParticipantsManager({
   onRemoveParticipant,
   onInviteParticipant,
 }: ParticipantsManagerProps) {
+  const [isInviting, setIsInviting] = useState(false);
   const currentUser = participants.find((p) => p.id === currentUserId);
   const canManageParticipants = hasPermission(
     currentUser,
     "manage_participants",
   );
+
+  const handleInvite = async (role: Participant["role"]) => {
+    setIsInviting(true);
+    try {
+      return await onInviteParticipant(role);
+    } finally {
+      setIsInviting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -34,8 +46,8 @@ export function ParticipantsManager({
             Invitar nuevo participante
           </h3>
           <InviteParticipant
-            onInvite={onInviteParticipant}
-            isInviting={false} // TODO: Pass loading state if applicable
+            onInvite={handleInvite}
+            isInviting={isInviting}
           />
         </NeumorphicCard>
       )}

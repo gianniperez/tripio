@@ -17,7 +17,6 @@ export type ProposalType =
   | "poll"
   | "other";
 export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
-export type CostType = "fixed" | "projected";
 export type InventoryStatus = "needed" | "assigned" | "confirmed";
 export type TaskStatus = "pending" | "in-progress" | "done";
 export type TransportType = "car" | "bus" | "plane" | "other";
@@ -43,12 +42,11 @@ export interface User {
 export interface Trip {
   id: string;
   name: string;
-  destination: string;
+  destination: string | null;
   description: string | null;
-  startDate: Timestamp;
-  endDate: Timestamp;
+  startDate: Timestamp | null;
+  endDate: Timestamp | null;
   status: TripStatus;
-  dailyBudget: number | null;
   currency: string;
   coverImage: string | null;
   createdBy: string;
@@ -58,12 +56,28 @@ export interface Trip {
 
 export interface Participant {
   id: string; // Document ID de Firestore (UID del usuario)
+  uid: string; // UID del usuario para búsquedas collectionGroup
   role: TripRole;
   budgetLimit: number | null;
   joinedAt: Timestamp;
   invitedBy: string;
+  invitationToken?: string; // Token con el que se unió (opcional)
   // Overrides: Permisos específicos que rompen la jerarquía del rol
   customPermissions?: Partial<Record<TripPermission, boolean>>;
+}
+
+// --- Invitaciones (Colección raíz) ---
+export interface Invitation {
+  id: string; // Token único (ID del documento)
+  tripId: string;
+  tripName: string;
+  role: TripRole;
+  invitedByToken: string; // UID de quien generó el link
+  invitedByName: string; // Nombre de quien generó el link
+  createdAt: Timestamp;
+  expiresAt: Timestamp;
+  usedBy?: string; // UID del usuario que la usó (si aplica)
+  status: "pending" | "accepted" | "expired";
 }
 
 // --- 8.5 Subcolección: events ---
@@ -112,9 +126,12 @@ export interface Cost {
   id: string;
   description: string;
   amount: number;
-  type: CostType;
   category: EventCategory;
   linkedEventId: string | null;
+  linkedProposalId: string | null;
+  costType: "total" | "per_person";
+  splitType: "equal" | "custom";
+  customSplit?: Record<string, number>;
   createdBy: string;
   createdAt: Timestamp;
 }

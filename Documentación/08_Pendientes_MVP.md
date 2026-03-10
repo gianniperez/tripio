@@ -17,7 +17,7 @@ _Objetivo: Preparar el terreno y conectar la infraestructura base._
 - [✅] **Infraestructura Firebase:**
   - [✅] Instalar SDK de Firebase (`npm install firebase`).
   - [✅] Crear archivo de configuración `src/lib/firebase.ts`.
-  - [ ] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
+  - [✅] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
 
 - [✅] **Configuración PWA:**
   - [✅] Generar e incluir `manifest.json`.
@@ -48,20 +48,23 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
   - [✅] Crear Pantalla de Login (`/login`) con Auth Providers.
   - [✅] Guardar perfil de usuario en colección `users` al primer login.
 
-- [ ] **Gestor de Viajes (Mis Viajes):**
-  - [ ] Crear la pantalla "Mis Viajes" (`/trips`) para listar los trips del usuario.
-  - [ ] Modal/Pantalla para "Crear Nuevo Viaje" (Formulario usando `zod`).
-  - [ ] Generación de "Magic Links" de invitación.
-  - [ ] Lógica para unirse a viaje vía link (`/invite/[token]`). (Pendiente de Backend/Logic)
+- [✅] **Gestor de Viajes (Mis Viajes):**
+  - [✅] Crear la pantalla "Mis Viajes" (`/trips`) para listar los trips del usuario.
+  - [✅] Modal/Pantalla para "Crear Nuevo Viaje" (Formulario usando `zod`).
+  - [✅] Generación de "Magic Links" de invitación.
+  - [✅] Lógica para unirse a viaje vía link (`/invite/[token]`).
 
-- [ ] **Layout & Navegación:**
-  - [ ] Header con contexto de viaje (Nombre + Fecha).
-  - [✅] Sticky Bottom NavBar (Inicio, Propuestas, Logística, Participantes).
+- [✅] **Layout & Navegación:**
+  - [✅] Header con contexto de viaje (Nombre + Fecha).
+  - [✅] Sticky Bottom NavBar (Inicio, Propuestas, Itinerario, Participantes).
+  - [✅] Sidebar Desktop persistente para navegación fluida.
 
-- [ ] **Visualización del Itinerario:**
-  - [/] Vista Timeline (lista vertical secuencial). (Placeholder creado as `/logistics`?)
-  - [ ] Vista Calendario (grid mensual/semanal).
-  - [ ] Switch de alternancia entre vistas.
+- [✅] **Visualización del Itinerario:**
+  - [✅] Gestión de fechas del viaje (Ajustes).
+  - [✅] Vista Timeline (lista vertical secuencial).
+  - [✅] Vista Calendario (grid mensual/semanal).
+  - [✅] Switch de alternancia entre vistas.
+  - [✅] Manejo de estados vacíos (CTAs cuando no hay fechas).
 
 ---
 
@@ -69,13 +72,14 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
 
 _Objetivo: Control financiero proyectado según duración del viaje._
 
-- [ ] **Motor Económico:**
-  - [ ] Configuración de Presupuesto Diario y Budget Limit en el viaje.
-  - [ ] CRUD de Gastos Fijos y Proyectados.
-  - [ ] Lógica de cálculo del "Total Cost" (Fijos/n + Proyectados/n + Diarios\*días).
+- [✅] **Motor Económico:**
+  - [✅] Configuración de Presupuesto Diario Disponible en el viaje.
+  - [✅] Configuración de Budget Limit personal.
+  - [✅] CRUD de Gastos Fijos (ABM manual agregado).
+  - [✅] Lógica de cálculo del "Total Cost".
 
-- [ ] **Alertas de Presupuesto:**
-  - [ ] Watcher de gastos que dispara banner de advertencia si se excede el límite personal.
+- [✅] **Alertas de Presupuesto:**
+  - [✅] Watcher visual (BudgetProgressBar) de gastos que lanza advertencia sobre si se excede el límite personal.
 
 ---
 

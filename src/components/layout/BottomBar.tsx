@@ -7,6 +7,7 @@ import {
   Map as MapIcon,
   Lightbulb,
   Users,
+  Wallet,
 } from "lucide-react";
 
 export const BottomBar = ({ tripId }: { tripId: string }) => {
@@ -15,7 +16,8 @@ export const BottomBar = ({ tripId }: { tripId: string }) => {
   const MOBILE_NAV = [
     { name: "Inicio", href: `/trips/${tripId}`, icon: LayoutDashboard },
     { name: "Propuestas", href: `/trips/${tripId}/proposals`, icon: Lightbulb },
-    { name: "Logística", href: `/trips/${tripId}/logistics`, icon: MapIcon },
+    { name: "Itinerario", href: `/trips/${tripId}/logistics`, icon: MapIcon },
+    { name: "Finanzas", href: `/trips/${tripId}/finances`, icon: Wallet },
     {
       name: "Participantes",
       href: `/trips/${tripId}/participants`,

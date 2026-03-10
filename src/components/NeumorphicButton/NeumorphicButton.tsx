@@ -19,6 +19,8 @@ export function NeumorphicButton({
     secondary:
       "bg-white text-text-main shadow-neumorphic hover:shadow-neumorphic-sm active:shadow-neumorphic-inset",
     ghost: "bg-transparent shadow-neumorphic text-gray-500 hover:bg-black/5",
+    danger:
+      "bg-red-500 text-white shadow-neumorphic hover:shadow-neumorphic-sm active:shadow-neumorphic-inset",
   };
 
   return (

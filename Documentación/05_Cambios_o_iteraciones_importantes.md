@@ -59,3 +59,15 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
 - **[MODIFICADO]** `firestore.rules`:
   - Reglas complejas adaptadas para aceptar validación híbrida (Rol base + `customPermissions`).
   - Uso de checkeo `hasPermission` y funciones utilitarias en Rules (getOverrides).
+
+## 📅 9 de Marzo, 2026
+
+### 🐛 Corrección de Errores (Persistencia de Viajes)
+
+- **[FIX]** **Persistencia y Visualización de Viajes:**
+  - Se detectó que la consulta `collectionGroup` en Firestore fallaba al intentar filtrar por `__name__` usando solo el UID (debido a que requiere la ruta completa).
+  - **Cambios realizados:**
+    - Se agregó el campo `uid` explícito a la interfaz `Participant` en `src/types/tripio.ts`.
+    - Se actualizó `createTrip.ts` para guardar el `uid` del usuario en el documento del participante al crear un viaje.
+    - Se modificó `getTrips.ts` para que la consulta `collectionGroup("participants")` filtre por el campo `uid` en lugar de `__name__`.
+  - **Importante:** Esto resuelve el problema donde el usuario creaba un viaje pero este no aparecía en la lista de "Mis Viajes" al recargar.

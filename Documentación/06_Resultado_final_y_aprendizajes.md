@@ -10,6 +10,16 @@ A partir de marzo de 2026, el proyecto Tripio adopta una política de transparen
 
 ---
 
+## 🏆 Cierre de Fase 1: El Viaje y Timeline
+
+### Resultado Final
+Hemos logrado una base sólida para la colaboración grupal. El sistema de permisos y el motor de visualización de itinerarios están listos para recibir el contenido de las fases económicas y de propuestas.
+
+### Aprendizajes Clave
+1. **Firestore Query Management:** Aprendimos la importancia de los campos redundantes (como `uid` en el participante) para optimizar consultas de `collectionGroup`.
+2. **UI/UX Neumórfica:** Mantener la consistencia del diseño en componentes complejos como el Calendario requiere un sistema de sombras muy estricto.
+3. **Escalabilidad de Permisos:** Centralizar la lógica de permisos en `hasPermission` antes de empezar con los módulos de dinero y logística fue una decisión arquitectónica acertada que evitó deuda técnica.
+
 [Resumen del estado final del proyecto al momento del cierre]
 
 ## Métricas de Éxito

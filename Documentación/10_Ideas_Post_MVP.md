@@ -1,0 +1,81 @@
+# Ideas Post-MVP - Tripio 🚀
+
+Este documento centraliza las ideas, sugerencias y features propuestas para el desarrollo de Tripio una vez que el MVP (Minimum Viable Product) esté consolidado.
+
+## 🗺️ Geo-Localización y Mapas
+
+### 1. Integración con Google Maps API
+
+* **Autocompletado de Destinos:** Implementar `Google Places Autocomplete` en el formulario de creación de viajes y propuestas.
+* **Vista de Mapa Grupal:** Un mapa interactivo que muestre todos los puntos confirmados del itinerario y las propuestas activas.
+* **Cálculo de Rutas:** Integración con `Directions API` para estimar tiempos de viaje entre puntos del itinerario (especialmente útil para la logística de transporte).
+
+### 2. "Cerca de mí" (Exploración Local)
+
+* Sugerencias dinámicas de actividades o puntos de interés (POIs) basados en la ubicación actual del grupo durante el viaje.
+
+---
+
+## 📅 Sincronización y Notificaciones
+
+### 3. Sincronización con Calendarios Externos
+
+* Exportación de eventos confirmados a Google Calendar, Apple Calendar e iCal.
+* Suscripción vía URL para que los cambios en Tripio se reflejen automáticamente en el calendario personal del usuario.
+
+### 4. Notificaciones Push (Web Push API)
+
+* Alertas en tiempo real para:
+  * Nuevas propuestas o encuestas creadas.
+  * Resultados finales de una votación.
+  * Recordatorios de tareas asignadas (deadlines).
+  * Alertas de proximidad de eventos en el Timeline.
+
+---
+
+## 📶 Conectividad y Performance
+
+### 5. Modo Offline (Service Workers Avanzados)
+
+* Capacidad de consultar el itinerario, la logística y los contactos sin conexión a internet (crítico para viajes a zonas rurales o internacionales sin roaming).
+* Cola de sincronización: Permitir cargar gastos o checks de tareas offline que se sincronicen al recuperar conexión.
+
+### 6. Exportación a PDF / Imprimible
+
+* Generador de "Libreta de Viaje" en PDF con el resumen de alojamientos, transportes y el timeline completo para llevar en formato físico.
+
+---
+
+## 👥 Colaboración y Social
+
+### 7. Chat de Viaje Integrado
+
+* Un hilo de chat por viaje para centralizar la comunicación y evitar depender de grupos externos (WhatsApp/Telegram).
+* Posibilidad de "anclar" mensajes importantes desde el chat directamente al Timeline o Logística.
+
+### 8. Gestión de Fotos Grupal
+
+* Un feed de fotos compartido para el viaje, donde todos puedan subir sus mejores capturas, organizadas por día del itinerario.
+
+---
+
+## 💰 Finanzas Avanzadas
+
+### 9. Split de Gastos (División de Deudas)
+
+* Módulo para registrar quién pagó qué y calcular automáticamente quién le debe a quién (estilo Splitwise integrado).
+* Conversión de moneda multi-divisa con tipos de cambio actualizados.
+
+### 10. Dashboard Grupal de Finanzas (Insights)
+
+* Vista global para entender en qué está gastando más dinero el grupo como entidad (alojamiento, comida, etc).
+* Gráficos y analíticas grupales post-viaje.
+
+---
+
+## 🎮 Gamificación
+
+### 10. Mascota y Logros del Grupo
+
+* Un guía lúdico (mascota de Tripio) que celebre hitos (ej: "¡Logística completa!", "¡El primer gasto registrado!").
+* Badges por roles (ej: "El Rey del RSVP", "El Conductor Designado", "El Optimizer del Budget").

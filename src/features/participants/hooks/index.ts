@@ -1,1 +1,1 @@
-// Custom hooks para la feature participants
+export * from "./useParticipants";

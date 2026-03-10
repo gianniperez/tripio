@@ -13,7 +13,7 @@ describe("ParticipantCard Component", () => {
           joinedAt: Timestamp.now(),
           budgetLimit: 0,
           invitedBy: "system",
-        }}
+        } as any}
         isCurrentUser={false}
         canManage={true}
         onUpdateRole={vi.fn()}

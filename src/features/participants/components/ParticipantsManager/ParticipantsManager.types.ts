@@ -9,5 +9,5 @@ export type ParticipantsManagerProps = {
     permissions: Participant["customPermissions"],
   ) => void;
   onRemoveParticipant: (participantId: string) => void;
-  onInviteParticipant: (email: string, role: Participant["role"]) => void;
+  onInviteParticipant: (role: Participant["role"]) => Promise<string | null>;
 };
