@@ -1,10 +1,4 @@
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  Timestamp,
-  addDoc
-} from "firebase/firestore";
+import { collection, doc, getDoc, Timestamp, addDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Invitation, TripRole } from "@/types/tripio";
 import { addDays } from "date-fns";
@@ -17,10 +11,10 @@ export const createInvitation = async (
   tripName: string,
   role: TripRole,
   invitedByToken: string,
-  invitedByName: string
+  invitedByName: string,
 ): Promise<string> => {
   const invitationRef = collection(db, "invitations");
-  
+
   const now = new Date();
   const expiresAt = addDays(now, 3); // 72 horas de validez por defecto
 
@@ -42,7 +36,9 @@ export const createInvitation = async (
 /**
  * Obtiene una invitación por su ID (token)
  */
-export const getInvitation = async (tokenId: string): Promise<Invitation | null> => {
+export const getInvitation = async (
+  tokenId: string,
+): Promise<Invitation | null> => {
   const docRef = doc(db, "invitations", tokenId);
   const docSnap = await getDoc(docRef);
 

@@ -3,7 +3,10 @@ import { getTripsByUserId } from "../api/getTrips";
 import { getTripById } from "../api/getTrip";
 import { createTrip, CreateTripDTO } from "../api/createTrip";
 import { updateTrip, UpdateTripDTO } from "../api/updateTrip";
-import { updateParticipant, UpdateParticipantParams } from "../api/updateParticipant";
+import {
+  updateParticipant,
+  UpdateParticipantParams,
+} from "../api/updateParticipant";
 import { deleteTrip } from "../api/deleteTrip";
 import { getEventsByTripId } from "../api/getEvents";
 import { Trip, Event } from "@/types/tripio";
@@ -40,7 +43,8 @@ export const useUpdateTrip = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ tripId, data }: { tripId: string; data: UpdateTripDTO }) => updateTrip(tripId, data),
+    mutationFn: ({ tripId, data }: { tripId: string; data: UpdateTripDTO }) =>
+      updateTrip(tripId, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
       queryClient.invalidateQueries({ queryKey: ["trips"] });
@@ -55,7 +59,9 @@ export const useUpdateParticipant = () => {
     mutationFn: (params: UpdateParticipantParams) => updateParticipant(params),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["trip", variables.tripId] });
-      queryClient.invalidateQueries({ queryKey: ["participants", variables.tripId] });
+      queryClient.invalidateQueries({
+        queryKey: ["participants", variables.tripId],
+      });
     },
   });
 };
@@ -83,7 +89,7 @@ export const useEvents = (tripId: string | undefined) => {
     setIsLoading(true);
     try {
       const unsubscribe = getEventsByTripId(
-        tripId, 
+        tripId,
         (data) => {
           setEvents(data);
           setIsLoading(false);
@@ -91,7 +97,7 @@ export const useEvents = (tripId: string | undefined) => {
         (err) => {
           setError(err);
           setIsLoading(false);
-        }
+        },
       );
       return () => unsubscribe();
     } catch (err) {
@@ -102,4 +108,3 @@ export const useEvents = (tripId: string | undefined) => {
 
   return { data: events, isLoading, error };
 };
-

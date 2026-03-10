@@ -19,7 +19,7 @@ export const PageHeader = ({
   actionButton,
 }: PageHeaderProps) => {
   return (
-    <div className="flex justify-between items-center backdrop-blur-md sticky top-0 z-20 py-4 border-b border-primary/10">
+    <div className="flex justify-between items-center backdrop-blur-md top-0 z-20 py-4 border-b border-primary/10">
       <div>
         <h1 className="text-2xl font-black text-text-main font-nunito">
           {title}

@@ -1,8 +1,4 @@
-import { 
-  doc, 
-  Timestamp,
-  runTransaction
-} from "firebase/firestore";
+import { doc, Timestamp, runTransaction } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Invitation, Participant } from "@/types/tripio";
 
@@ -12,9 +8,15 @@ import { Invitation, Participant } from "@/types/tripio";
 export const acceptInvitation = async (
   tokenId: string,
   userId: string,
-  invitation: Invitation
+  invitation: Invitation,
 ): Promise<void> => {
-  const tripParticipantRef = doc(db, "trips", invitation.tripId, "participants", userId);
+  const tripParticipantRef = doc(
+    db,
+    "trips",
+    invitation.tripId,
+    "participants",
+    userId,
+  );
   const invitationRef = doc(db, "invitations", tokenId);
 
   await runTransaction(db, async (transaction) => {

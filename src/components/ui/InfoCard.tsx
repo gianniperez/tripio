@@ -42,7 +42,7 @@ export const InfoCard = ({
   const styles = variantStyles[variant];
 
   const content = (
-    <NeumorphicCard className="my-4 p-4 flex items-center gap-4 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
+    <NeumorphicCard className="my-2 p-4 flex items-center gap-4 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
       <div
         className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${styles.bg}`}
       >

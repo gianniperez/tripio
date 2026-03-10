@@ -35,11 +35,6 @@ export function ParticipantsManager({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Users className="w-5 h-5 text-[--text-color]" />
-        <h2 className="text-xl font-bold text-[--text-color]">Participantes</h2>
-      </div>
-
       {canManageParticipants && (
         <NeumorphicCard className="p-4">
           <h3 className="text-lg font-semibold mb-3 text-[--text-color]">

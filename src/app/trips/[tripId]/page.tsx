@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { redirect, useParams } from "next/navigation";
-import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { useTrip } from "@/features/trips/hooks";
 import {
   MapPin,
@@ -17,10 +15,8 @@ import {
   Users,
 } from "lucide-react";
 import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
-
 import { InfoCard } from "@/components/ui/InfoCard";
 import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { SettingsModal } from "@/features/trips/components";
 
@@ -61,33 +57,13 @@ export default function TripHome() {
       <PageHeader
         title={trip.name}
         description={trip.destination ?? ""}
-        descriptionIcon={<MapPin size={14} />}
+        descriptionIcon={trip.destination ? <MapPin size={14} /> : undefined}
         actionButton={{
           icon: <Settings className="w-6 h-6 text-white" />,
           onClick: () => setIsSettingsOpen(true),
           ariaLabel: "Configuración del viaje",
         }}
       />
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-text-main tracking-tight font-nunito">
-            {trip.name}
-          </h1>
-          {trip.destination && (
-            <div className="flex items-center gap-1 text-gray-500 mt-1">
-              <MapPin size={14} />
-              <span className="text-sm">{trip.destination}</span>
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={() => setIsSettingsOpen(true)}
-          className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-xl transition-colors"
-        >
-          <Settings size={20} />
-        </button>
-      </div>
 
       {/* Missing Info Alert Section */}
       {hasMissingFields && (
@@ -100,7 +76,7 @@ export default function TripHome() {
             Usá propuestas y encuestas para que el grupo decida.
           </p>
 
-          <div className="space-y-3">
+          <div>
             {missingDestination && (
               <InfoCard
                 icon={<MapPin size={20} className="text-white" />}

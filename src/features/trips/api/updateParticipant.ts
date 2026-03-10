@@ -13,6 +13,12 @@ export const updateParticipant = async ({
   participantId,
   data,
 }: UpdateParticipantParams): Promise<void> => {
-  const participantRef = doc(db, "trips", tripId, "participants", participantId);
+  const participantRef = doc(
+    db,
+    "trips",
+    tripId,
+    "participants",
+    participantId,
+  );
   await updateDoc(participantRef, data);
 };

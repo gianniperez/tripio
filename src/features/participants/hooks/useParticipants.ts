@@ -13,24 +13,23 @@ export const useParticipants = (tripId: string) => {
           return;
         }
 
-        const q = query(
-          collection(db, "trips", tripId, "participants")
-        );
+        const q = query(collection(db, "trips", tripId, "participants"));
 
-        onSnapshot(q, 
+        onSnapshot(
+          q,
           (snapshot) => {
             const data = snapshot.docs.map(
               (doc) =>
                 ({
                   id: doc.id,
                   ...doc.data(),
-                } as Participant)
+                }) as Participant,
             );
             resolve(data);
           },
           (error) => {
             reject(error);
-          }
+          },
         );
       });
     },

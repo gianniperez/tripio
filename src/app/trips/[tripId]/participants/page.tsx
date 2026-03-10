@@ -9,6 +9,7 @@ import { collection, onSnapshot, query, doc, getDoc } from "firebase/firestore";
 import { createInvitation } from "@/features/participants/api";
 import { useAuth } from "@/features/auth/hooks";
 import { Loader2 } from "lucide-react";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function TripParticipants() {
   const { tripId } = useParams<{ tripId: string }>();
@@ -69,9 +70,7 @@ export default function TripParticipants() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-[--text-color] mb-8">
-        Participantes
-      </h1>
+      <PageHeader title="Participantes" />
       <div className="bg-[--bg-color] p-6 rounded-[20px] shadow-[8px_8px_16px_var(--shadow-dark),-8px_-8px_16px_var(--shadow-light)]">
         <ParticipantsManager
           participants={participants}
