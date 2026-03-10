@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { useTrip } from "@/features/trips/hooks";
 import {
   MapPin,
@@ -19,46 +19,9 @@ import {
 } from "lucide-react";
 import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
 
-interface MissingInfoCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  ctaLabel: string;
-  ctaHref: string;
-  accentColor: string;
-}
-
-function MissingInfoCard({
-  icon,
-  title,
-  description,
-  ctaLabel,
-  ctaHref,
-  accentColor,
-}: MissingInfoCardProps) {
-  return (
-    <Link href={ctaHref}>
-      <NeumorphicCard className="my-4 p-4 flex items-center gap-4 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
-        <div
-          className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${accentColor}`}
-        >
-          {icon}
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="font-bold text-sm text-text-main">{title}</h4>
-          <p className="text-xs text-gray-500 mt-0.5">{description}</p>
-        </div>
-        <div className="flex items-center gap-1 text-xs font-semibold text-primary shrink-0">
-          <span>{ctaLabel}</span>
-          <ChevronRight
-            size={14}
-            className="group-hover:translate-x-0.5 transition-transform"
-          />
-        </div>
-      </NeumorphicCard>
-    </Link>
-  );
-}
+import { InfoCard } from "@/components/ui/InfoCard";
+import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default function TripHome() {
   const params = useParams<{ tripId: string }>();
@@ -125,23 +88,23 @@ export default function TripHome() {
 
           <div className="space-y-3">
             {missingDestination && (
-              <MissingInfoCard
+              <InfoCard
                 icon={<MapPin size={20} className="text-white" />}
                 title="¿A dónde vamos?"
                 description="El destino aún no fue definido."
                 ctaLabel="Crear encuesta"
                 ctaHref={proposalsUrl}
-                accentColor="bg-primary"
+                variant="primary"
               />
             )}
             {missingDates && (
-              <MissingInfoCard
+              <InfoCard
                 icon={<Calendar size={20} className="text-white" />}
                 title="¿Cuándo viajamos?"
                 description="Las fechas del viaje no están definidas."
                 ctaLabel="Sugerir fechas"
                 ctaHref={`/trips/${params.tripId}/settings`}
-                accentColor="bg-secondary"
+                variant="secondary"
               />
             )}
           </div>
@@ -155,46 +118,30 @@ export default function TripHome() {
       <div className="p-2 space-y-4">
         <h3 className="font-bold text-sm text-text-main">Accesos Rápidos</h3>
         <div className="grid grid-cols-2 gap-4">
-          <Link href={proposalsUrl}>
-            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
-              <div className="w-12 h-12 rounded-2xl bg-primary-extralight/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Lightbulb size={24} className="text-primary" />
-              </div>
-              <span className="font-bold text-sm text-secondary-deep">
-                Propuestas
-              </span>
-            </NeumorphicCard>
-          </Link>
-          <Link href={logisticsUrl}>
-            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
-              <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <MapIcon size={24} className="text-secondary" />
-              </div>
-              <span className="font-bold text-sm text-secondary-deep">
-                Itinerario
-              </span>
-            </NeumorphicCard>
-          </Link>
-          <Link href={financesUrl}>
-            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
-              <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Wallet size={24} className="text-secondary" />
-              </div>
-              <span className="font-bold text-sm text-secondary-deep">
-                Finanzas
-              </span>
-            </NeumorphicCard>
-          </Link>
-          <Link href={participantsUrl}>
-            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
-              <div className="w-12 h-12 rounded-2xl bg-primary-extralight/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Users size={24} className="text-primary" />
-              </div>
-              <span className="font-bold text-sm text-secondary-deep">
-                Participantes
-              </span>
-            </NeumorphicCard>
-          </Link>
+          <QuickAccessCard
+            href={proposalsUrl}
+            icon={<Lightbulb size={24} />}
+            title="Propuestas"
+            variant="primary"
+          />
+          <QuickAccessCard
+            href={logisticsUrl}
+            icon={<MapIcon size={24} />}
+            title="Itinerario"
+            variant="secondary"
+          />
+          <QuickAccessCard
+            href={financesUrl}
+            icon={<Wallet size={24} />}
+            title="Finanzas"
+            variant="secondary"
+          />
+          <QuickAccessCard
+            href={participantsUrl}
+            icon={<Users size={24} />}
+            title="Participantes"
+            variant="primary"
+          />
         </div>
       </div>
 
@@ -202,12 +149,12 @@ export default function TripHome() {
       {!missingDates && (
         <div className="space-y-3">
           <h3 className="font-bold text-sm text-text-main">Timeline</h3>
-          <NeumorphicCard className="p-6 flex flex-col items-center gap-2 text-center">
-            <Calendar size={32} className="text-gray-300" />
-            <p className="text-sm text-gray-500">
-              Aquí aparecerán tus actividades confirmadas.
-            </p>
-          </NeumorphicCard>
+          <EmptyState
+            icon={<Calendar size={32} className="text-gray-300" />}
+            title="Actividades"
+            description="Aquí aparecerán tus actividades confirmadas."
+            className="p-6! gap-2! shadow-none"
+          />
         </div>
       )}
     </div>

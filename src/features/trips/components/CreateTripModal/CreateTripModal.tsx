@@ -3,8 +3,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { NeumorphicInput } from "@/components/NeumorphicInput";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Modal } from "@/components/ui/dialog/Modal";
 import { createTripSchema } from "../../types";
 import { useCreateTrip } from "../../hooks";

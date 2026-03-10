@@ -15,7 +15,7 @@ import {
   subMonths,
 } from "date-fns";
 import { es } from "date-fns/locale";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface CalendarViewProps {

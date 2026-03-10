@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal } from "@/components/ui/dialog/Modal";
-import { NeumorphicInput } from "@/components/NeumorphicInput";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

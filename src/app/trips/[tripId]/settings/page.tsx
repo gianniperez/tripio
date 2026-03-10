@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { createTripSchema } from "@/features/trips/types";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
-import { NeumorphicInput } from "@/components/NeumorphicInput";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Timestamp } from "firebase/firestore";
 import {
   MapPin,

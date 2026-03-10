@@ -9,9 +9,10 @@ import {
   useUpdateProposal,
 } from "@/features/proposals/hooks";
 import { ProposalsList, ProposalForm } from "@/features/proposals/components";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Plus, Loader2 } from "lucide-react";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { CreateProposalFormValues, Proposal } from "@/features/proposals/types";
 
 export default function TripProposals() {
@@ -77,24 +78,15 @@ export default function TripProposals() {
 
   return (
     <div className="space-y-6 pb-20">
-      <div className="flex justify-between items-center backdrop-blur-md sticky top-0 z-20 py-4 border-b border-primary/10">
-        <div>
-          <h1 className="text-2xl font-black text-text-main font-nunito">
-            Propuestas
-          </h1>
-          <p className="text-sm text-slate-500 font-inter">
-            Vota y organiza el viaje
-          </p>
-        </div>
-        <NeumorphicButton
-          variant="primary"
-          onClick={openCreateModal}
-          className="rounded-full w-12 h-12 flex items-center justify-center p-0"
-          aria-label="Nueva propuesta"
-        >
-          <Plus className="w-6 h-6 text-white" />
-        </NeumorphicButton>
-      </div>
+      <PageHeader
+        title="Propuestas"
+        description="Vota y organiza el viaje"
+        actionButton={{
+          icon: <Plus className="w-6 h-6 text-white" />,
+          onClick: openCreateModal,
+          ariaLabel: "Nueva propuesta",
+        }}
+      />
 
       <Modal
         isOpen={isModalOpen}

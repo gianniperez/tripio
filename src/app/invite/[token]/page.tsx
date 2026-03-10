@@ -5,16 +5,22 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks";
 import { getInvitation, acceptInvitation } from "@/features/participants/api";
 import { Invitation } from "@/types/tripio";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
-import { MapPin, UserPlus, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import {
+  MapPin,
+  UserPlus,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function InvitationPage() {
   const { token } = useParams<{ token: string }>();
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  
+
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +52,7 @@ export default function InvitationPage() {
 
   const handleJoin = async () => {
     if (!user || !invitation || !token) return;
-    
+
     setJoining(true);
     try {
       await acceptInvitation(token, user.uid, invitation);
@@ -57,7 +63,8 @@ export default function InvitationPage() {
       }, 2000);
     } catch (err: unknown) {
       console.error("Error joining trip:", err);
-      const errorMessage = err instanceof Error ? err.message : "No se pudo unir al viaje.";
+      const errorMessage =
+        err instanceof Error ? err.message : "No se pudo unir al viaje.";
       setError(errorMessage);
       setJoining(false);
     }
@@ -78,7 +85,9 @@ export default function InvitationPage() {
           <div className="flex justify-center">
             <AlertCircle className="w-16 h-16 text-red-500" />
           </div>
-          <h1 className="text-2xl font-bold text-[--text-color]">¡Ups! Algo salió mal</h1>
+          <h1 className="text-2xl font-bold text-[--text-color]">
+            ¡Ups! Algo salió mal
+          </h1>
           <p className="text-gray-500">{error}</p>
           <Link href="/trips" className="block">
             <NeumorphicButton className="w-full">
@@ -97,8 +106,12 @@ export default function InvitationPage() {
           <div className="flex justify-center">
             <CheckCircle2 className="w-16 h-16 text-green-500 animate-bounce" />
           </div>
-          <h1 className="text-2xl font-bold text-[--text-color]">¡Ya eres parte del equipo!</h1>
-          <p className="text-gray-500">Redirigiéndote al viaje &quot;{invitation?.tripName}&quot;...</p>
+          <h1 className="text-2xl font-bold text-[--text-color]">
+            ¡Ya eres parte del equipo!
+          </h1>
+          <p className="text-gray-500">
+            Redirigiéndote al viaje &quot;{invitation?.tripName}&quot;...
+          </p>
         </NeumorphicCard>
       </div>
     );
@@ -109,9 +122,12 @@ export default function InvitationPage() {
       <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
         <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
           <UserPlus className="w-16 h-16 text-[--primary-color] mx-auto" />
-          <h1 className="text-2xl font-bold text-[--text-color]">Invitación a viajar</h1>
+          <h1 className="text-2xl font-bold text-[--text-color]">
+            Invitación a viajar
+          </h1>
           <p className="text-gray-500">
-            Has sido invitado por <strong>{invitation?.invitedByName}</strong> a unirte al viaje <strong>&quot;{invitation?.tripName}&quot;</strong>.
+            Has sido invitado por <strong>{invitation?.invitedByName}</strong> a
+            unirte al viaje <strong>&quot;{invitation?.tripName}&quot;</strong>.
           </p>
           <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 text-sm text-orange-800">
             Debes iniciar sesión para aceptar la invitación.
@@ -133,9 +149,19 @@ export default function InvitationPage() {
           <div className="w-20 h-20 bg-[--primary-color] rounded-3xl rotate-12 mx-auto flex items-center justify-center shadow-lg mb-6">
             <MapPin className="w-10 h-10 text-white -rotate-12" />
           </div>
-          <h1 className="text-3xl font-bold text-[--text-color]">¡Te invitaron!</h1>
+          <h1 className="text-3xl font-bold text-[--text-color]">
+            ¡Te invitaron!
+          </h1>
           <p className="text-gray-500">
-            <strong>{invitation?.invitedByName}</strong> te invitó a unirte como <strong>{invitation?.role === 'admin' ? 'Administrador' : invitation?.role === 'collaborator' ? 'Colaborador' : 'Lector'}</strong> en:
+            <strong>{invitation?.invitedByName}</strong> te invitó a unirte como{" "}
+            <strong>
+              {invitation?.role === "admin"
+                ? "Administrador"
+                : invitation?.role === "collaborator"
+                  ? "Colaborador"
+                  : "Lector"}
+            </strong>{" "}
+            en:
           </p>
         </div>
 
@@ -146,8 +172,8 @@ export default function InvitationPage() {
         </div>
 
         <div className="space-y-4">
-          <NeumorphicButton 
-            variant="primary" 
+          <NeumorphicButton
+            variant="primary"
             className="w-full h-14 text-lg font-bold"
             onClick={handleJoin}
             disabled={joining}
@@ -159,8 +185,11 @@ export default function InvitationPage() {
             )}
             {joining ? "Uniéndome..." : "Aceptar Invitación"}
           </NeumorphicButton>
-          
-          <Link href="/trips" className="block text-center text-sm text-gray-400 hover:text-gray-600 transition-colors">
+
+          <Link
+            href="/trips"
+            className="block text-center text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
             Ignorar esta invitación
           </Link>
         </div>

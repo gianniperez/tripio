@@ -5,8 +5,8 @@ import {
   CreateProposalFormValues,
   createProposalSchema,
 } from "../../types";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
-import { NeumorphicInput } from "@/components/NeumorphicInput";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import {
   FileText,
   AlignLeft,

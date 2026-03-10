@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { DollarSign, ChevronRight } from "lucide-react";
 import { useCosts } from "@/features/finances/hooks/useCosts";
 import { useEvents } from "@/features/trips/hooks";

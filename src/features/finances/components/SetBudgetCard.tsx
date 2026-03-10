@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DollarSign, ChevronRight, X } from "lucide-react";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 
 interface SetBudgetCardProps {
   onSetBudget: (amount: number) => void;

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Plus, Calendar, MapPin, Loader2, HelpCircle } from "lucide-react";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { TopBar } from "@/components/layout/TopBar";
 import { useAuth } from "@/features/auth/hooks";
 import { useTrips } from "@/features/trips/hooks";

@@ -18,7 +18,7 @@ export const createProposal = async ({
     ...data,
     status: "draft" as ProposalStatus,
     votes: {},
-    optionVotes: data.type === "poll" ? {} : null,
+    optionVotes: data.options && data.options.length > 0 ? {} : null,
     linkedEventId: null,
     createdBy: userId,
     createdAt: serverTimestamp(),

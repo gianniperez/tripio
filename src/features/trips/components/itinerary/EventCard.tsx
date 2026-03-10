@@ -3,15 +3,15 @@
 import React from "react";
 import { Event } from "@/types/tripio";
 import { format } from "date-fns";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
-import { 
-  MapPin, 
-  Clock, 
-  Bed, 
-  Car, 
-  Utensils, 
-  Camera, 
-  MoreHorizontal 
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import {
+  MapPin,
+  Clock,
+  Bed,
+  Car,
+  Utensils,
+  Camera,
+  MoreHorizontal,
 } from "lucide-react";
 
 interface EventCardProps {
@@ -27,13 +27,17 @@ const CATEGORY_ICONS = {
 };
 
 export const EventCard = ({ event }: EventCardProps) => {
-  const categoryConfig = CATEGORY_ICONS[event.category] || CATEGORY_ICONS.other;
+  const categoryConfig =
+    CATEGORY_ICONS[event.category as keyof typeof CATEGORY_ICONS] ||
+    CATEGORY_ICONS.other;
   const Icon = categoryConfig.icon;
 
   return (
     <NeumorphicCard className="p-4 hover:shadow-neumorphic-sm transition-all group">
       <div className="flex gap-4">
-        <div className={`w-10 h-10 rounded-xl ${categoryConfig.bg} flex items-center justify-center shrink-0`}>
+        <div
+          className={`w-10 h-10 rounded-xl ${categoryConfig.bg} flex items-center justify-center shrink-0`}
+        >
           <Icon className={categoryConfig.color} size={20} />
         </div>
         <div className="flex-1 min-w-0">
@@ -48,7 +52,7 @@ export const EventCard = ({ event }: EventCardProps) => {
               </div>
             )}
           </div>
-          
+
           {event.location && (
             <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1">
               <MapPin size={10} />

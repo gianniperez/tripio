@@ -6,8 +6,10 @@ import {
   useConfirmProposal,
   useDeleteProposal,
 } from "../../hooks";
-import { History, CheckCircle2, Clock } from "lucide-react";
+import { History, CheckCircle2, Clock, LightbulbOff } from "lucide-react";
 import { Proposal } from "../../types";
+import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface ProposalsListProps {
   tripId: string;
@@ -122,41 +124,30 @@ export const ProposalsList = ({
   return (
     <div className="space-y-6">
       {/* Filter Tab Bar */}
-      <div className="bg-slate-100 flex p-2 rounded-tripio sticky top-20 z-10 backdrop-blur-sm border border-white/20">
-        <button
-          onClick={() => setActiveTab("pending")}
-          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
-            activeTab === "pending"
-              ? "bg-white text-primary shadow-soft"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          <Clock className="w-3.5 h-3.5 mr-1.5" />
-          Pendientes ({pendingProposals.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("voted")}
-          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
-            activeTab === "voted"
-              ? "bg-white text-primary shadow-soft"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" />
-          Votadas ({votedProposals.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("closed")}
-          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
-            activeTab === "closed"
-              ? "bg-white text-primary shadow-soft"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          <History className="w-3.5 h-3.5 mr-1.5" />
-          Cerradas ({closedProposals.length})
-        </button>
-      </div>
+      <FilterTabBar
+        tabs={[
+          {
+            id: "pending",
+            label: "Pendientes",
+            icon: <Clock />,
+            count: pendingProposals.length,
+          },
+          {
+            id: "voted",
+            label: "Votadas",
+            icon: <CheckCircle2 />,
+            count: votedProposals.length,
+          },
+          {
+            id: "closed",
+            label: "Cerradas",
+            icon: <History />,
+            count: closedProposals.length,
+          },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(id) => setActiveTab(id as "pending" | "voted" | "closed")}
+      />
 
       <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
         {filteredProposals.length > 0 ? (
@@ -173,11 +164,12 @@ export const ProposalsList = ({
             />
           ))
         ) : (
-          <div className="text-center py-12 px-6 bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-            <p className="text-slate-400 font-medium text-sm">
-              No hay nada que ver por aquí en este momento.
-            </p>
-          </div>
+          <EmptyState
+            icon={<LightbulbOff size={32} className="text-amber-500" />}
+            title="Sin propuestas"
+            description="No hay nada que ver por aquí en este momento."
+            className="border-dashed bg-slate-50 shadow-none border border-slate-200"
+          />
         )}
       </div>
     </div>

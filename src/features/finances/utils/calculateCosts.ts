@@ -7,10 +7,14 @@ export const getUserCostAmount = (
   cost: Cost,
   events: Event[],
   proposals: Proposal[],
-  userId: string
+  userId: string,
 ): number => {
   // 1. Custom Split explicit overwrite
-  if (cost.splitType === "custom" && cost.customSplit && cost.customSplit[userId] !== undefined) {
+  if (
+    cost.splitType === "custom" &&
+    cost.customSplit &&
+    cost.customSplit[userId] !== undefined
+  ) {
     return cost.customSplit[userId];
   }
 
@@ -21,14 +25,18 @@ export const getUserCostAmount = (
   if (cost.linkedEventId) {
     const event = events.find((e) => e.id === cost.linkedEventId);
     if (event && event.rsvp) {
-      userParticipates = event.rsvp[userId] === true;
-      totalParticipants = Object.values(event.rsvp).filter((val) => val === true).length;
+      userParticipates = event.rsvp[userId] === "si";
+      totalParticipants = Object.values(event.rsvp).filter(
+        (val) => val === "si",
+      ).length;
     }
   } else if (cost.linkedProposalId) {
     const proposal = proposals.find((p) => p.id === cost.linkedProposalId);
     if (proposal && proposal.votes) {
-      userParticipates = proposal.votes[userId] === true;
-      totalParticipants = Object.values(proposal.votes).filter((val) => val === true).length;
+      userParticipates = proposal.votes[userId] === "si";
+      totalParticipants = Object.values(proposal.votes).filter(
+        (val) => val === "si",
+      ).length;
     }
   }
 
@@ -51,7 +59,7 @@ export const calculateMyCosts = (
   costs: Cost[],
   events: Event[],
   proposals: Proposal[],
-  userId: string
+  userId: string,
 ): number => {
   let total = 0;
   costs.forEach((cost) => {
@@ -65,20 +73,24 @@ export const filterMyRelatedCosts = (
   costs: Cost[],
   events: Event[],
   proposals: Proposal[],
-  userId: string
+  userId: string,
 ): Cost[] => {
   return costs.filter((cost) => {
     // Consider a cost relevant if the user has an explicit split, OR if they participate.
-    if (cost.splitType === "custom" && cost.customSplit && cost.customSplit[userId] !== undefined) {
+    if (
+      cost.splitType === "custom" &&
+      cost.customSplit &&
+      cost.customSplit[userId] !== undefined
+    ) {
       return true;
     }
-    
+
     if (cost.linkedEventId) {
       const event = events.find((e) => e.id === cost.linkedEventId);
-      return event && event.rsvp && event.rsvp[userId] === true;
+      return event && event.rsvp && event.rsvp[userId] === "si";
     } else if (cost.linkedProposalId) {
       const proposal = proposals.find((p) => p.id === cost.linkedProposalId);
-      return proposal && proposal.votes && proposal.votes[userId] === true;
+      return proposal && proposal.votes && proposal.votes[userId] === "si";
     }
     return false;
   });

@@ -2,7 +2,7 @@ import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { differenceInDays } from "date-fns";
 import { CalendarDays, Wallet } from "lucide-react";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 
 interface DailyBudgetCardProps {
   budgetLimit: number;

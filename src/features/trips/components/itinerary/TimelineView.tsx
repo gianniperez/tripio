@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { EventCard } from "./EventCard";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 
 interface TimelineViewProps {
   events: Event[];
@@ -33,8 +33,12 @@ export const TimelineView = ({ events, trip }: TimelineViewProps) => {
   // Group events by day
   const groupedEvents: { [key: string]: Event[] } = {};
 
-  const tripStartDateKey = trip?.startDate ? format(trip.startDate.toDate(), "yyyy-MM-dd") : null;
-  const tripEndDateKey = trip?.endDate ? format(trip.endDate.toDate(), "yyyy-MM-dd") : null;
+  const tripStartDateKey = trip?.startDate
+    ? format(trip.startDate.toDate(), "yyyy-MM-dd")
+    : null;
+  const tripEndDateKey = trip?.endDate
+    ? format(trip.endDate.toDate(), "yyyy-MM-dd")
+    : null;
 
   // Initialize boundary arrays so days are rendered even if empty
   if (tripStartDateKey) groupedEvents[tripStartDateKey] = [];
@@ -47,7 +51,7 @@ export const TimelineView = ({ events, trip }: TimelineViewProps) => {
     }
     groupedEvents[dateKey].push(event);
   });
-  
+
   // Sort dates
   const sortedDateKeys = Object.keys(groupedEvents).sort();
 
@@ -75,12 +79,17 @@ export const TimelineView = ({ events, trip }: TimelineViewProps) => {
                 <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0 shadow-neumorphic-inset-sm">
                   <span className="text-xl">🏁</span>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-widest text-emerald-700">Comienzo de la Aventura</span>
+                <span className="text-sm font-bold uppercase tracking-widest text-emerald-700">
+                  Comienzo de la Aventura
+                </span>
               </div>
             )}
-            
-            {groupedEvents[dateKey].length === 0 && !((dateKey === tripStartDateKey) || (dateKey === tripEndDateKey)) ? (
-              <p className="text-xs text-gray-400 italic py-2">Sin plan definido.</p>
+
+            {groupedEvents[dateKey].length === 0 &&
+            !(dateKey === tripStartDateKey || dateKey === tripEndDateKey) ? (
+              <p className="text-xs text-gray-400 italic py-2">
+                Sin plan definido.
+              </p>
             ) : null}
 
             {groupedEvents[dateKey].map((event) => (
@@ -92,7 +101,9 @@ export const TimelineView = ({ events, trip }: TimelineViewProps) => {
                 <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center shrink-0 shadow-neumorphic-inset-sm">
                   <span className="text-xl">👋</span>
                 </div>
-                <span className="text-sm font-bold uppercase tracking-widest text-rose-700">Fin del Viaje</span>
+                <span className="text-sm font-bold uppercase tracking-widest text-rose-700">
+                  Fin del Viaje
+                </span>
               </div>
             )}
           </div>

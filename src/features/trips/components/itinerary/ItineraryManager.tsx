@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useEvents, useTrip } from "../../hooks";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { Calendar, List, Loader2, AlertCircle, Settings } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
@@ -12,7 +12,9 @@ import { db } from "@/lib/firebase";
 import { Participant } from "@/types/tripio";
 import { hasPermission } from "@/features/auth/utils/permissions";
 import Link from "next/link";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface ItineraryManagerProps {
   tripId: string;
@@ -59,58 +61,44 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
   return (
     <div className="space-y-6">
       {/* View Switcher */}
-      <div className="bg-slate-100 flex p-2 rounded-tripio sticky top-20 z-10 backdrop-blur-sm border border-white/20">
-        <button
-          onClick={() => setView("timeline")}
-          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
-            view === "timeline"
-              ? "bg-white text-primary shadow-soft"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          <List className="w-3.5 h-3.5 mr-1.5" />
-          Timeline
-        </button>
-        <button
-          onClick={() => setView("calendar")}
-          className={`cursor-pointer flex-1 flex items-center justify-center py-2.5 px-2 rounded-tripio text-xs font-bold transition-all ${
-            view === "calendar"
-              ? "bg-white text-primary shadow-soft"
-              : "text-slate-500 hover:text-slate-700"
-          }`}
-        >
-          <Calendar className="w-3.5 h-3.5 mr-1.5" />
-          Calendario
-        </button>
-      </div>
+      <FilterTabBar
+        tabs={[
+          {
+            id: "timeline",
+            label: "Timeline",
+            icon: <List />,
+          },
+          {
+            id: "calendar",
+            label: "Calendario",
+            icon: <Calendar />,
+          },
+        ]}
+        activeTab={view}
+        onTabChange={(id) => setView(id as "timeline" | "calendar")}
+      />
 
       {/* View Content */}
       <div className="min-h-[400px]">
         {missingDates ? (
-          <NeumorphicCard className="p-8 flex flex-col items-center gap-4 text-center">
-            <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center shadow-neumorphic-inset-sm">
-              <AlertCircle size={32} className="text-amber-500" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-bold text-text-main">Fechas no definidas</h3>
-              <p className="text-xs text-gray-500 max-w-[240px] mx-auto">
-                Para visualizar el itinerario y calendario, el viaje debe tener
-                fechas de inicio y fin confirmadas.
-              </p>
-            </div>
-            {canEdit ? (
-              <Link href={`/trips/${tripId}/settings`}>
-                <NeumorphicButton>
-                  <Settings size={18} />
-                  <span>Configurar fechas</span>
-                </NeumorphicButton>
-              </Link>
-            ) : (
-              <p className="text-[10px] text-gray-400 italic">
-                Contactá al organizador para definir las fechas.
-              </p>
-            )}
-          </NeumorphicCard>
+          <EmptyState
+            title="Fechas no definidas"
+            description="Para visualizar el itinerario y calendario, el viaje debe tener fechas de inicio y fin confirmadas."
+            action={
+              canEdit ? (
+                <Link href={`/trips/${tripId}/settings`}>
+                  <NeumorphicButton>
+                    <Settings size={18} />
+                    <span>Configurar fechas</span>
+                  </NeumorphicButton>
+                </Link>
+              ) : (
+                <p className="text-[10px] text-gray-400 italic">
+                  Contactá al organizador para definir las fechas.
+                </p>
+              )
+            }
+          />
         ) : view === "timeline" && trip ? (
           <TimelineView events={events} trip={trip} />
         ) : trip ? (

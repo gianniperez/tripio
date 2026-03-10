@@ -1,8 +1,8 @@
 "use client";
 
 import type { ParticipantCardProps } from "./ParticipantCard.types";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Shield, ShieldAlert, UserX, Settings2 } from "lucide-react";
 import { useUser } from "@/features/auth/hooks";
 import { TripRole, TripPermission } from "@/types/tripio";
@@ -26,7 +26,9 @@ export function ParticipantCard({
   onRemove,
 }: ParticipantCardProps) {
   const [showOverrides, setShowOverrides] = useState(false);
-  const { data: userProfile, isLoading } = useUser(participant.uid || participant.id);
+  const { data: userProfile, isLoading } = useUser(
+    participant.uid || participant.id,
+  );
 
   const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onUpdateRole(e.target.value as TripRole);
@@ -56,7 +58,9 @@ export function ParticipantCard({
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h4 className="font-semibold text-[--text-color] text-lg">
-              {isLoading ? "Cargando..." : (userProfile?.displayName || participant.id)}{" "}
+              {isLoading
+                ? "Cargando..."
+                : userProfile?.displayName || participant.id}{" "}
             </h4>
             {isCurrentUser && (
               <span className="text-xs bg-[--primary-color] text-white px-2 py-1 rounded-full">

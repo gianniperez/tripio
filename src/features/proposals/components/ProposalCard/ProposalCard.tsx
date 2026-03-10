@@ -1,6 +1,6 @@
 import { Proposal } from "../../types";
-import { NeumorphicCard } from "@/components/NeumorphicCard";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import {

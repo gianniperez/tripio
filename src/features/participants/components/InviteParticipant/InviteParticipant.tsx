@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { InviteParticipantProps } from "./InviteParticipant.types";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Link as LinkIcon, Copy, Check, Loader2 } from "lucide-react";
 import { TripRole } from "@/types/tripio";
 
@@ -33,7 +33,10 @@ export function InviteParticipant({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleGenerate} className="flex flex-col sm:flex-row gap-3">
+      <form
+        onSubmit={handleGenerate}
+        className="flex flex-col sm:flex-row gap-3"
+      >
         <div className="flex-1">
           <select
             value={role}
@@ -65,7 +68,7 @@ export function InviteParticipant({
           <div className="flex-1 truncate text-sm text-gray-500 font-mono">
             {generatedLink}
           </div>
-          <NeumorphicButton 
+          <NeumorphicButton
             onClick={copyToClipboard}
             className="px-4 py-2 text-xs"
           >

@@ -22,7 +22,8 @@ import { doc, collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Participant, Proposal } from "@/types/tripio";
 import { Loader2, Plus } from "lucide-react";
-import { NeumorphicButton } from "@/components/NeumorphicButton";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function TripFinances() {
   const { tripId } = useParams<{ tripId: string }>();
@@ -104,24 +105,15 @@ export default function TripFinances() {
 
   return (
     <div className="space-y-6 pb-24">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-text-main tracking-tight font-nunito">
-            Finanzas
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Proyección de tus gastos personales para este viaje.
-          </p>
-        </div>
-        <NeumorphicButton
-          onClick={() => setIsAddExpenseOpen(true)}
-          variant="terciary"
-          className="py-2"
-        >
-          <Plus className="text-white w-4 h-4" />
-          <span>Añadir</span>
-        </NeumorphicButton>
-      </div>
+      <PageHeader
+        title="Finanzas"
+        description="Proyección de tus gastos personales para este viaje."
+        actionButton={{
+          icon: <Plus className="text-white w-5 h-5" />,
+          onClick: () => setIsAddExpenseOpen(true),
+          ariaLabel: "Añadir gasto",
+        }}
+      />
 
       {!participant.budgetLimit || isEditingBudget ? (
         <SetBudgetCard

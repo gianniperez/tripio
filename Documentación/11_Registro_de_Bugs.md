@@ -4,13 +4,14 @@ Este documento mantiene un registro de los bugs identificados en la aplicación,
 
 ## 🐛 Bugs Activos
 
-*Ninguno por el momento.*
+_Ninguno por el momento._
 
 ---
 
 ## ✅ Bugs Resueltos
 
 ### 1. Los viajes recién creados no aparecen en la lista ("Mis Viajes" vacío)
+
 - **Estado**: Resuelto.
 - **Descripción**: Al crear un nuevo viaje, la mutación era exitosa, pero la vista de "Mis Viajes" se quedaba cargando o recargaba vacía.
 - **Causa raíz**: Falta de un **Índice de Grupo de Colecciones (Collection Group Index)** en Firestore para el campo `uid` en la subcolección `participants`.
