@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTrip, useUpdateTrip, useDeleteTrip } from "@/features/trips/hooks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTripSchema, CreateTripFormValues } from "@/features/trips/types";
+import { z } from "zod";
+import { createTripSchema } from "@/features/trips/types";
 import { NeumorphicCard } from "@/components/NeumorphicCard";
 import { NeumorphicInput } from "@/components/NeumorphicInput";
 import { NeumorphicButton } from "@/components/NeumorphicButton";
@@ -16,7 +17,7 @@ import {
   Type,
   ChevronLeft,
   Save,
-  Loader2
+  Loader2,
 } from "lucide-react";
 
 export default function TripSettings() {
@@ -32,8 +33,8 @@ export default function TripSettings() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateTripFormValues>({
-    resolver: zodResolver(createTripSchema) as any,
+  } = useForm<z.input<typeof createTripSchema>>({
+    resolver: zodResolver(createTripSchema),
   });
 
   useEffect(() => {
@@ -42,15 +43,20 @@ export default function TripSettings() {
         name: trip.name,
         destination: trip.destination || "",
         description: trip.description || "",
-        startDate: trip.startDate ? trip.startDate.toDate().toISOString().split("T")[0] : undefined,
-        endDate: trip.endDate ? trip.endDate.toDate().toISOString().split("T")[0] : undefined,
+        startDate: trip.startDate
+          ? trip.startDate.toDate().toISOString().split("T")[0]
+          : undefined,
+        endDate: trip.endDate
+          ? trip.endDate.toDate().toISOString().split("T")[0]
+          : undefined,
         currency: trip.currency || "USD",
-      } as any);
+      });
     }
   }, [trip, reset]);
 
-  const onSubmit = async (values: CreateTripFormValues) => {
+  const onSubmit = async (data: z.input<typeof createTripSchema>) => {
     try {
+      const values = createTripSchema.parse(data);
       await updateMutation.mutateAsync({
         tripId,
         data: {
@@ -58,9 +64,11 @@ export default function TripSettings() {
           destination: values.destination || null,
           description: values.description || null,
           currency: values.currency,
-          startDate: values.startDate ? Timestamp.fromDate(values.startDate) : null,
+          startDate: values.startDate
+            ? Timestamp.fromDate(values.startDate)
+            : null,
           endDate: values.endDate ? Timestamp.fromDate(values.endDate) : null,
-        }
+        },
       });
       // Small delay to allow Firestore to propagate
       setTimeout(() => {
@@ -95,7 +103,7 @@ export default function TripSettings() {
       </div>
 
       <NeumorphicCard className="p-6">
-        <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-4">
             <NeumorphicInput
               label="Nombre del Viaje"
@@ -119,14 +127,14 @@ export default function TripSettings() {
                 type="date"
                 leftIcon={<Calendar size={18} />}
                 error={errors.startDate?.message}
-                {...register("startDate" as any)}
+                {...register("startDate")}
               />
               <NeumorphicInput
                 label="Fecha Fin"
                 type="date"
                 leftIcon={<Calendar size={18} />}
                 error={errors.endDate?.message}
-                {...register("endDate" as any)}
+                {...register("endDate")}
               />
             </div>
 
@@ -139,7 +147,9 @@ export default function TripSettings() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-gray-400 ml-1">Descripción</label>
+              <label className="text-xs font-bold text-gray-400 ml-1">
+                Descripción
+              </label>
               <textarea
                 className="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-primary/20 shadow-neumorphic-inset-sm transition-all min-h-[100px]"
                 placeholder="Escribe algo sobre este viaje..."
@@ -161,7 +171,11 @@ export default function TripSettings() {
                 ) : (
                   <Save size={20} />
                 )}
-                <span>{updateMutation.isPending ? "GUARDANDO..." : "GUARDAR CAMBIOS"}</span>
+                <span>
+                  {updateMutation.isPending
+                    ? "GUARDANDO..."
+                    : "GUARDAR CAMBIOS"}
+                </span>
               </div>
             </NeumorphicButton>
           </div>
@@ -190,7 +204,8 @@ export default function TripSettings() {
           ) : (
             <div className="flex flex-col gap-4">
               <p className="text-red-600 font-bold text-sm">
-                ¿Estás completamente seguro de que quieres eliminar el viaje &quot;{trip?.name}&quot;?
+                ¿Estás completamente seguro de que quieres eliminar el viaje
+                &quot;{trip?.name}&quot;?
               </p>
               <div className="flex items-center gap-3">
                 <NeumorphicButton
@@ -202,7 +217,11 @@ export default function TripSettings() {
                     router.push("/trips");
                   }}
                 >
-                  {deleteMutation.isPending ? <Loader2 size={20} className="animate-spin mx-auto" /> : "Sí, eliminar para siempre"}
+                  {deleteMutation.isPending ? (
+                    <Loader2 size={20} className="animate-spin mx-auto" />
+                  ) : (
+                    "Sí, eliminar para siempre"
+                  )}
                 </NeumorphicButton>
                 <NeumorphicButton
                   variant="secondary"

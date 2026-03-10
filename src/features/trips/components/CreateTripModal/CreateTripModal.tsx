@@ -6,9 +6,9 @@ import * as z from "zod";
 import { NeumorphicInput } from "@/components/NeumorphicInput";
 import { NeumorphicButton } from "@/components/NeumorphicButton";
 import { Modal } from "@/components/ui/dialog/Modal";
-import { createTripSchema, CreateTripFormValues } from "../../types";
+import { createTripSchema } from "../../types";
 import { useCreateTrip } from "../../hooks";
-import { MapPin, Type, Calendar, DollarSign } from "lucide-react";
+import { MapPin, Type, Calendar } from "lucide-react";
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -16,41 +16,51 @@ interface CreateTripModalProps {
   userId: string;
 }
 
-export const CreateTripModal = ({ isOpen, onClose, userId }: CreateTripModalProps) => {
+export const CreateTripModal = ({
+  isOpen,
+  onClose,
+  userId,
+}: CreateTripModalProps) => {
   const { mutate: createTrip, isPending } = useCreateTrip();
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<z.input<typeof createTripSchema>>({
-    resolver: zodResolver(createTripSchema) as any,
+    resolver: zodResolver(createTripSchema),
     defaultValues: {
+      name: "",
+      destination: "",
+      startDate: undefined,
+      endDate: undefined,
       currency: "USD",
     },
   });
 
-  const onSubmit = (data: CreateTripFormValues) => {
+  const onSubmit = (data: z.input<typeof createTripSchema>) => {
+    // Transform input to output values according to schema
+    const validatedData = createTripSchema.parse(data);
     createTrip(
-      { ...data, userId },
+      { ...validatedData, userId },
       {
         onSuccess: () => {
           reset();
           onClose();
         },
-      }
+      },
     );
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Crear Nuevo Viaje">
-      <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-5 p-1">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 p-1">
         <NeumorphicInput
           label="Nombre del Viaje *"
           placeholder="Ej: Expedición Patagonia"
           leftIcon={<Type size={18} />}
-          error={errors.name?.message as string}
+          error={errors.name?.message}
           {...register("name")}
         />
 
@@ -58,7 +68,7 @@ export const CreateTripModal = ({ isOpen, onClose, userId }: CreateTripModalProp
           label="Destino"
           placeholder="Ej: Bariloche, Argentina (opcional)"
           leftIcon={<MapPin size={18} />}
-          error={errors.destination?.message as string}
+          error={errors.destination?.message}
           {...register("destination")}
         />
 
@@ -67,15 +77,15 @@ export const CreateTripModal = ({ isOpen, onClose, userId }: CreateTripModalProp
             label="Fecha Inicio"
             type="date"
             leftIcon={<Calendar size={18} />}
-            error={errors.startDate?.message as string}
-            {...register("startDate" as any)}
+            error={errors.startDate?.message}
+            {...register("startDate")}
           />
           <NeumorphicInput
             label="Fecha Fin"
             type="date"
             leftIcon={<Calendar size={18} />}
-            error={errors.endDate?.message as string}
-            {...register("endDate" as any)}
+            error={errors.endDate?.message}
+            {...register("endDate")}
           />
         </div>
 

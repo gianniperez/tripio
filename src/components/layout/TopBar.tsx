@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, LogOut, X } from "lucide-react";
+import { Menu, LogOut, X, ArrowLeft } from "lucide-react";
 import { useAuthStore } from "@/features/auth/stores";
 import { auth } from "@/lib/firebase";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,22 +14,70 @@ export const TopBar = () => {
 
   return (
     <>
-      <header className="md:hidden h-14 bg-background border-b border-gray-100 flex items-center justify-between px-4 sticky top-0 z-30">
-        <div className="flex items-center gap-2">
-          <Image
-            src="/isologo/orange.png"
-            alt="Tripio Logo"
-            width={32}
-            height={32}
-            className="rounded-md"
-          />
-          <h1 className="text-2xl font-black text-primary tracking-tight">
-            tripio
-          </h1>
+      <header className="h-16 glass-header flex items-center justify-between px-6 sticky top-0 z-40 border-b border-secondary/20">
+        {/* Desktop & Mobile Identity */}
+        <div className="flex items-center gap-3">
+          <Link href="/trips" className="flex items-center gap-3">
+            <Image
+              src="/isologo/orange.png"
+              alt="Tripio Logo"
+              width={32}
+              height={32}
+              className="rounded-md"
+            />
+            <h1 className="text-2xl font-black text-primary tracking-tight">
+              tripio
+            </h1>
+          </Link>
+
+          {/* Back button context only for mobile detail pages */}
+          <div className="md:hidden ml-2">
+            {usePathname() !== "/trips" && (
+              <Link
+                href="/trips"
+                className="flex items-center gap-1 text-sm font-bold text-secondary"
+              >
+                <ArrowLeft size={16} />
+                <span>Mis viajes</span>
+              </Link>
+            )}
+          </div>
         </div>
+
+        {/* Desktop User Actions */}
+        <div className="hidden md:flex items-center gap-6">
+          <div className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
+            {user?.photoURL ? (
+              <Image
+                src={user.photoURL}
+                alt={user.displayName || "Usuario"}
+                width={28}
+                height={28}
+                className="rounded-full shadow-sm ring-2 ring-white"
+              />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white text-[10px] font-bold">
+                {user?.displayName?.charAt(0) || "U"}
+              </div>
+            )}
+            <span className="text-sm font-bold text-secondary-deep">
+              {user?.displayName || "Usuario"}
+            </span>
+          </div>
+
+          <button
+            onClick={() => auth.signOut()}
+            className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
+            title="Cerrar Sesión"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
+
+        {/* Mobile Menu Trigger */}
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 text-main hover:text-gray-50 rounded-full transition-colors"
+          className="md:hidden p-2 text-secondary-deep hover:text-primary rounded-full transition-colors"
         >
           <Menu className="w-6 h-6" />
         </button>
@@ -59,7 +109,7 @@ export const TopBar = () => {
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col">
           {/* User Info */}
-          <div className="flex items-center gap-3 mb-6 p-3 bg-gray-50 border border-gray-100">
+          <div className="flex items-center rounded-full gap-3 mb-6 p-3 bg-gray-50 border border-gray-100">
             {user?.photoURL ? (
               <Image
                 src={user?.photoURL || ""}
@@ -91,7 +141,7 @@ export const TopBar = () => {
                 setIsOpen(false);
                 auth.signOut();
               }}
-              className="rounded-tripio w-full flex items-center justify-center gap-2 p-3 text-sm font-bold text-white bg-danger hover:bg-red-600 transition-colors shadow-sm"
+              className="rounded-tripio w-full flex items-center justify-center gap-2 p-4 text-sm font-bold text-white bg-danger hover:bg-red-600 transition-colors shadow-sm"
             >
               <LogOut className="w-4 h-4" />
               Cerrar Sesión

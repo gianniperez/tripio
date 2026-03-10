@@ -33,57 +33,78 @@ export function FinanceWidget({ tripId }: FinanceWidgetProps) {
     );
   }
 
-  const currentUserParticipant = participants.find((p: Participant) => p.uid === user.uid);
+  const currentUserParticipant = participants.find(
+    (p: Participant) => p.uid === user.uid,
+  );
   const budgetLimit = currentUserParticipant?.budgetLimit;
   const currentCost = calculateMyCosts(costs, events, proposals, user.uid);
 
   return (
     <Link href={`/trips/${tripId}/finances`}>
-      <NeumorphicCard className="p-4 flex flex-col gap-3 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
+      <NeumorphicCard className="my-6 p-5 flex flex-col gap-4 group hover:shadow-xl transition-all cursor-pointer glass-card border-l-4 border-l-primary/50">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
-              <DollarSign size={20} className="text-emerald-600" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center shrink-0">
+              <DollarSign size={24} className="text-white" />
             </div>
             <div>
-              <h4 className="font-bold text-sm text-text-main">Mis Finanzas</h4>
-              <p className="text-xs text-gray-500">
-                {budgetLimit 
-                  ? `Presupuesto: $${budgetLimit.toFixed(0)}` 
-                  : "Sin presupuesto definido"}
+              <h4 className="font-black text-base text-secondary-deep tracking-tight">
+                Mis Finanzas
+              </h4>
+              <p className="text-xs font-bold text-secondary">
+                {budgetLimit
+                  ? `Presupuesto: $${budgetLimit.toFixed(0)}`
+                  : "Gastos proyectados"}
               </p>
             </div>
           </div>
-          <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-0.5 transition-transform" />
+          <div className="w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+            <ChevronRight
+              size={18}
+              className="text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all"
+            />
+          </div>
         </div>
 
-        <div>
-          <div className="flex justify-between items-end mb-1">
-            <span className="text-2xl font-black text-text-main leading-none">
+        <div className="space-y-3">
+          <div className="flex justify-between items-end">
+            <span className="text-3xl font-black text-secondary-deep leading-none tracking-tighter">
               ${currentCost.toFixed(0)}
             </span>
             {budgetLimit && (
-              <span className="text-xs font-semibold text-gray-500">
-                {((currentCost / budgetLimit) * 100).toFixed(0)}%
-              </span>
+              <div className="flex flex-col items-end">
+                <span
+                  className={`text-xs font-black px-2 py-0.5 rounded-full ${
+                    currentCost > budgetLimit
+                      ? "bg-red-100 text-red-600"
+                      : "bg-secondary-light text-secondary"
+                  }`}
+                >
+                  {((currentCost / budgetLimit) * 100).toFixed(0)}%
+                </span>
+              </div>
             )}
           </div>
 
-          {budgetLimit ? (
-            <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-neumorphic-inset-sm">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                  currentCost > budgetLimit
-                    ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"
-                    : currentCost > budgetLimit * 0.8
-                    ? "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]"
-                    : "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                }`}
-                style={{ width: `${Math.min((currentCost / budgetLimit) * 100, 100)}%` }}
-              />
-            </div>
-          ) : (
-            <p className="text-[10px] text-gray-400 font-medium">Gastos proyectados de mis actividades</p>
+          <div className="h-3 w-full bg-secondary/5 rounded-full overflow-hidden p-0.5 border border-secondary/10 shadow-inner">
+            <div
+              className={`h-full rounded-full transition-all duration-700 ease-out shadow-sm ${
+                budgetLimit && currentCost > budgetLimit
+                  ? "bg-red-500"
+                  : budgetLimit && currentCost > budgetLimit * 0.8
+                    ? "bg-primary-light"
+                    : "bg-secondary"
+              }`}
+              style={{
+                width: `${budgetLimit ? Math.min((currentCost / budgetLimit) * 100, 100) : 100}%`,
+              }}
+            />
+          </div>
+
+          {!budgetLimit && (
+            <p className="text-[10px] text-secondary/60 font-bold uppercase tracking-wider">
+              Análisis de costos basado en actividades
+            </p>
           )}
         </div>
       </NeumorphicCard>

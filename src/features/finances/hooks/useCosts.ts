@@ -12,7 +12,7 @@ export const useCosts = (tripId: string | undefined) => {
 
     try {
       const unsubscribe = getCostsByTripId(
-        tripId, 
+        tripId,
         (data) => {
           setCosts(data);
           setIsLoading(false);
@@ -20,14 +20,14 @@ export const useCosts = (tripId: string | undefined) => {
         (err) => {
           setError(err);
           setIsLoading(false);
-        }
+        },
       );
       return () => unsubscribe();
     } catch (err) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError(err as Error);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsLoading(false);
+      setTimeout(() => {
+        setError(err as Error);
+        setIsLoading(false);
+      }, 0);
     }
   }, [tripId]);
 

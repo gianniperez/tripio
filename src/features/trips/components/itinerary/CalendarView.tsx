@@ -2,17 +2,17 @@
 
 import React from "react";
 import { Event } from "@/types/tripio";
-import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfWeek, 
-  endOfWeek, 
-  eachDayOfInterval, 
-  isSameMonth, 
-  isSameDay, 
-  addMonths, 
-  subMonths 
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  addMonths,
+  subMonths,
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { NeumorphicCard } from "@/components/NeumorphicCard";
@@ -50,15 +50,15 @@ export const CalendarView = ({ events, trip }: CalendarViewProps) => {
           {format(currentMonth, "MMMM yyyy", { locale: es })}
         </h4>
         <div className="flex gap-2">
-          <button 
+          <button
             onClick={prevMonth}
-            className="p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
+            className="cursor-pointer p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
           >
             <ChevronLeft size={20} />
           </button>
-          <button 
+          <button
             onClick={nextMonth}
-            className="p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
+            className="cursor-pointer p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
           >
             <ChevronRight size={20} />
           </button>
@@ -70,7 +70,9 @@ export const CalendarView = ({ events, trip }: CalendarViewProps) => {
         <div className="grid grid-cols-7 mb-2 border-b border-gray-50 pb-2">
           {weekDays.map((day, i) => (
             <div key={i} className="text-center">
-              <span className="text-[10px] font-black text-gray-400">{day}</span>
+              <span className="text-[10px] font-black text-gray-400">
+                {day}
+              </span>
             </div>
           ))}
         </div>
@@ -78,7 +80,9 @@ export const CalendarView = ({ events, trip }: CalendarViewProps) => {
         {/* Days Grid */}
         <div className="grid grid-cols-7 gap-1">
           {calendarDays.map((day, i) => {
-            const dayEvents = events.filter(e => isSameDay(e.date.toDate(), day));
+            const dayEvents = events.filter((e) =>
+              isSameDay(e.date.toDate(), day),
+            );
             const isCurrentMonth = isSameMonth(day, monthStart);
             const isToday = isSameDay(day, new Date());
             const isTripStart = tripStart ? isSameDay(day, tripStart) : false;
@@ -86,23 +90,32 @@ export const CalendarView = ({ events, trip }: CalendarViewProps) => {
             const isTripDateBoundary = isTripStart || isTripEnd;
 
             return (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={`aspect-square p-1 flex flex-col items-center justify-between rounded-lg transition-all ${
-                  isTripDateBoundary ? "bg-secondary/10 shadow-neumorphic-inset-sm" : isCurrentMonth ? "bg-transparent" : "opacity-20"
+                  isTripDateBoundary
+                    ? "bg-secondary/10 shadow-neumorphic-inset-sm"
+                    : isCurrentMonth
+                      ? "bg-transparent"
+                      : "opacity-20"
                 }`}
               >
-                <span className={`text-[10px] font-bold ${
-                  isToday ? "text-primary bg-primary/10 w-5 h-5 flex items-center justify-center rounded-full" : 
-                  isTripDateBoundary ? "text-secondary font-black" : "text-text-main"
-                }`}>
+                <span
+                  className={`text-[10px] font-bold ${
+                    isToday
+                      ? "text-primary bg-primary/10 w-5 h-5 flex items-center justify-center rounded-full"
+                      : isTripDateBoundary
+                        ? "text-secondary font-black"
+                        : "text-text-main"
+                  }`}
+                >
                   {format(day, "d")}
                 </span>
-                
+
                 <div className="flex flex-wrap gap-0.5 justify-center mt-auto pb-1">
                   {dayEvents.slice(0, 3).map((_, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="w-1 h-1 rounded-full bg-primary"
                     />
                   ))}

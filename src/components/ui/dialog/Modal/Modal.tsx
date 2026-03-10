@@ -55,7 +55,7 @@ export function Modal(props: ModalProps) {
         aria-labelledby={title ? "modal-title" : undefined}
         aria-describedby={description ? "modal-description" : undefined}
         className={cn(
-          "relative z-10 w-full max-w-lg bg-[#FFFAF5] rounded-2xl shadow-xl overflow-hidden",
+          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden",
           className,
         )}
       >
@@ -66,7 +66,7 @@ export function Modal(props: ModalProps) {
               {title && (
                 <h2
                   id="modal-title"
-                  className="text-xl font-bold font-nunito text-[#001523]"
+                  className="text-xl font-bold font-nunito text-text-main"
                 >
                   {title}
                 </h2>

@@ -8,12 +8,14 @@ import { useTrip } from "@/features/trips/hooks";
 import {
   MapPin,
   Calendar,
-  DollarSign,
   Lightbulb,
   AlertTriangle,
   Loader2,
   Settings,
   ChevronRight,
+  Map as MapIcon,
+  Wallet,
+  Users,
 } from "lucide-react";
 import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
 
@@ -26,11 +28,20 @@ interface MissingInfoCardProps {
   accentColor: string;
 }
 
-function MissingInfoCard({ icon, title, description, ctaLabel, ctaHref, accentColor }: MissingInfoCardProps) {
+function MissingInfoCard({
+  icon,
+  title,
+  description,
+  ctaLabel,
+  ctaHref,
+  accentColor,
+}: MissingInfoCardProps) {
   return (
     <Link href={ctaHref}>
-      <NeumorphicCard className="p-4 flex items-center gap-4 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${accentColor}`}>
+      <NeumorphicCard className="my-4 p-4 flex items-center gap-4 group hover:shadow-neumorphic-sm transition-all cursor-pointer">
+        <div
+          className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${accentColor}`}
+        >
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -39,7 +50,10 @@ function MissingInfoCard({ icon, title, description, ctaLabel, ctaHref, accentCo
         </div>
         <div className="flex items-center gap-1 text-xs font-semibold text-primary shrink-0">
           <span>{ctaLabel}</span>
-          <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight
+            size={14}
+            className="group-hover:translate-x-0.5 transition-transform"
+          />
         </div>
       </NeumorphicCard>
     </Link>
@@ -72,6 +86,9 @@ export default function TripHome() {
   const hasMissingFields = missingDestination || missingDates;
 
   const proposalsUrl = `/trips/${params.tripId}/proposals`;
+  const logisticsUrl = `/trips/${params.tripId}/logistics`;
+  const financesUrl = `/trips/${params.tripId}/finances`;
+  const participantsUrl = `/trips/${params.tripId}/participants`;
 
   return (
     <div className="space-y-6">
@@ -89,7 +106,7 @@ export default function TripHome() {
           )}
         </div>
         <Link href={`/trips/${params.tripId}/settings`}>
-          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-xl transition-colors">
+          <button className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-xl transition-colors">
             <Settings size={20} />
           </button>
         </Link>
@@ -135,25 +152,47 @@ export default function TripHome() {
       <FinanceWidget tripId={params.tripId} />
 
       {/* Quick Actions / Dashboard Cards */}
-      <div className="space-y-3">
+      <div className="p-2 space-y-4">
         <h3 className="font-bold text-sm text-text-main">Accesos Rápidos</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <Link href={proposalsUrl}>
-            <NeumorphicCard className="p-4 flex flex-col items-center gap-2 text-center hover:shadow-neumorphic-sm transition-all cursor-pointer h-full">
-              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Lightbulb size={20} className="text-amber-600" />
+            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
+              <div className="w-12 h-12 rounded-2xl bg-primary-extralight/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Lightbulb size={24} className="text-primary" />
               </div>
-              <span className="text-xs font-semibold text-text-main">Propuestas</span>
-              <span className="text-[10px] text-gray-400">Propuestas del grupo</span>
+              <span className="font-bold text-sm text-secondary-deep">
+                Propuestas
+              </span>
             </NeumorphicCard>
           </Link>
-          <Link href={`/trips/${params.tripId}/logistics`}>
-            <NeumorphicCard className="p-4 flex flex-col items-center gap-2 text-center hover:shadow-neumorphic-sm transition-all cursor-pointer h-full">
-              <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center">
-                <MapPin size={20} className="text-teal-600" />
+          <Link href={logisticsUrl}>
+            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <MapIcon size={24} className="text-secondary" />
               </div>
-              <span className="text-xs font-semibold text-text-main">Itinerario</span>
-              <span className="text-[10px] text-gray-400">Transporte y actividades</span>
+              <span className="font-bold text-sm text-secondary-deep">
+                Itinerario
+              </span>
+            </NeumorphicCard>
+          </Link>
+          <Link href={financesUrl}>
+            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
+              <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Wallet size={24} className="text-secondary" />
+              </div>
+              <span className="font-bold text-sm text-secondary-deep">
+                Finanzas
+              </span>
+            </NeumorphicCard>
+          </Link>
+          <Link href={participantsUrl}>
+            <NeumorphicCard className="p-6 flex flex-col items-center gap-3 text-center hover:shadow-xl transition-all cursor-pointer h-full glass-card border border-secondary/5 group">
+              <div className="w-12 h-12 rounded-2xl bg-primary-extralight/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Users size={24} className="text-primary" />
+              </div>
+              <span className="font-bold text-sm text-secondary-deep">
+                Participantes
+              </span>
             </NeumorphicCard>
           </Link>
         </div>

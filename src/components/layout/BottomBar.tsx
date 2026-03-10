@@ -2,21 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Map as MapIcon,
-  Lightbulb,
-  Users,
-  Wallet,
-} from "lucide-react";
+import { LayoutDashboard, Lightbulb, Users, Wallet, Plane } from "lucide-react";
 
 export const BottomBar = ({ tripId }: { tripId: string }) => {
   const pathname = usePathname();
 
   const MOBILE_NAV = [
-    { name: "Inicio", href: `/trips/${tripId}`, icon: LayoutDashboard },
     { name: "Propuestas", href: `/trips/${tripId}/proposals`, icon: Lightbulb },
-    { name: "Itinerario", href: `/trips/${tripId}/logistics`, icon: MapIcon },
+    { name: "Logística", href: `/trips/${tripId}/logistics`, icon: Plane },
+    { name: "Inicio", href: `/trips/${tripId}`, icon: LayoutDashboard },
     { name: "Finanzas", href: `/trips/${tripId}/finances`, icon: Wallet },
     {
       name: "Participantes",

@@ -23,7 +23,10 @@ export const BudgetProgressBar = ({
   currency,
   onEdit,
 }: BudgetProgressBarProps) => {
-  const percentage = Math.min((currentCost / Math.max(budgetLimit, 1)) * 100, 100);
+  const percentage = Math.min(
+    (currentCost / Math.max(budgetLimit, 1)) * 100,
+    100,
+  );
   const isOverBudget = currentCost > budgetLimit;
   const remaining = budgetLimit - currentCost;
 
@@ -33,24 +36,42 @@ export const BudgetProgressBar = ({
   else if (percentage > 85) progressColor = "bg-amber-500";
 
   return (
-    <div className="bg-surface rounded-tripio p-5 shadow-neumorphic flex flex-col gap-4">
+    <div className="bg-white rounded-tripio p-5 shadow-neumorphic flex flex-col gap-4">
       <div className="flex justify-between items-end">
         <div>
-          <p className="text-sm text-gray-500 font-medium mb-1 tracking-tight">Costo Proyectado</p>
+          <p className="text-sm text-gray-500 font-medium mb-1 tracking-tight">
+            Costo Proyectado
+          </p>
           <div className="flex items-center gap-2">
             <span className="text-3xl font-black text-text-main font-nunito tracking-tighter">
               {formatMoney(currentCost, currency)}
             </span>
-            {isOverBudget && (
-              <AlertCircle className="w-5 h-5 text-red-500" />
-            )}
+            {isOverBudget && <AlertCircle className="w-5 h-5 text-red-500" />}
           </div>
         </div>
         <div className="text-right flex flex-col items-end">
-          <div className="flex items-center gap-1.5 mb-1 cursor-pointer group" onClick={onEdit}>
-            <p className="text-xs text-gray-400 font-medium tracking-tight group-hover:text-primary transition-colors">Presupuesto</p>
+          <div
+            className="flex items-center gap-1.5 mb-1 cursor-pointer group"
+            onClick={onEdit}
+          >
+            <p className="text-xs text-gray-400 font-medium tracking-tight group-hover:text-primary transition-colors">
+              Presupuesto
+            </p>
             {onEdit && (
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover:text-primary transition-colors"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-gray-400 group-hover:text-primary transition-colors"
+              >
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+              </svg>
             )}
           </div>
           <p className="text-sm font-bold text-gray-600">
@@ -72,11 +93,13 @@ export const BudgetProgressBar = ({
         <span className={isOverBudget ? "text-red-500" : "text-gray-500"}>
           {percentage.toFixed(0)}% consumido
         </span>
-        
+
         {isOverBudget ? (
           <div className="flex items-center gap-1 text-red-500">
             <TrendingUp className="w-4 h-4" />
-            <span>Te pasaste por {formatMoney(Math.abs(remaining), currency)}</span>
+            <span>
+              Te pasaste por {formatMoney(Math.abs(remaining), currency)}
+            </span>
           </div>
         ) : (
           <div className="flex items-center gap-1 text-green-600">

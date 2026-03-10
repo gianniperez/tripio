@@ -19,5 +19,7 @@ El workflow `/setup-antigravity` **solo** se ejecuta cuando el usuario lo invoca
 - `/orquestar` - Pipeline completo (clarificar → cuestionar → mapear → delegar → planificar → ejecutar → entregar)
 - `/cuestionar` - Modo socio estratégico (solo analizar, no ejecutar)
 - `/contexto` - Mapa del sistema
+- `/explicar` - Explicar un concepto técnico
+- `/nuevo-proyecto` - Crear un nuevo proyecto
 - `/prepr` - Preparar PR
 - `/setup-antigravity` - Configurar solo para Antigravity (elimina .cursor/)

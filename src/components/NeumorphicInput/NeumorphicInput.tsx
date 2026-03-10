@@ -41,7 +41,7 @@ export const NeumorphicInput = forwardRef<
           ref={ref}
           type={inputType}
           className={cn(
-            "bg-white rounded-tripio w-full px-4 py-3 shadow-neumorphic-inset focus:outline-none focus:ring-2 focus:ring-secondary transition-all",
+            "bg-white rounded-tripio w-full px-4 py-3 shadow-neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary transition-all",
             "placeholder:text-gray-400 text-text-main",
             leftIcon && "pl-11",
             (rightIcon || isPassword) && "pr-11",
@@ -54,7 +54,7 @@ export const NeumorphicInput = forwardRef<
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 text-gray-400 hover:text-secondary transition-colors cursor-pointer"
+            className="absolute right-4 text-gray-400 hover:text-primary transition-colors cursor-pointer"
           >
             {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
           </button>

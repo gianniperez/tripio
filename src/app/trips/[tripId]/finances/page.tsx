@@ -3,23 +3,31 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks";
-import { useTrip, useEvents, useUpdateParticipant } from "@/features/trips/hooks";
+import {
+  useTrip,
+  useEvents,
+  useUpdateParticipant,
+} from "@/features/trips/hooks";
 import { useCosts } from "@/features/finances/hooks/useCosts";
 import { BudgetProgressBar } from "@/features/finances/components/BudgetProgressBar";
 import { SetBudgetCard } from "@/features/finances/components/SetBudgetCard";
 import { ExpenseList } from "@/features/finances/components/ExpenseList";
 import { DailyBudgetCard } from "@/features/finances/components/DailyBudgetCard";
 import { AddExpenseModal } from "@/features/finances/components/AddExpenseModal";
-import { calculateMyCosts, filterMyRelatedCosts } from "@/features/finances/utils/calculateCosts";
+import {
+  calculateMyCosts,
+  filterMyRelatedCosts,
+} from "@/features/finances/utils/calculateCosts";
 import { doc, collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Participant, Proposal } from "@/types/tripio";
 import { Loader2, Plus } from "lucide-react";
+import { NeumorphicButton } from "@/components/NeumorphicButton";
 
 export default function TripFinances() {
   const { tripId } = useParams<{ tripId: string }>();
   const { user } = useAuth();
-  
+
   const { data: trip, isLoading: isLoadingTrip } = useTrip(tripId);
   const { data: events, isLoading: isLoadingEvents } = useEvents(tripId);
   const { data: costs, isLoading: isLoadingCosts } = useCosts(tripId);
@@ -32,21 +40,29 @@ export default function TripFinances() {
 
   useEffect(() => {
     if (!tripId || !user?.uid) return;
-    
+
     let isSubscribed = true;
 
-    const unsubParticipant = onSnapshot(doc(db, "trips", tripId, "participants", user.uid), (docSnap) => {
-      if (docSnap.exists() && isSubscribed) {
-        setParticipant({ id: docSnap.id, ...docSnap.data() } as Participant);
-      }
-    });
+    const unsubParticipant = onSnapshot(
+      doc(db, "trips", tripId, "participants", user.uid),
+      (docSnap) => {
+        if (docSnap.exists() && isSubscribed) {
+          setParticipant({ id: docSnap.id, ...docSnap.data() } as Participant);
+        }
+      },
+    );
 
-    const unsubProposals = onSnapshot(query(collection(db, "trips", tripId, "proposals")), (snapshot) => {
-      if (isSubscribed) {
-        const props = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Proposal));
-        setProposals(props);
-      }
-    });
+    const unsubProposals = onSnapshot(
+      query(collection(db, "trips", tripId, "proposals")),
+      (snapshot) => {
+        if (isSubscribed) {
+          const props = snapshot.docs.map(
+            (d) => ({ id: d.id, ...d.data() }) as Proposal,
+          );
+          setProposals(props);
+        }
+      },
+    );
 
     return () => {
       isSubscribed = false;
@@ -56,7 +72,8 @@ export default function TripFinances() {
   }, [tripId, user?.uid]);
 
   const isReady = participant !== null;
-  const isLoading = isLoadingTrip || isLoadingEvents || isLoadingCosts || !isReady;
+  const isLoading =
+    isLoadingTrip || isLoadingEvents || isLoadingCosts || !isReady;
 
   if (isLoading) {
     return (
@@ -73,12 +90,17 @@ export default function TripFinances() {
     await updateParticipant.mutateAsync({
       tripId,
       participantId: user.uid,
-      data: { budgetLimit: amount }
+      data: { budgetLimit: amount },
     });
   };
 
   const myTotalCosts = calculateMyCosts(costs, events, proposals, user.uid);
-  const myFilteredCosts = filterMyRelatedCosts(costs, events, proposals, user.uid);
+  const myFilteredCosts = filterMyRelatedCosts(
+    costs,
+    events,
+    proposals,
+    user.uid,
+  );
 
   return (
     <div className="space-y-6 pb-24">
@@ -91,30 +113,35 @@ export default function TripFinances() {
             Proyección de tus gastos personales para este viaje.
           </p>
         </div>
-        <button 
+        <NeumorphicButton
           onClick={() => setIsAddExpenseOpen(true)}
-          className="flex items-center gap-1.5 bg-text-main text-white px-3 py-2 rounded-xl text-sm font-bold shadow-neumorphic-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+          variant="terciary"
+          className="py-2"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="text-white w-4 h-4" />
           <span>Añadir</span>
-        </button>
+        </NeumorphicButton>
       </div>
 
       {!participant.budgetLimit || isEditingBudget ? (
-        <SetBudgetCard 
+        <SetBudgetCard
           onSetBudget={(amount) => {
             handleSetBudget(amount);
             setIsEditingBudget(false);
-          }} 
-          currency={trip.currency} 
+          }}
+          currency={trip.currency}
           initialBudget={participant.budgetLimit || undefined}
-          onCancel={participant.budgetLimit ? () => setIsEditingBudget(false) : undefined}
+          onCancel={
+            participant.budgetLimit
+              ? () => setIsEditingBudget(false)
+              : undefined
+          }
         />
       ) : (
-        <BudgetProgressBar 
-          budgetLimit={participant.budgetLimit} 
-          currentCost={myTotalCosts} 
-          currency={trip.currency} 
+        <BudgetProgressBar
+          budgetLimit={participant.budgetLimit}
+          currentCost={myTotalCosts}
+          currency={trip.currency}
           onEdit={() => setIsEditingBudget(true)}
         />
       )}
@@ -130,13 +157,13 @@ export default function TripFinances() {
       )}
 
       <div className="mt-8">
-        <ExpenseList 
+        <ExpenseList
           tripId={tripId}
           currentUserId={user.uid}
-          costs={myFilteredCosts} 
-          events={events} 
-          proposals={proposals} 
-          currency={trip.currency} 
+          costs={myFilteredCosts}
+          events={events}
+          proposals={proposals}
+          currency={trip.currency}
         />
       </div>
 

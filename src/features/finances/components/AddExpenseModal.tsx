@@ -10,9 +10,23 @@ import { EventCategory } from "@/types/tripio";
 import { AlertCircle, Loader2 } from "lucide-react";
 
 const expenseSchema = z.object({
-  description: z.string().min(1, "La descripción es requerida").max(50, "Máximo 50 caracteres"),
-  amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, "El monto debe ser mayor a 0"),
-  category: z.enum(["accommodation", "transport", "food", "activity", "other"] as const),
+  description: z
+    .string()
+    .min(1, "La descripción es requerida")
+    .max(50, "Máximo 50 caracteres"),
+  amount: z
+    .string()
+    .refine(
+      (val) => !isNaN(Number(val)) && Number(val) > 0,
+      "El monto debe ser mayor a 0",
+    ),
+  category: z.enum([
+    "accommodation",
+    "transport",
+    "food",
+    "activity",
+    "other",
+  ] as const),
 });
 
 type ExpenseFormValues = z.infer<typeof expenseSchema>;
@@ -24,9 +38,14 @@ interface AddExpenseModalProps {
   userId: string;
 }
 
-export const AddExpenseModal = ({ isOpen, onClose, tripId, userId }: AddExpenseModalProps) => {
+export const AddExpenseModal = ({
+  isOpen,
+  onClose,
+  tripId,
+  userId,
+}: AddExpenseModalProps) => {
   const createCost = useCreateCost();
-  
+
   const {
     register,
     handleSubmit,
@@ -67,7 +86,6 @@ export const AddExpenseModal = ({ isOpen, onClose, tripId, userId }: AddExpenseM
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Añadir Gasto">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        
         <NeumorphicInput
           label="Descripción"
           placeholder="Ej: Seguro de viaje"
@@ -99,7 +117,19 @@ export const AddExpenseModal = ({ isOpen, onClose, tripId, userId }: AddExpenseM
               <option value="other">Otro</option>
             </select>
             <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+              <svg
+                className="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
             </div>
           </div>
           {errors.category?.message && (

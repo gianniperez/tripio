@@ -45,10 +45,7 @@ export function ParticipantsManager({
           <h3 className="text-lg font-semibold mb-3 text-[--text-color]">
             Invitar nuevo participante
           </h3>
-          <InviteParticipant
-            onInvite={handleInvite}
-            isInviting={isInviting}
-          />
+          <InviteParticipant onInvite={handleInvite} isInviting={isInviting} />
         </NeumorphicCard>
       )}
 

@@ -4,68 +4,74 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Map as MapIcon,
+  Plane,
   Lightbulb,
   Users,
-  LogOut,
   Settings,
   Wallet,
+  ArrowLeft,
 } from "lucide-react";
 import Image from "next/image";
 import { auth } from "@/lib/firebase";
+import { useAuthStore } from "@/features/auth";
 
-export const DesktopSidebar = ({ tripId }: { tripId: string }) => {
+export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
   const pathname = usePathname();
 
+  const { user } = useAuthStore();
+
   const NAV_ITEMS = [
-    { name: "Inicio", href: `/trips/${tripId}`, icon: LayoutDashboard },
-    { name: "Propuestas", href: `/trips/${tripId}/proposals`, icon: Lightbulb },
-    { name: "Itinerario", href: `/trips/${tripId}/logistics`, icon: MapIcon },
-    { name: "Finanzas", href: `/trips/${tripId}/finances`, icon: Wallet },
-    { name: "Participantes", href: `/trips/${tripId}/participants`, icon: Users },
-    { name: "Configuración", href: `/trips/${tripId}/settings`, icon: Settings },
+    { label: "Inicio", path: "", icon: LayoutDashboard },
+    { label: "Propuestas", path: "/proposals", icon: Lightbulb },
+    { label: "Logística", path: "/logistics", icon: Plane },
+    { label: "Finanzas", path: "/finances", icon: Wallet },
+    { label: "Participantes", path: "/participants", icon: Users },
+    { label: "Configuración", path: "/settings", icon: Settings },
   ];
 
+  if (!tripId) return null;
+
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-white border-r border-gray-100 h-screen sticky top-0 shrink-0">
-      <div className="p-6 flex items-center gap-3">
-        <Image src="/isologo/orange.png" alt="Logo" width={32} height={32} />
-        <span className="text-xl font-black text-primary tracking-tight">tripio</span>
+    <aside className="hidden md:flex flex-col w-64 bg-background border-r border-secondary/10 sticky top-16 h-[calc(100vh-64px)] z-30">
+      {/* Navigation Context Header */}
+      <div className="p-6 pb-2">
+        <Link
+          href="/trips"
+          className="flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary transition-colors group"
+        >
+          <ArrowLeft
+            size={16}
+            className="group-hover:-translate-x-1 transition-transform"
+          />
+          <span>Mis viajes</span>
+        </Link>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-2">
+      <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
-          const isActive =
-            item.href === `/trips/${tripId}`
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-          
+          const Icon = item.icon;
+          const href = `/trips/${tripId}${item.path}`;
+          const isActive = pathname === href;
+
           return (
             <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm transition-all ${
+              key={item.path}
+              href={href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
                 isActive
-                  ? "bg-primary/5 text-primary shadow-neumorphic-inset-sm"
-                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                  ? "bg-primary text-white shadow-lg shadow-primary/30"
+                  : "text-secondary hover:bg-secondary/5 hover:text-secondary-dark"
               }`}
             >
-              <item.icon size={20} />
-              <span>{item.name}</span>
+              <Icon
+                size={20}
+                className={isActive ? "text-white" : "text-secondary font-bold"}
+              />
+              {item.label}
             </Link>
           );
         })}
       </nav>
-
-      <div className="p-4 border-t border-gray-50">
-        <button
-          onClick={() => auth.signOut()}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all"
-        >
-          <LogOut size={20} />
-          <span>Cerrar Sesión</span>
-        </button>
-      </div>
     </aside>
   );
 };

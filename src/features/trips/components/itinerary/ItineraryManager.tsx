@@ -12,6 +12,7 @@ import { db } from "@/lib/firebase";
 import { Participant } from "@/types/tripio";
 import { hasPermission } from "@/features/auth/utils/permissions";
 import Link from "next/link";
+import { NeumorphicButton } from "@/components/NeumorphicButton";
 
 interface ItineraryManagerProps {
   tripId: string;
@@ -28,11 +29,14 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
     if (!tripId || !user) return;
     const q = query(
       collection(db, "trips", tripId, "participants"),
-      where("uid", "==", user.uid)
+      where("uid", "==", user.uid),
     );
     return onSnapshot(q, (snapshot) => {
       if (!snapshot.empty) {
-        setParticipant({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as Participant);
+        setParticipant({
+          id: snapshot.docs[0].id,
+          ...snapshot.docs[0].data(),
+        } as Participant);
       }
     });
   }, [tripId, user]);
@@ -45,7 +49,9 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-4">
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        <p className="text-gray-500 text-sm font-medium">Cargando itinerario...</p>
+        <p className="text-gray-500 text-sm font-medium">
+          Cargando itinerario...
+        </p>
       </div>
     );
   }
@@ -57,7 +63,7 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
         <NeumorphicCard className="p-1 flex items-center gap-1 bg-gray-50/50 rounded-2xl">
           <button
             onClick={() => setView("timeline")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
               view === "timeline"
                 ? "bg-white shadow-neumorphic-inset-sm text-primary"
                 : "text-gray-400 hover:text-gray-600"
@@ -68,7 +74,7 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
           </button>
           <button
             onClick={() => setView("calendar")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+            className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
               view === "calendar"
                 ? "bg-white shadow-neumorphic-inset-sm text-primary"
                 : "text-gray-400 hover:text-gray-600"
@@ -90,15 +96,16 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
             <div className="space-y-2">
               <h3 className="font-bold text-text-main">Fechas no definidas</h3>
               <p className="text-xs text-gray-500 max-w-[240px] mx-auto">
-                Para visualizar el itinerario y calendario, el viaje debe tener fechas de inicio y fin confirmadas.
+                Para visualizar el itinerario y calendario, el viaje debe tener
+                fechas de inicio y fin confirmadas.
               </p>
             </div>
             {canEdit ? (
               <Link href={`/trips/${tripId}/settings`}>
-                <button className="mt-2 flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-bold text-sm shadow-neumorphic-sm hover:shadow-neumorphic-inset-sm transition-all">
+                <NeumorphicButton>
                   <Settings size={18} />
                   <span>Configurar fechas</span>
-                </button>
+                </NeumorphicButton>
               </Link>
             ) : (
               <p className="text-[10px] text-gray-400 italic">

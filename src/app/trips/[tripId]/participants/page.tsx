@@ -51,7 +51,7 @@ export default function TripParticipants() {
         trip.name,
         role,
         user.uid,
-        user.displayName || "Un amigo"
+        user.displayName || "Un amigo",
       );
     } catch (error) {
       console.error("Error creating invitation:", error);
