@@ -4,6 +4,7 @@ import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 interface PageHeaderProps {
   title: string;
   description?: string;
+  descriptionIcon?: React.ReactNode;
   actionButton?: {
     icon: React.ReactNode;
     onClick: () => void;
@@ -14,6 +15,7 @@ interface PageHeaderProps {
 export const PageHeader = ({
   title,
   description,
+  descriptionIcon,
   actionButton,
 }: PageHeaderProps) => {
   return (
@@ -22,9 +24,10 @@ export const PageHeader = ({
         <h1 className="text-2xl font-black text-text-main font-nunito">
           {title}
         </h1>
-        {description && (
-          <p className="text-sm text-slate-500 font-inter">{description}</p>
-        )}
+        <div className="flex items-center gap-1 text-sm text-slate-500 font-inter">
+          {descriptionIcon}
+          {description && <p>{description}</p>}
+        </div>
       </div>
       {actionButton && (
         <NeumorphicButton

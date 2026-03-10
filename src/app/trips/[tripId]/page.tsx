@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { useTrip } from "@/features/trips/hooks";
 import {
@@ -12,7 +12,6 @@ import {
   AlertTriangle,
   Loader2,
   Settings,
-  ChevronRight,
   Map as MapIcon,
   Wallet,
   Users,
@@ -22,10 +21,13 @@ import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { SettingsModal } from "@/features/trips/components";
 
 export default function TripHome() {
   const params = useParams<{ tripId: string }>();
   const { data: trip, isLoading } = useTrip(params.tripId);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -56,6 +58,16 @@ export default function TripHome() {
   return (
     <div className="space-y-6">
       {/* Trip Header */}
+      <PageHeader
+        title={trip.name}
+        description={trip.destination ?? ""}
+        descriptionIcon={<MapPin size={14} />}
+        actionButton={{
+          icon: <Settings className="w-6 h-6 text-white" />,
+          onClick: () => setIsSettingsOpen(true),
+          ariaLabel: "Configuración del viaje",
+        }}
+      />
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-black text-text-main tracking-tight font-nunito">
@@ -68,11 +80,13 @@ export default function TripHome() {
             </div>
           )}
         </div>
-        <Link href={`/trips/${params.tripId}/settings`}>
-          <button className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-xl transition-colors">
-            <Settings size={20} />
-          </button>
-        </Link>
+
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-black/5 rounded-xl transition-colors"
+        >
+          <Settings size={20} />
+        </button>
       </div>
 
       {/* Missing Info Alert Section */}
@@ -103,7 +117,7 @@ export default function TripHome() {
                 title="¿Cuándo viajamos?"
                 description="Las fechas del viaje no están definidas."
                 ctaLabel="Sugerir fechas"
-                ctaHref={`/trips/${params.tripId}/settings`}
+                onClick={() => setIsSettingsOpen(true)}
                 variant="secondary"
               />
             )}
@@ -145,18 +159,12 @@ export default function TripHome() {
         </div>
       </div>
 
-      {/* Timeline Placeholder */}
-      {!missingDates && (
-        <div className="space-y-3">
-          <h3 className="font-bold text-sm text-text-main">Timeline</h3>
-          <EmptyState
-            icon={<Calendar size={32} className="text-gray-300" />}
-            title="Actividades"
-            description="Aquí aparecerán tus actividades confirmadas."
-            className="p-6! gap-2! shadow-none"
-          />
-        </div>
-      )}
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        tripId={params.tripId}
+      />
     </div>
   );
 }

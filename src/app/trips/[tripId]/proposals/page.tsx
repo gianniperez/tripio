@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuthStore } from "@/features/auth/stores";
@@ -9,7 +9,6 @@ import {
   useUpdateProposal,
 } from "@/features/proposals/hooks";
 import { ProposalsList, ProposalForm } from "@/features/proposals/components";
-import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Plus, Loader2 } from "lucide-react";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { PageHeader } from "@/components/ui/PageHeader";

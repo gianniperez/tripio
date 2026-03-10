@@ -8,7 +8,7 @@ import {
 } from "../../hooks";
 import { History, CheckCircle2, Clock, LightbulbOff } from "lucide-react";
 import { Proposal } from "../../types";
-import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
+import { FilterTabBar } from "@/components/ui/FilterTabBar";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 interface ProposalsListProps {
@@ -51,12 +51,10 @@ export const ProposalsList = ({
 
   if (!proposals || proposals.length === 0) {
     return (
-      <div className="text-center p-8 text-slate-500 font-inter">
-        <p>No hay propuestas activas.</p>
-        <p className="text-sm mt-2">
-          ¡Sé el primero en proponer una idea para el viaje!
-        </p>
-      </div>
+      <EmptyState
+        title="No hay propuestas activas."
+        description="¡Sé el primero en proponer una idea para el viaje!"
+      />
     );
   }
 

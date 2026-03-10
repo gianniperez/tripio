@@ -22,7 +22,6 @@ import { doc, collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Participant, Proposal } from "@/types/tripio";
 import { Loader2, Plus } from "lucide-react";
-import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function TripFinances() {
@@ -109,7 +108,7 @@ export default function TripFinances() {
         title="Finanzas"
         description="Proyección de tus gastos personales para este viaje."
         actionButton={{
-          icon: <Plus className="text-white w-5 h-5" />,
+          icon: <Plus className="text-white w-6 h-6" />,
           onClick: () => setIsAddExpenseOpen(true),
           ariaLabel: "Añadir gasto",
         }}

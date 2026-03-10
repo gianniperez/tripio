@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useEvents, useTrip } from "../../hooks";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
-import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { Calendar, List, Loader2, AlertCircle, Settings } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
@@ -13,14 +12,18 @@ import { Participant } from "@/types/tripio";
 import { hasPermission } from "@/features/auth/utils/permissions";
 import Link from "next/link";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
+import { FilterTabBar } from "@/components/ui/FilterTabBar";
 import { EmptyState } from "@/components/ui/EmptyState";
 
 interface ItineraryManagerProps {
   tripId: string;
+  onOpenSettings?: () => void;
 }
 
-export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
+export const ItineraryManager = ({
+  tripId,
+  onOpenSettings,
+}: ItineraryManagerProps) => {
   const [view, setView] = useState<"timeline" | "calendar">("timeline");
   const { data: trip, isLoading: isLoadingTrip } = useTrip(tripId);
   const { data: events, isLoading: isLoadingEvents } = useEvents(tripId);
@@ -86,12 +89,10 @@ export const ItineraryManager = ({ tripId }: ItineraryManagerProps) => {
             description="Para visualizar el itinerario y calendario, el viaje debe tener fechas de inicio y fin confirmadas."
             action={
               canEdit ? (
-                <Link href={`/trips/${tripId}/settings`}>
-                  <NeumorphicButton>
-                    <Settings size={18} />
-                    <span>Configurar fechas</span>
-                  </NeumorphicButton>
-                </Link>
+                <NeumorphicButton onClick={onOpenSettings}>
+                  <Settings size={18} />
+                  <span>Configurar fechas</span>
+                </NeumorphicButton>
               ) : (
                 <p className="text-[10px] text-gray-400 italic">
                   Contactá al organizador para definir las fechas.

@@ -2,3 +2,4 @@
 
 export * from "./CreateTripModal";
 export * from "./itinerary";
+export * from "./SettingsModal/SettingsModal";
