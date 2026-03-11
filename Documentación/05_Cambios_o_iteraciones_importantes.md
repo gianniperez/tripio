@@ -71,3 +71,13 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
     - Se actualizó `createTrip.ts` para guardar el `uid` del usuario en el documento del participante al crear un viaje.
     - Se modificó `getTrips.ts` para que la consulta `collectionGroup("participants")` filtre por el campo `uid` en lugar de `__name__`.
   - **Importante:** Esto resuelve el problema donde el usuario creaba un viaje pero este no aparecía en la lista de "Mis Viajes" al recargar.
+
+## 📅 11 de Marzo, 2026
+
+### 📝 Workflows y Automatización
+
+- **[MODIFICADO]** [`.agent/workflows/nuevo-proyecto.md`](file:///c:/Users/Maza/Documents/Programacion%20IA/Proyectos/Tripio/.agent/workflows/nuevo-proyecto.md):
+  - Se eliminó la integración con Taskmaster y el comando `git init` automático.
+  - Se implementó la creación condicional de un documento de "Próximos Pasos" si falta información clave.
+  - Se estableció que el uso de Git sea opcional y quede a discreción del usuario.
+  - Se actualizaron las instrucciones para alinearse con la política de documentación obligatoria del DT.

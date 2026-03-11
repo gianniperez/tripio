@@ -1,28 +1,51 @@
 ---
-description: Inicializar un nuevo proyecto con DT y Taskmaster
+description: Inicializar un nuevo proyecto con DT, Taskmaster y estándar Antigravity
 ---
 
 # Nuevo Proyecto
 
-Este workflow automatiza la creación e inicialización de un nuevo proyecto, instalándole la configuración del Director Técnico (DT) y preparando la base de datos de tareas de Taskmaster.
+## Nuevo Proyecto (DT-Seed Template)
 
-1. **Pedir el nombre del proyecto**: Si el usuario no especificó un nombre en su mensaje inicial, pregúntale cómo quiere llamar a su proyecto.
+Este workflow automatiza la creación de un nuevo proyecto utilizando `DT-Seed` como plantilla base, asegurando que se cumplan los estándares técnicos y la política organizativa de documentación.
 
-2. **Crear carpeta del proyecto**: Utiliza el comando de terminal para crear el directorio en la raíz de la zona de proyectos actual.
+1. **Definición del Proyecto**:
+   - Preguntar el **Nombre del proyecto** y la **Ruta donde se creará**.
+   - Validar que el directorio no exista o esté vacío.
 
-3. **Copiar configuración del DT**:
-   - Copia recursivamente la carpeta `.agent` global hacia el nuevo proyecto.
-   - Copia recursivamente la carpeta `.antigravity` global hacia el nuevo proyecto.
+2. **Creación de Estructura Base**:
+   - Crear el directorio raíz del proyecto.
+   - Copiar las carpetas `.agent/` y `.antigravity/` desde `c:\Users\Maza\Documents\Programacion IA\DT-Seed` a la raíz del nuevo proyecto.
 
-4. **Inicializar Taskmaster**:
-   - Crea una carpeta `.taskmaster/tasks` dentro del nuevo proyecto.
-   - Crea un archivo `tasks.json` con la estructura inicial:
+3. **Aplicación de Política Organizativa (RULE[user_global])**:
+   - Copiar la carpeta `Documentación/` completa desde `DT-Seed`.
 
-   ```json
-   {
-     "tasks": [],
-     "nextId": 1
-   }
-   ```
+4. **Archivos de Soporte**:
+   - Copiar `.gitignore`, `README.md` (plantilla) y la carpeta `docs/` (con `IDE-SETUP.md`) desde `DT-Seed`.
+   - Personalizar el `README.md` con el nombre del nuevo proyecto.
 
-5. **Confirmar creación**: Informa al usuario que su proyecto está listo y que ahora puede entrar a la carpeta para empezar a trabajar con el DT y Taskmaster activos.
+5. **Documento de Próximos Pasos (Condicional)**:
+   - Si el usuario **no proporcionó toda la información necesaria** durante la creación (ej. faltan objetivos claros, fechas o responsables):
+     - Crear un archivo temporal `Proximos_Pasos.md` en la raíz con el siguiente contenido:
+
+       ```markdown
+       # Próximos Pasos - [Nombre del Proyecto]
+
+       Este documento enumera las tareas iniciales necesarias para completar la configuración. **Una vez completadas todas las tareas, elimina este archivo.**
+
+       ## 📋 Documentación Obligatoria (Política DT)
+
+       - [ ] **Objetivos**: Completar `Documentación/Objetivos del proyecto.md`.
+       - [ ] **Alcance**: Definir `Documentación/Alcances y entregables.md`.
+       - [ ] **Cronograma**: Establecer hitos en `Documentación/Cronograma y fechas clave.md`.
+
+       ## 🛠️ Configuración Técnica
+
+       - [ ] **IDE Setup**: Seguir instrucciones en `docs/IDE-SETUP.md`.
+       - [ ] **Git (Opcional)**: Ejecutar `git init` si se planea usar control de versiones.
+       ```
+
+   - Si el usuario **proporcionó toda la información**, NO crear este archivo.
+
+6. **Finalización**:
+   - Confirmar al usuario que el proyecto ha sido inicializado.
+   - Recordar que el uso de Git es opcional y queda a criterio del usuario inicializarlo cuando lo desee.
