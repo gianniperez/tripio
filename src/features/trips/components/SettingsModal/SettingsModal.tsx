@@ -7,10 +7,24 @@ import { createTripSchema } from "@/features/trips/types";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { Timestamp } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  query,
+  where,
+  getDocs,
+  writeBatch,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { useRouter } from "next/navigation";
-import { MapPin, Calendar, Type, Save, Loader2 } from "lucide-react";
+import {
+  Calendar,
+  Type,
+  Save,
+  Loader2,
+  Image as ImageIcon,
+} from "lucide-react";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -33,16 +47,18 @@ export const SettingsModal = ({
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<z.input<typeof createTripSchema>>({
     resolver: zodResolver(createTripSchema),
   });
 
+  const currentCoverImage = watch("coverImage");
+
   useEffect(() => {
     if (trip) {
       reset({
         name: trip.name,
-        destination: trip.destination || "",
         description: trip.description || "",
         startDate: trip.startDate
           ? trip.startDate.toDate().toISOString().split("T")[0]
@@ -51,6 +67,7 @@ export const SettingsModal = ({
           ? trip.endDate.toDate().toISOString().split("T")[0]
           : undefined,
         currency: trip.currency || "USD",
+        coverImage: trip.coverImage || "",
       });
     }
   }, [trip, reset]);
@@ -58,21 +75,86 @@ export const SettingsModal = ({
   const onSubmit = async (data: z.input<typeof createTripSchema>) => {
     try {
       const values = createTripSchema.parse(data);
+      const newStartDate = values.startDate
+        ? Timestamp.fromDate(values.startDate)
+        : null;
+      const newEndDate = values.endDate
+        ? Timestamp.fromDate(values.endDate)
+        : null;
+
       await updateMutation.mutateAsync({
         tripId,
         data: {
           name: values.name,
-          destination: values.destination || null,
           description: values.description || null,
           currency: values.currency,
-          startDate: values.startDate
-            ? Timestamp.fromDate(new Date(values.startDate + "T00:00:00"))
-            : null,
-          endDate: values.endDate
-            ? Timestamp.fromDate(new Date(values.endDate + "T00:00:00"))
-            : null,
+          startDate: newStartDate,
+          endDate: newEndDate,
+          coverImage: values.coverImage || null,
         },
       });
+
+      // Reset confirmed proposals whose dates fall outside the new trip range
+      if (newStartDate || newEndDate) {
+        const proposalsRef = collection(db, "trips", tripId, "proposals");
+        const confirmedQuery = query(
+          proposalsRef,
+          where("status", "==", "confirmed"),
+        );
+        const snap = await getDocs(confirmedQuery);
+        const batch = writeBatch(db);
+        let hasResets = false;
+
+        const tripStart = newStartDate?.toDate();
+        const tripEnd = newEndDate?.toDate();
+
+        for (const proposalDoc of snap.docs) {
+          const p = proposalDoc.data();
+          const pStart = p.startDate?.toDate?.();
+          const pEnd = p.endDate?.toDate?.();
+
+          if (!pStart && !pEnd) continue;
+
+          const isOutOfRange =
+            (tripStart && pStart && pStart < tripStart) ||
+            (tripEnd && pStart && pStart > tripEnd) ||
+            (tripEnd && pEnd && pEnd > tripEnd) ||
+            (tripStart && pEnd && pEnd < tripStart);
+
+          if (isOutOfRange) {
+            // Reset proposal to pending, clear votes
+            batch.update(proposalDoc.ref, {
+              status: "pending",
+              votes: {},
+              optionVotes: {},
+              confirmedAt: null,
+            });
+
+            // Delete linked events
+            const eventsQ = query(
+              collection(db, "trips", tripId, "events"),
+              where("linkedProposalId", "==", proposalDoc.id),
+            );
+            const eventsSnap = await getDocs(eventsQ);
+            eventsSnap.forEach((e) => batch.delete(e.ref));
+
+            // Delete linked costs
+            const costsQ = query(
+              collection(db, "trips", tripId, "costs"),
+              where("linkedProposalId", "==", proposalDoc.id),
+            );
+            const costsSnap = await getDocs(costsQ);
+            costsSnap.forEach((c) => batch.delete(c.ref));
+
+            hasResets = true;
+          }
+        }
+
+        if (hasResets) {
+          await batch.commit();
+        }
+      }
+
       onClose();
     } catch (error) {
       console.error("DEBUG - Update Error:", error);
@@ -104,14 +186,6 @@ export const SettingsModal = ({
                 {...register("name")}
               />
 
-              <NeumorphicInput
-                label="Destino (Opcional)"
-                leftIcon={<MapPin size={18} />}
-                placeholder="¿A dónde van?"
-                error={errors.destination?.message}
-                {...register("destination")}
-              />
-
               <div className="grid grid-cols-2 gap-4">
                 <NeumorphicInput
                   label="Fecha Inicio"
@@ -135,6 +209,31 @@ export const SettingsModal = ({
                   placeholder="USD"
                   {...register("currency")}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-gray-400 ml-1">
+                    Foto de Portada (Enlace web)
+                  </label>
+
+                  {currentCoverImage && (
+                    <div className="w-full h-32 rounded-2xl overflow-hidden mb-2 relative">
+                      <img
+                        src={currentCoverImage}
+                        alt="Portada"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  <NeumorphicInput
+                    placeholder="https://images.unsplash..."
+                    leftIcon={<ImageIcon size={18} />}
+                    error={errors.coverImage?.message}
+                    {...register("coverImage")}
+                  />
+                </div>
               </div>
 
               <div className="flex flex-col gap-1.5">

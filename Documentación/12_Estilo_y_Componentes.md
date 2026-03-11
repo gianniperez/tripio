@@ -58,3 +58,24 @@ Tripio utiliza un **Neumorfismo Suave** para dar volumen sin saturar.
 
 > [!IMPORTANT]
 > **No inventar nuevos estilos.** Si un componente no encaja en estas reglas, debe proponerse un ajuste a esta guía antes de implementarse. La reutilización es prioridad absoluta.
+
+---
+
+## 🛑 Política de Componentización Restrictiva (Anexo)
+
+Para mantener un código limpio, con escala predecible y evitar deuda técnica UI, rige la siguiente política organizativa de estricto cumplimiento:
+
+**1. Prohibición de HTML Crudo para UI Interactiva**
+Queda estrictamente prohibido el uso directo de elementos HTML interactivos básicos (como `<button>`, `<input>`, `<select>`, o contenedores con clases crudas de sombra y bordes) directamente dentro del código funcional o vistas de la aplicación (`src/features` o `src/app`).
+
+**2. Uso de la Suite Neumórfica**
+Toda interacción debe realizarse utilizando los componentes encapsulados de nuestro Design System (ej. `NeumorphicButton`, `NeumorphicInput`, `NeumorphicCard`), ubicados en `src/components/neumorphic`.
+
+**3. Extensibilidad ante Carencias**
+Si un diseño o funcionalidad requiere un comportamiento no contemplado por los componentes del Design System preexistentes:
+
+- **No** se debe abandonar el componente a favor de un elemento HTML con clases ad-hoc.
+- **Se debe** iterar y refactorizar el componente Neumórfico base para permitir su extensión (por ejemplo, asegurando que exponga de manera limpia todas sus _props_ nativas).
+
+**4. Validación en CI**
+Las integraciones continuas y auditorías automáticas marcarán como error sintáctico la presencia de botones, inputs y tarjetas que no deriven de nuestra librería base.

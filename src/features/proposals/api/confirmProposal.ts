@@ -64,8 +64,6 @@ export const confirmProposal = async ({
 
     transaction.set(newEventRef, eventData);
 
-    transaction.set(newEventRef, eventData);
-
     // Logistical Side-Effects: "Conversión Mágica"
     if (proposal.type === "inventory") {
       const inventoryRef = collection(db, "trips", tripId, "inventory");
@@ -115,6 +113,24 @@ export const confirmProposal = async ({
         createdAt: serverTimestamp(),
       };
       transaction.set(newItemRef, accommodationData);
+    }
+
+    // Automatic cost creation when proposal has estimatedCost
+    if (proposal.estimatedCost && proposal.estimatedCost > 0) {
+      const costsRef = collection(db, "trips", tripId, "costs");
+      const newCostRef = doc(costsRef);
+      const costData = {
+        description: proposal.title,
+        amount: proposal.estimatedCost,
+        category: proposal.type,
+        linkedEventId: newEventRef.id,
+        linkedProposalId: proposalId,
+        costType: "total" as const,
+        splitType: "equal" as const,
+        createdBy: userId,
+        createdAt: serverTimestamp(),
+      };
+      transaction.set(newCostRef, costData);
     }
 
     // Link the created event back to the proposal

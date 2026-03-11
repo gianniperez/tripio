@@ -1,5 +1,5 @@
 import React from "react";
-import { Cost, Event, Proposal } from "@/types/tripio";
+import { Cost, Proposal } from "@/types/tripio";
 import {
   Calendar,
   CheckSquare,
@@ -11,12 +11,12 @@ import { useDeleteCost } from "../hooks/useCostMutations";
 import { useState } from "react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListItemCard } from "@/components/ui/ListItemCard";
+import { useRouter } from "next/navigation";
 
 interface ExpenseListProps {
   tripId: string;
   currentUserId: string;
   costs: Cost[];
-  events: Event[];
   proposals: Proposal[];
   currency: string;
 }
@@ -34,12 +34,12 @@ export const ExpenseList = ({
   tripId,
   currentUserId,
   costs,
-  events,
   proposals,
   currency,
 }: ExpenseListProps) => {
   const deleteCost = useDeleteCost();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleDelete = async (costId: string) => {
     try {
@@ -69,19 +69,16 @@ export const ExpenseList = ({
       </h3>
       <div className="bg-white flex flex-col gap-3">
         {costs.map((cost) => {
-          let sourceName = "Actividad Desconocida";
           let sourceIcon = <Calendar className="w-6 h-6 text-primary" />;
           let isProposal = false;
 
           if (cost.linkedEventId) {
-            const event = events.find((e) => e.id === cost.linkedEventId);
-            if (event) sourceName = event.title;
+            // Unused since we don't display event names directly here
           } else if (cost.linkedProposalId) {
             const proposal = proposals.find(
               (p) => p.id === cost.linkedProposalId,
             );
             if (proposal) {
-              sourceName = proposal.title;
               sourceIcon = <MessageSquare />;
               isProposal = true;
             }
@@ -94,6 +91,14 @@ export const ExpenseList = ({
               title={cost.description}
               description={cost.category}
               rightDetail={formatMoney(cost.amount, currency)}
+              onClick={
+                isProposal && cost.linkedProposalId
+                  ? () =>
+                      router.push(
+                        `/trips/${tripId}/proposals?proposalId=${cost.linkedProposalId}`,
+                      )
+                  : undefined
+              }
               actions={
                 !isProposal &&
                 !cost.linkedEventId &&

@@ -3,8 +3,13 @@ import { z } from "zod";
 export const createTripSchema = z
   .object({
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
-    destination: z.string().optional(),
     description: z.string().optional(),
+    coverImage: z
+      .string()
+      .url("Debe ser una URL válida")
+      .optional()
+      .nullable()
+      .or(z.literal("")),
     startDate: z
       .union([z.string(), z.date()])
       .optional()

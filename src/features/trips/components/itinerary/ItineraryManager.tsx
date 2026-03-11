@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useEvents, useTrip } from "../../hooks";
+import { useTrip } from "../../hooks";
+import { useProposals, useUpdateProposal } from "@/features/proposals/hooks";
+import { Proposal, CreateProposalFormValues } from "@/features/proposals/types";
+import { ProposalForm } from "@/features/proposals/components";
+import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
 import { Calendar, List, Loader2, Settings } from "lucide-react";
 import { useAuth } from "@/features/auth/hooks";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Participant } from "@/types/tripio";
+import { Participant, Event } from "@/types/tripio";
 import { hasPermission } from "@/features/auth/utils/permissions";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { FilterTabBar } from "@/components/ui/FilterTabBar";
@@ -25,7 +29,9 @@ export const ItineraryManager = ({
 }: ItineraryManagerProps) => {
   const [view, setView] = useState<"timeline" | "calendar">("timeline");
   const { data: trip, isLoading: isLoadingTrip } = useTrip(tripId);
-  const { data: events, isLoading: isLoadingEvents } = useEvents(tripId);
+  const { data: proposals, isLoading: isLoadingEvents } = useProposals(tripId);
+  const { mutate: updateProposal, isPending: isUpdating } =
+    useUpdateProposal(tripId);
   const { user } = useAuth();
   const [participant, setParticipant] = useState<Participant | null>(null);
 
@@ -48,6 +54,45 @@ export const ItineraryManager = ({
   const isLoading = isLoadingEvents || isLoadingTrip;
   const canEdit = hasPermission(participant, "edit_itinerary");
   const missingDates = !trip?.startDate || !trip?.endDate;
+
+  const [editingItem, setEditingItem] = useState<Proposal | null>(null);
+
+  // Map proposals to Events and separate Backlog
+  const confirmedProposals =
+    proposals?.filter((p: Proposal) => p.status === "confirmed") || [];
+  const timelineItems = confirmedProposals.filter((p: Proposal) => p.startDate);
+  const backlogItems = confirmedProposals.filter((p: Proposal) => !p.startDate);
+
+  const mappedEvents: Event[] = timelineItems.map(
+    (p: Proposal) =>
+      ({
+        id: p.id,
+        title: p.title,
+        description: p.description,
+        date: p.startDate!,
+        startTime: p.startDate,
+        endTime: p.endDate,
+        location: p.location,
+        locationUrl: p.locationUrl,
+        category: p.type,
+        costImpact: p.estimatedCost,
+        rsvp: p.votes || {},
+        linkedProposalId: p.id,
+        createdBy: p.createdBy,
+        createdAt: p.createdAt,
+      }) as Event,
+  );
+
+  const handleUpdateProposal = (data: CreateProposalFormValues) => {
+    if (editingItem) {
+      updateProposal(
+        { ...data, proposalId: editingItem.id },
+        {
+          onSuccess: () => setEditingItem(null),
+        },
+      );
+    }
+  };
 
   if (isLoading) {
     return (
@@ -100,11 +145,62 @@ export const ItineraryManager = ({
             }
           />
         ) : view === "timeline" && trip ? (
-          <TimelineView events={events} trip={trip} />
+          <TimelineView events={mappedEvents} trip={trip} />
         ) : trip ? (
-          <CalendarView events={events} trip={trip} />
+          <CalendarView events={mappedEvents} trip={trip} />
         ) : null}
       </div>
+
+      {backlogItems.length > 0 && (
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <h3 className="font-bold text-slate-700 flex items-center gap-2 mb-4">
+            <Calendar className="w-4 h-4 text-amber-500" />
+            Pendientes de asignar fecha
+          </h3>
+          <div className="space-y-3">
+            {backlogItems.map((item: Proposal) => (
+              <div
+                key={item.id}
+                className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex justify-between items-center"
+              >
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase">
+                    {item.type}
+                  </span>
+                  <p className="font-bold text-sm text-slate-700 leading-tight mt-0.5">
+                    {item.title}
+                  </p>
+                </div>
+                <NeumorphicButton
+                  variant="secondary"
+                  className="px-4 py-2 text-[10px] font-bold shadow-sm whitespace-nowrap ml-2"
+                  onClick={() => setEditingItem(item)}
+                >
+                  Asignar fecha
+                </NeumorphicButton>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Editing Modal for Backlog items */}
+      {editingItem && (
+        <Modal
+          isOpen={true}
+          onClose={() => setEditingItem(null)}
+          title="Asignar Fecha"
+          description="Añade una fecha para que aparezca en el itinerario."
+        >
+          <ProposalForm
+            onSubmit={handleUpdateProposal}
+            isSubmitting={isUpdating}
+            initialData={editingItem}
+            tripId={tripId}
+            trip={trip!}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

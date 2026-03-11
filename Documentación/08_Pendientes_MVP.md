@@ -93,13 +93,13 @@ _Objetivo: Colaboración activa y organización de recursos._
   - [✅] RSVP/Votación y cierre automático de propuestas.
   - [✅] Lógica de "Confirmar Propuesta" → Auto-crear evento en Timeline.
 
-- [ ] **Logística de Transporte:**
-  - [ ] Registro de vehículos y capacidad.
-  - [ ] Asignación de pasajeros (con validación de límite).
+- [✅] **Logística de Transporte:**
+  - [✅] Registro de vehículos y capacidad.
+  - [✅] Asignación de pasajeros (con validación de límite).
 
-- [ ] **Inventario e ítems:**
-  - [ ] Checklist de ítems necesarios.
-  - [ ] Vínculo Ítem → Tarea automática al asignar responsable.
+- [✅] **Inventario e ítems:**
+  - [✅] Checklist de ítems necesarios.
+  - [✅] Vínculo Ítem → Tarea automática al asignar responsable.
 
 ---
 
@@ -113,3 +113,13 @@ _Objetivo: Comunicación y calidad final._
 - [ ] **Branding Final:**
   - [ ] Sistema de diseño (colores y tipografía definitiva).
   - [ ] Logo y Favicon oficial.
+
+---
+
+## 🛠️ Oportunidades de Mejora MVP (Componentización)
+
+_Sección detectada tras la auditoría de Arquitectura e UI del 10/03/2026. Refactors requeridos para evitar deuda técnica antes del lanzamiento V1. Para más detalle técnico sobre el hallazgo, referirse al documento **[Informe de Cierre 2026-03-10](file:///c:/Users/Maza/Documents/Programacion%20IA/Proyectos/Tripio/Documentaci%C3%B3n/Informe_Cierre_2026-03-10.md)**._
+
+- [ ] **Refactor `NeumorphicSelect`:** Abstraer los selectores HTML nativos utilizados en App/Features (6 instancias) para que adopten las sombras y padding del Design System de forma estructurada.
+- [ ] **Refactor `FormGroup`:** Abstraer los layouts de labels y validaciones (27+ instancias) para inyectar iconos de Lucide-React y estandarizar los textos de label/error de los formularios dinámicos.
+- [ ] **Refactor `Badge/Chip`:** Unificar las píldoras de colores crudas ubicadas en tarjetas de participantes y encabezados de propuestas en un componente tipado `<Badge variant="prop" />`.

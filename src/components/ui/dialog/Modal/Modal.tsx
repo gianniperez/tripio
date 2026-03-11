@@ -55,7 +55,7 @@ export function Modal(props: ModalProps) {
         aria-labelledby={title ? "modal-title" : undefined}
         aria-describedby={description ? "modal-description" : undefined}
         className={cn(
-          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden",
+          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]",
           className,
         )}
       >
@@ -94,7 +94,7 @@ export function Modal(props: ModalProps) {
         )}
 
         {/* Content */}
-        <div className="p-6">{children}</div>
+        <div className="p-6 overflow-y-auto select-text">{children}</div>
       </div>
     </div>
   );

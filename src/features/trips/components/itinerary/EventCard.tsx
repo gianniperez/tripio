@@ -4,8 +4,8 @@ import React from "react";
 import { Event } from "@/types/tripio";
 import { format } from "date-fns";
 import { ListItemCard } from "@/components/ui/ListItemCard";
+import { useRouter, useParams } from "next/navigation";
 import {
-  MapPin,
   Clock,
   Bed,
   Car,
@@ -27,10 +27,20 @@ const CATEGORY_ICONS = {
 };
 
 export const EventCard = ({ event }: EventCardProps) => {
+  const router = useRouter();
+  const params = useParams<{ tripId: string }>();
   const categoryConfig =
     CATEGORY_ICONS[event.category as keyof typeof CATEGORY_ICONS] ||
     CATEGORY_ICONS.other;
   const Icon = categoryConfig.icon;
+
+  const handleClick = () => {
+    if (event.linkedProposalId && params.tripId) {
+      router.push(
+        `/trips/${params.tripId}/proposals?proposalId=${event.linkedProposalId}`,
+      );
+    }
+  };
 
   return (
     <ListItemCard
@@ -38,6 +48,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       iconWrapperClassName={`${categoryConfig.bg} rounded-xl`}
       title={event.title}
       description={event.description}
+      onClick={event.linkedProposalId ? handleClick : undefined}
       rightDetail={
         event.startTime ? (
           <div className="flex items-center gap-1 text-[10px] font-bold text-gray-400 shrink-0 bg-transparent px-0 py-0">

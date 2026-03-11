@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
@@ -8,7 +8,7 @@ import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Modal } from "@/components/ui/dialog/Modal";
 import { createTripSchema } from "../../types";
 import { useCreateTrip } from "../../hooks";
-import { MapPin, Type, Calendar } from "lucide-react";
+import { Type, Calendar } from "lucide-react";
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -26,18 +26,19 @@ export const CreateTripModal = ({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
     reset,
   } = useForm<z.input<typeof createTripSchema>>({
     resolver: zodResolver(createTripSchema),
     defaultValues: {
       name: "",
-      destination: "",
       startDate: undefined,
       endDate: undefined,
-      currency: "USD",
     },
   });
+
+  const startDate = useWatch({ control, name: "startDate" });
 
   const onSubmit = (data: z.input<typeof createTripSchema>) => {
     // Transform input to output values according to schema
@@ -64,20 +65,13 @@ export const CreateTripModal = ({
           {...register("name")}
         />
 
-        <NeumorphicInput
-          label="Destino"
-          placeholder="Ej: Bariloche, Argentina (opcional)"
-          leftIcon={<MapPin size={18} />}
-          error={errors.destination?.message}
-          {...register("destination")}
-        />
-
         <div className="grid grid-cols-2 gap-4">
           <NeumorphicInput
             label="Fecha Inicio"
             type="date"
             leftIcon={<Calendar size={18} />}
             error={errors.startDate?.message}
+            min={new Date().toISOString().split("T")[0]}
             {...register("startDate")}
           />
           <NeumorphicInput
@@ -85,6 +79,13 @@ export const CreateTripModal = ({
             type="date"
             leftIcon={<Calendar size={18} />}
             error={errors.endDate?.message}
+            min={
+              startDate
+                ? new Date(startDate as string | number | Date)
+                    .toISOString()
+                    .split("T")[0]
+                : new Date().toISOString().split("T")[0]
+            }
             {...register("endDate")}
           />
         </div>

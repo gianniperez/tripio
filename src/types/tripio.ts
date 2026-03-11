@@ -12,7 +12,8 @@ export type ProposalType =
   | "accommodation"
   | "transport"
   | "activity"
-  | "inventory";
+  | "inventory"
+  | "destination";
 export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
 export type InventoryStatus = "needed" | "assigned" | "confirmed";
 export type TaskStatus = "pending" | "in-progress" | "done";
@@ -39,7 +40,6 @@ export interface User {
 export interface Trip {
   id: string;
   name: string;
-  destination: string | null;
   description: string | null;
   startDate: Timestamp | null;
   endDate: Timestamp | null;
@@ -49,6 +49,20 @@ export interface Trip {
   createdBy: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+}
+
+// --- 8.3.1 Subcolección: segments (Tramos del viaje) ---
+export interface TripSegment {
+  id: string;
+  name: string; // ej. "Estadía en París" o "Viaje en Tren"
+  destination: string | null;
+  startDate: Timestamp | null;
+  endDate: Timestamp | null;
+  accommodationId: string | null; // ID de un alojamiento asociado
+  transportId: string | null; // ID de un transporte asociado
+  order: number; // Para ordenarlos cronológicamente
+  createdBy: string;
+  createdAt: Timestamp;
 }
 
 export interface Participant {

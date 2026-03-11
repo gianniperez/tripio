@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuthStore } from "@/features/auth/stores";
 import {
@@ -27,6 +27,16 @@ export default function TripProposals() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
+  const searchParams = useSearchParams();
+  const defaultType = searchParams.get("type") || undefined;
+
+  // Auto-open the modal when coming from logistics with ?open=true
+  useEffect(() => {
+    if (searchParams.get("open") === "true" && !isModalOpen) {
+      setIsModalOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (isTripLoading || !user) {
     return (
@@ -101,6 +111,9 @@ export default function TripProposals() {
           onSubmit={handleCreateOrUpdate}
           isSubmitting={isCreating || isUpdating}
           initialData={editingProposal || undefined}
+          tripId={params.tripId}
+          trip={trip}
+          defaultType={!editingProposal ? defaultType : undefined}
         />
       </Modal>
 

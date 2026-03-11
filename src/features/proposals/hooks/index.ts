@@ -4,3 +4,4 @@ export * from "./useVoteProposal";
 export * from "./useConfirmProposal";
 export * from "./useUpdateProposal";
 export * from "./useDeleteProposal";
+export * from "./useRejectProposal";

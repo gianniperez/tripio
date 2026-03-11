@@ -41,8 +41,8 @@ export const NeumorphicInput = forwardRef<
           ref={ref}
           type={inputType}
           className={cn(
-            "bg-white rounded-tripio w-full px-4 py-3 shadow-neumorphic-inset focus:outline-none focus:ring-2 focus:ring-primary transition-all",
-            "placeholder:text-gray-400 text-text-main",
+            "bg-white rounded-tripio w-full px-4 py-3 shadow-neumorphic-inset-sm focus:outline-none focus:ring-2 focus:ring-primary transition-all",
+            "placeholder:text-gray-400 text-text-main select-text! cursor-text!",
             leftIcon && "pl-11",
             (rightIcon || isPassword) && "pr-11",
             error && "ring-2 ring-danger",

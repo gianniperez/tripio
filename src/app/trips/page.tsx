@@ -132,7 +132,7 @@ export default function TripsList() {
             </div>
             <div className="space-y-3">
               <h3 className="text-3xl font-black text-secondary-deep tracking-tight font-display">
-                ¿Listo para despegar?
+                ¿Listo para partir?
               </h3>
               <p className="text-secondary max-w-xs mx-auto text-lg font-medium leading-relaxed">
                 Aún no tienes viajes creados. ¡Empieza la aventura hoy mismo!
