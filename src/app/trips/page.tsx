@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Calendar, MapPin, Loader2, HelpCircle } from "lucide-react";
+import { Calendar, Loader2, HelpCircle } from "lucide-react";
+import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { TopBar } from "@/components/layout/TopBar";
 import { useAuth } from "@/features/auth/hooks";
@@ -14,19 +15,10 @@ import { es } from "date-fns/locale";
 import type { Trip } from "@/types/tripio";
 
 function TripCardInfo({ trip }: { trip: Trip }) {
-  const hasDestination = !!trip.destination;
   const hasDates = !!trip.startDate && !!trip.endDate;
 
   return (
     <div className="flex flex-col gap-1 text-gray-200 text-sm font-medium font-inter">
-      <div className="flex items-center gap-1.5">
-        <MapPin className="w-4 h-4 text-primary shrink-0" />
-        {hasDestination ? (
-          <span>{trip.destination}</span>
-        ) : (
-          <span className="italic text-gray-400">Destino por definir</span>
-        )}
-      </div>
       <div className="flex items-center gap-1.5">
         <Calendar className="w-4 h-4 text-primary shrink-0" />
         {hasDates ? (
@@ -44,7 +36,6 @@ function TripCardInfo({ trip }: { trip: Trip }) {
 
 function MissingFieldsBadge({ trip }: { trip: Trip }) {
   const missing: string[] = [];
-  if (!trip.destination) missing.push("Destino");
   if (!trip.startDate) missing.push("Fechas");
 
   if (missing.length === 0) return null;
@@ -69,17 +60,9 @@ export default function TripsList() {
       <TopBar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 space-y-8 pb-24">
-        <div className="flex items-center justify-between">
-          <h1 className="text-4xl font-black text-secondary-deep tracking-tighter drop-shadow-sm font-display">
-            Mis Viajes
-          </h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary text-white shadow-lg shadow-primary/40 hover:shadow-primary/60 hover:-translate-y-1 active:translate-y-0 transition-all cursor-pointer group"
-          >
-            <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform" />
-          </button>
-        </div>
+        <h1 className="text-4xl font-black text-secondary-deep tracking-tighter drop-shadow-sm font-display">
+          Mis Viajes
+        </h1>
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -153,6 +136,14 @@ export default function TripsList() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           userId={user.uid}
+        />
+      )}
+
+      {trips && trips.length > 0 && (
+        <FloatingActionButton
+          onClick={() => setIsModalOpen(true)}
+          isSubPage={false}
+          ariaLabel="Crear nuevo viaje"
         />
       )}
     </div>

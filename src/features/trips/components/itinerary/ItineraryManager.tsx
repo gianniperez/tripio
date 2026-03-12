@@ -61,7 +61,10 @@ export const ItineraryManager = ({
   const confirmedProposals =
     proposals?.filter((p: Proposal) => p.status === "confirmed") || [];
   const timelineItems = confirmedProposals.filter((p: Proposal) => p.startDate);
-  const backlogItems = confirmedProposals.filter((p: Proposal) => !p.startDate);
+  const backlogItems = confirmedProposals.filter(
+    (p: Proposal) =>
+      !p.startDate && p.type !== "inventory",
+  );
 
   const mappedEvents: Event[] = timelineItems.map(
     (p: Proposal) =>
@@ -78,6 +81,7 @@ export const ItineraryManager = ({
         costImpact: p.estimatedCost,
         rsvp: p.votes || {},
         linkedProposalId: p.id,
+        destinationId: null,
         createdBy: p.createdBy,
         createdAt: p.createdAt,
       }) as Event,
@@ -145,7 +149,11 @@ export const ItineraryManager = ({
             }
           />
         ) : view === "timeline" && trip ? (
-          <TimelineView events={mappedEvents} trip={trip} />
+          <TimelineView
+            events={mappedEvents}
+            trip={trip}
+            tripId={tripId}
+          />
         ) : trip ? (
           <CalendarView events={mappedEvents} trip={trip} />
         ) : null}

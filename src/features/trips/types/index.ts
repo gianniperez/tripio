@@ -37,6 +37,20 @@ export const createTripSchema = z
         return isNaN(d.getTime()) ? undefined : d;
       }),
     currency: z.string(),
+    enabledFeatures: z
+      .object({
+        finances: z.boolean(),
+        inventory: z.boolean(),
+        activities: z.boolean(),
+        logistics: z.boolean(),
+      })
+      .optional()
+      .default({
+        finances: true,
+        inventory: true,
+        activities: true,
+        logistics: true,
+      }),
   })
   .refine(
     (data) => {

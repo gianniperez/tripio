@@ -11,10 +11,12 @@ export const confirmProposal = async ({
   tripId,
   proposalId,
   userId,
+  winningOption,
 }: {
   tripId: string;
   proposalId: string;
   userId: string;
+  winningOption?: string;
 }) => {
   const proposalRef = doc(db, "trips", tripId, "proposals", proposalId);
 
@@ -30,46 +32,56 @@ export const confirmProposal = async ({
       return; // Already confirmed
     }
 
+    // Determine final title (use winning option if provided for polls)
+    const finalTitle = winningOption || proposal.title;
+
     // Prepare update data
     const proposalUpdateData: Partial<Proposal> = {
       status: "confirmed",
+      title: finalTitle,
     };
 
-    // If it's a structural proposal, we create an Event in the Timeline.
-    // Events handle 'accommodation', 'transport', 'food', 'activity', 'inventory', 'other'
-    // We treat everything as structural now since they are unified.
-    const eventsRef = collection(db, "trips", tripId, "events");
-    const newEventRef = doc(eventsRef);
+    if (winningOption) {
+      proposalUpdateData.winningOption = winningOption;
+    }
 
-    // Map optionVotes to a flatter structure or just pass them if the event supports them
-    // For MVP, we'll store the results in a 'metadata' or similar field if needed,
-    // but the current 'rsvp' field was boolean. We'll add 'optionVotes' to events too.
-    const eventData = {
-      title: proposal.title,
-      description: proposal.description || null,
-      date: proposal.startDate || serverTimestamp(),
-      startTime: proposal.startDate || null,
-      endTime: proposal.endDate || null,
-      location: proposal.location || null,
-      locationUrl: proposal.locationUrl || null,
-      category: proposal.type,
-      costImpact: proposal.estimatedCost || null,
-      // For backward compatibility keep rsvp, but add optionVotes
-      rsvp: proposal.votes || {},
-      optionVotes: proposal.optionVotes || {},
-      linkedProposalId: proposalId,
-      createdBy: userId,
-      createdAt: serverTimestamp(),
-    };
+    // Only create timeline events for types that are temporal (not inventory)
+    const isTemporalType =
+      proposal.type !== "inventory";
 
-    transaction.set(newEventRef, eventData);
+    let newEventId: string | null = null;
+
+    if (isTemporalType) {
+      const eventsRef = collection(db, "trips", tripId, "events");
+      const newEventRef = doc(eventsRef);
+      newEventId = newEventRef.id;
+
+      const eventData = {
+        title: finalTitle,
+        description: proposal.description || null,
+        date: proposal.startDate || serverTimestamp(),
+        startTime: proposal.startDate || null,
+        endTime: proposal.endDate || null,
+        location: proposal.location || null,
+        locationUrl: proposal.locationUrl || null,
+        category: proposal.type,
+        costImpact: proposal.estimatedCost || null,
+        rsvp: proposal.votes || {},
+        optionVotes: proposal.optionVotes || {},
+        linkedProposalId: proposalId,
+        createdBy: userId,
+        createdAt: serverTimestamp(),
+      };
+
+      transaction.set(newEventRef, eventData);
+    }
 
     // Logistical Side-Effects: "Conversión Mágica"
     if (proposal.type === "inventory") {
       const inventoryRef = collection(db, "trips", tripId, "inventory");
       const newItemRef = doc(inventoryRef);
       const inventoryData = {
-        name: proposal.title,
+        name: finalTitle,
         description: proposal.description || null,
         quantity: proposal.quantity || 1,
         detail: proposal.description || null,
@@ -84,8 +96,8 @@ export const confirmProposal = async ({
       const transportRef = collection(db, "trips", tripId, "transport");
       const newItemRef = doc(transportRef);
       const transportData = {
-        name: proposal.title,
-        type: proposal.transportType || "personal",
+        name: finalTitle,
+        type: proposal.isPersonalTransport ? "personal" : "public",
         capacity: proposal.capacity || 5,
         passengers: [],
         owner: null,
@@ -102,7 +114,7 @@ export const confirmProposal = async ({
       );
       const newItemRef = doc(accommodationRef);
       const accommodationData = {
-        name: proposal.title,
+        name: finalTitle,
         description: proposal.description || null,
         location: proposal.location || null,
         locationUrl: proposal.locationUrl || null,
@@ -120,10 +132,10 @@ export const confirmProposal = async ({
       const costsRef = collection(db, "trips", tripId, "costs");
       const newCostRef = doc(costsRef);
       const costData = {
-        description: proposal.title,
+        description: finalTitle,
         amount: proposal.estimatedCost,
         category: proposal.type,
-        linkedEventId: newEventRef.id,
+        linkedEventId: newEventId,
         linkedProposalId: proposalId,
         costType: "total" as const,
         splitType: "equal" as const,
@@ -133,8 +145,10 @@ export const confirmProposal = async ({
       transaction.set(newCostRef, costData);
     }
 
-    // Link the created event back to the proposal
-    proposalUpdateData.linkedEventId = newEventRef.id;
+    // Link the created event back to the proposal (only if event was created)
+    if (newEventId) {
+      proposalUpdateData.linkedEventId = newEventId;
+    }
 
     transaction.update(proposalRef, proposalUpdateData);
   });

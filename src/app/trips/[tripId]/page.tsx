@@ -3,10 +3,20 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTrip } from "@/features/trips/hooks";
-import { Calendar, AlertTriangle, Loader2, Settings } from "lucide-react";
+import { 
+  Calendar, 
+  AlertTriangle, 
+  Loader2, 
+  Settings,
+  MapPin,
+  Tent,
+  Package,
+  CreditCard
+} from "lucide-react";
 import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
 import { SettingsModal, ItineraryManager } from "@/features/trips/components";
 
 export default function TripHome() {
@@ -61,7 +71,7 @@ export default function TripHome() {
             {missingDates && (
               <InfoCard
                 icon={<Calendar size={20} className="text-white" />}
-                title="¿Cuándo viajamos?"
+                title="¿Cuando viajamos?"
                 description="Las fechas del viaje no están definidas."
                 ctaLabel="Sugerir fechas"
                 onClick={() => setIsSettingsOpen(true)}
@@ -72,8 +82,12 @@ export default function TripHome() {
         </div>
       )}
 
-      {/* Finance Widget */}
-      <FinanceWidget tripId={params.tripId} />
+      {/* Featured Widgets */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-4">
+        {trip.enabledFeatures?.finances !== false && (
+          <FinanceWidget tripId={params.tripId} />
+        )}
+      </div>
 
       {/* Itinerary Manager (Widget) */}
       <div className="pt-4 border-t border-slate-100">

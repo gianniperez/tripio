@@ -1,8 +1,8 @@
 # Documento de Requerimientos del Sistema (DRS) - Proyecto Tripio
 
-> **Versión:** 3.0  
+> **Versión:** 3.1  
 > **Estado:** Draft  
-> **Última actualización:** 4 de Marzo, 2026  
+> **Última actualización:** 11 de Marzo, 2026  
 > **Basado en:** Lineamientos de Antigravity DRS
 
 ---

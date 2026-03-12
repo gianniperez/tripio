@@ -81,3 +81,14 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
   - Se implementó la creación condicional de un documento de "Próximos Pasos" si falta información clave.
   - Se estableció que el uso de Git sea opcional y quede a discreción del usuario.
   - Se actualizaron las instrucciones para alinearse con la política de documentación obligatoria del DT.
+
+## 📅 12 de Marzo, 2026
+
+### 🐛 Corrección de Errores (Validación de Fechas de Alojamiento)
+
+- **[FIX]** **Validación de fechas en `ProposalForm.tsx`:**
+  - Se corrigió el error donde un alojamiento no podía tener la misma fecha de inicio que el viaje.
+  - Se corrigió el solapamiento consecutivo de alojamientos (ej: Alojamiento 1 termina el 10/1, Alojamiento 2 inicia el 10/1).
+  - **Cambios realizados:**
+    - Se implementó un helper `normalizeToMidnight` para evitar el corrimiento de fechas generado por el uso mixto de fechas UTC y fechas locales según el tipo de input de la UI.
+    - Se modificó la validación de solapamiento para comparar mediante `getTime()` absoluto, previniendo falsos positivos de `overlappingAccommodation`.

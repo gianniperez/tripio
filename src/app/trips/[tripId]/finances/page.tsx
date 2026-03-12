@@ -13,7 +13,6 @@ import { BudgetProgressBar } from "@/features/finances/components/BudgetProgress
 import { SetBudgetCard } from "@/features/finances/components/SetBudgetCard";
 import { ExpenseList } from "@/features/finances/components/ExpenseList";
 import { DailyBudgetCard } from "@/features/finances/components/DailyBudgetCard";
-import { AddExpenseModal } from "@/features/finances/components/AddExpenseModal";
 import {
   calculateMyCosts,
   filterMyRelatedCosts,
@@ -21,7 +20,7 @@ import {
 import { doc, collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Participant, Proposal } from "@/types/tripio";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function TripFinances() {
@@ -36,7 +35,6 @@ export default function TripFinances() {
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
-  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
 
   useEffect(() => {
     if (!tripId || !user?.uid) return;
@@ -107,11 +105,6 @@ export default function TripFinances() {
       <PageHeader
         title="Finanzas"
         description="Proyección de tus gastos personales para este viaje."
-        actionButton={{
-          icon: <Plus className="text-white w-6 h-6" />,
-          onClick: () => setIsAddExpenseOpen(true),
-          ariaLabel: "Añadir gasto",
-        }}
       />
 
       {!participant.budgetLimit || isEditingBudget ? (
@@ -152,18 +145,11 @@ export default function TripFinances() {
           tripId={tripId}
           currentUserId={user.uid}
           costs={myFilteredCosts}
-          events={events}
           proposals={proposals}
           currency={trip.currency}
         />
       </div>
 
-      <AddExpenseModal
-        isOpen={isAddExpenseOpen}
-        onClose={() => setIsAddExpenseOpen(false)}
-        tripId={tripId}
-        userId={user.uid}
-      />
     </div>
   );
 }

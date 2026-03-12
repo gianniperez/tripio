@@ -26,10 +26,11 @@ interface ProposalCardProps {
   proposal: Proposal;
   currentUserId: string;
   onVote: (type: VoteType, value: string) => void;
-  onConfirm: () => void;
+  onConfirm: (winningOption?: string) => void;
   onReject: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  onAddStay?: (destinationId: string) => void;
   isAdmin: boolean;
   totalParticipants: number;
   userProfiles: Record<string, string>;
@@ -40,7 +41,6 @@ const typeConfig = {
   transport: { color: "text-emerald-500", label: "Transporte", icon: MapPin },
   activity: { color: "text-purple-500", label: "Actividad", icon: MapPin },
   inventory: { color: "text-amber-500", label: "Item para llevar", icon: Info },
-  destination: { color: "text-rose-500", label: "Destino", icon: MapPin },
   other: { color: "text-slate-500", label: "Otro", icon: Info },
 };
 
@@ -56,7 +56,7 @@ export const ProposalCard = ({
   totalParticipants,
   userProfiles,
 }: ProposalCardProps) => {
-  const config = typeConfig[proposal.type] || typeConfig.other;
+  const config = typeConfig[proposal.type as keyof typeof typeConfig] || typeConfig.other;
   const isConfirmed = proposal.status === "confirmed";
   const isRejected = proposal.status === "rejected";
   const isClosed = isConfirmed || isRejected;
@@ -70,7 +70,7 @@ export const ProposalCard = ({
   const rsvpOptions = [
     {
       value: "si",
-      label: "Sí",
+      label: proposal.requiresVoting ? "Sí" : "Me sumo",
       icon: ThumbsUp,
       color: "text-green-500",
       bg: "bg-green-500/10",
@@ -78,20 +78,24 @@ export const ProposalCard = ({
     },
     {
       value: "no",
-      label: "No",
+      label: proposal.requiresVoting ? "No" : "No me sumo",
       icon: ThumbsDown,
       color: "text-red-500",
       bg: "bg-red-500/10",
       border: "border-red-500",
     },
-    {
-      value: "maybe",
-      label: "No me sumo",
-      icon: UserMinus,
-      color: "text-slate-500",
-      bg: "bg-slate-500/10",
-      border: "border-slate-500",
-    },
+    ...(proposal.requiresVoting
+      ? [
+          {
+            value: "maybe",
+            label: "Tal vez",
+            icon: UserMinus,
+            color: "text-slate-500",
+            bg: "bg-slate-500/10",
+            border: "border-slate-500",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -244,7 +248,7 @@ export const ProposalCard = ({
       </div>
 
       {/* Decision Section */}
-      {proposal.type !== "inventory" &&
+      {(proposal.type !== "inventory" || !proposal.requiresVoting) &&
         (!proposal.responseType ||
         proposal.responseType === "rsvp" ||
         !proposal.options ||
@@ -276,7 +280,7 @@ export const ProposalCard = ({
                 );
 
                 const isOptionDisabled = Boolean(
-                  isConfirmed || (isYesOption && capacityReached && !isActive),
+                  (proposal.requiresVoting && isConfirmed) || (isYesOption && capacityReached && !isActive),
                 );
 
                 return (
@@ -406,7 +410,7 @@ export const ProposalCard = ({
                   </button>
                   <NeumorphicButton
                     variant="primary"
-                    onClick={onConfirm}
+                    onClick={() => onConfirm()}
                     className="text-[10px] py-2 px-6 font-bold uppercase tracking-widest"
                   >
                     Confirmar
@@ -441,6 +445,29 @@ export const ProposalCard = ({
           // For option-based proposals (no RSVP votes), always confirm
           const isOptionBased = optionVoterCount > 0 && totalVotes === 0;
 
+          // Logic to determine winning option for polls
+          const getWinningOption = () => {
+            if (proposal.responseType !== "poll" || !proposal.options) return undefined;
+            
+            let winner = "";
+            let maxVotes = -1;
+            
+            proposal.options.forEach(opt => {
+              const count = proposal.optionVotes?.[opt]?.length || 0;
+              if (count > maxVotes) {
+                maxVotes = count;
+                winner = opt;
+              }
+            });
+            
+            return winner || undefined;
+          };
+
+          const handleConfirmClick = () => {
+            const winner = getWinningOption();
+            onConfirm(winner);
+          };
+
           return (
             <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col items-end gap-2">
               <div className="flex items-center gap-3 text-[10px] text-slate-400">
@@ -461,7 +488,7 @@ export const ProposalCard = ({
               {hasEnoughVotes && (isPositiveMajority || isOptionBased) ? (
                 <NeumorphicButton
                   variant="primary"
-                  onClick={onConfirm}
+                  onClick={handleConfirmClick}
                   className="text-[10px] py-2 px-6 font-bold uppercase tracking-widest"
                 >
                   Confirmar

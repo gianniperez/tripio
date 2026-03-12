@@ -5,8 +5,7 @@ export type ProposalType =
   | "accommodation"
   | "transport"
   | "activity"
-  | "inventory"
-  | "destination";
+  | "inventory";
 
 export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
 
@@ -42,6 +41,10 @@ export interface Proposal {
   linkedEventId: string | null;
   segmentId: string | null;
   responseType: "rsvp" | "poll";
+  requiresVoting: boolean;
+  inventoryCategory?: string | null;
+  isPersonal?: boolean | null;
+  winningOption: string | null;
   createdBy: string;
   createdAt: Timestamp;
 }
@@ -56,7 +59,6 @@ export const createProposalSchema = z
       "transport",
       "activity",
       "inventory",
-      "destination",
     ]),
     location: z.string().optional().nullable(),
     locationUrl: z
@@ -87,7 +89,12 @@ export const createProposalSchema = z
     options: z.array(z.object({ value: z.string() })),
     deadline: z.date().optional().nullable(),
     segmentId: z.string().optional().nullable(),
+    destinationId: z.string().optional().nullable(),
     responseType: z.enum(["rsvp", "poll"]).optional().nullable(),
+    requiresVoting: z.boolean().default(true).optional(),
+    inventoryCategory: z.string().optional().nullable(),
+    isPersonal: z.boolean().optional().nullable(),
+    winningOption: z.string().optional().nullable(),
   })
   .refine(
     (data) => {

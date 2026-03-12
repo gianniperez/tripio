@@ -39,11 +39,16 @@ export const createProposal = async ({
     deadline: data.deadline ? Timestamp.fromDate(data.deadline) : null,
     segmentId: data.segmentId || null,
     responseType: data.responseType || "rsvp",
+    requiresVoting: data.requiresVoting ?? true,
+    inventoryCategory: data.inventoryCategory || null,
+    isPersonal: data.isPersonal ?? null,
   };
+
+  const status: ProposalStatus = data.requiresVoting === false ? "confirmed" : "draft";
 
   await setDoc(proposalRef, {
     ...proposalData,
-    status: "draft" as ProposalStatus,
+    status,
     votes: {},
     optionVotes: data.options && data.options.length > 0 ? {} : null,
     linkedEventId: null,

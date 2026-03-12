@@ -17,8 +17,8 @@ export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
 
   const NAV_ITEMS = [
     { label: "Inicio", path: "", icon: LayoutDashboard },
-    { label: "Propuestas", path: "/proposals", icon: Lightbulb },
     { label: "Logística", path: "/logistics", icon: Plane },
+    { label: "Actividades", path: "/activities", icon: Lightbulb },
     { label: "Finanzas", path: "/finances", icon: Wallet },
     { label: "Participantes", path: "/participants", icon: Users },
     { label: "Configuración", path: "/settings", icon: Settings },

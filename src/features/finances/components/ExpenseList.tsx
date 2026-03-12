@@ -95,7 +95,7 @@ export const ExpenseList = ({
                 isProposal && cost.linkedProposalId
                   ? () =>
                       router.push(
-                        `/trips/${tripId}/proposals?proposalId=${cost.linkedProposalId}`,
+                        `/trips/${tripId}/finances`,
                       )
                   : undefined
               }

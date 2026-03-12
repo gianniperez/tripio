@@ -35,10 +35,21 @@ export const EventCard = ({ event }: EventCardProps) => {
   const Icon = categoryConfig.icon;
 
   const handleClick = () => {
-    if (event.linkedProposalId && params.tripId) {
-      router.push(
-        `/trips/${params.tripId}/proposals?proposalId=${event.linkedProposalId}`,
-      );
+    if (params.tripId) {
+      const category = event.category;
+      let path = "";
+
+      if (category === "accommodation" || category === "transport") {
+        path = `/trips/${params.tripId}/logistics`;
+      } else if (category === "activity" || (category as string) === "food") {
+        path = `/trips/${params.tripId}/activities`;
+      } else if ((category as string) === "inventory") {
+        path = `/trips/${params.tripId}/inventory`;
+      }
+
+      if (path) {
+        router.push(path);
+      }
     }
   };
 

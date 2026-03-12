@@ -49,6 +49,12 @@ export interface Trip {
   createdBy: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
+  enabledFeatures?: {
+    finances: boolean;
+    inventory: boolean;
+    activities: boolean;
+    logistics: boolean;
+  };
 }
 
 // --- 8.3.1 Subcolección: segments (Tramos del viaje) ---
@@ -132,6 +138,9 @@ export interface Proposal {
   optionVotes: Record<string, string[]>; // optionLabel -> userIds
   deadline: Timestamp | null;
   linkedEventId: string | null;
+  requiresVoting: boolean;
+  inventoryCategory?: string | null;
+  isPersonal?: boolean | null;
   createdBy: string;
   createdAt: Timestamp;
 }

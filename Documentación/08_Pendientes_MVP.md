@@ -75,8 +75,8 @@ _Objetivo: Control financiero proyectado según duración del viaje._
 - [✅] **Motor Económico:**
   - [✅] Configuración de Presupuesto Diario Disponible en el viaje.
   - [✅] Configuración de Budget Limit personal.
-  - [✅] CRUD de Gastos Fijos (ABM manual agregado).
-  - [✅] Lógica de cálculo del "Total Cost".
+  - [🚫] ~~CRUD de Gastos Fijos (ABM manual)~~ → _Movido a Post-MVP por solicitud de usuario (11/03/2026)._
+  - [✅] Lógica de cálculo del "Total Cost" (basado en propuestas y eventos).
 
 - [✅] **Alertas de Presupuesto:**
   - [✅] Watcher visual (BudgetProgressBar) de gastos que lanza advertencia sobre si se excede el límite personal.
@@ -123,3 +123,7 @@ _Sección detectada tras la auditoría de Arquitectura e UI del 10/03/2026. Refa
 - [ ] **Refactor `NeumorphicSelect`:** Abstraer los selectores HTML nativos utilizados en App/Features (6 instancias) para que adopten las sombras y padding del Design System de forma estructurada.
 - [ ] **Refactor `FormGroup`:** Abstraer los layouts de labels y validaciones (27+ instancias) para inyectar iconos de Lucide-React y estandarizar los textos de label/error de los formularios dinámicos.
 - [ ] **Refactor `Badge/Chip`:** Unificar las píldoras de colores crudas ubicadas en tarjetas de participantes y encabezados de propuestas en un componente tipado `<Badge variant="prop" />`.
+
+---
+
+

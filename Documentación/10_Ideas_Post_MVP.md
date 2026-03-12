@@ -41,7 +41,7 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 - **Google Maps:** Mejorar la UX conectando la ubicación de las propuestas con la API de Google Maps (Geocoding / Places) para ubicar rápidamente destinos y alojamientos.
 - **Service Workers (Offline Support):** Implementación de lectura cacheada para permitir acceder a los itinerarios y datos vitales del viaje sin conexión a internet.
 - **Notificaciones Push:** Transición del sistema actual de notificaciones por email estructurado a notificaciones push nativas en el dispositivo.
-- Cola de sincronización: Permitir cargar gastos o checks de tareas offline que se sincronicen al recuperar conexión.
+- **Cola de sincronización:** Permitir cargar gastos o checks de tareas offline que se sincronicen al recuperar conexión.
 
 ### 6. Exportación a PDF / Imprimible
 
@@ -76,9 +76,16 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 
 ---
 
+## 🏗️ Refactorings e Ideas Arquitectónicas (11/03/2026)
+
+- [ ] **Módulo de Finanzas (Carga manual):** Rehabilitar la capacidad de sumar gastos directamente desde la pestaña de Finanzas (actualmente restringido a propuestas automáticas).
+- [ ] **Revisión de Arquitectura de Destinos:** Evaluar si tiene sentido dejar el "Destino" simplemente como un campo adicional dentro de la propuesta de "Alojamiento", eliminando la entidad independiente o el tipo de propuesta "Destino".
+
+---
+
 ## 🎮 Gamificación
 
-### 10. Mascota y Logros del Grupo
+### 11. Mascota y Logros del Grupo
 
 - Un guía lúdico (mascota de Tripio) que celebre hitos (ej: "¡Logística completa!", "¡El primer gasto registrado!").
 - Badges por roles (ej: "El Rey del RSVP", "El Conductor Designado", "El Optimizer del Budget").
