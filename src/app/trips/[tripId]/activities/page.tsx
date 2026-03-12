@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Tent, History, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuth } from "@/features/auth/hooks";
 import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
@@ -12,6 +12,7 @@ import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { Proposal } from "@/features/proposals/types";
 import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 
 export default function ActivitiesPage() {
   const { tripId } = useParams<{ tripId: string }>();
@@ -44,34 +45,25 @@ export default function ActivitiesPage() {
     setEditingProposal(undefined);
   };
 
-  return (
-    <div className="space-y-6 pb-24">
-      <PageHeader title="Actividades" />
+  const tabs: Tab[] = [
+    { id: "confirmed", label: "Confirmadas" },
+    { id: "pending", label: "Pendientes" },
+  ];
 
-      {/* Tabs */}
-      <div className="flex gap-2 p-1 bg-gray-100/50 rounded-2xl shadow-neumorphic-inset-sm mx-4">
-        <button
-          onClick={() => setActiveTab("pending")}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${
-            activeTab === "pending"
-              ? "bg-white shadow-neumorphic-sm text-primary"
-              : "text-gray-400"
-          }`}
-        >
-          <Tent size={16} />
-          Pendientes
-        </button>
-        <button
-          onClick={() => setActiveTab("confirmed")}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold transition-all ${
-            activeTab === "confirmed"
-              ? "bg-white shadow-neumorphic-sm text-primary"
-              : "text-gray-400"
-          }`}
-        >
-          <History size={16} />
-          Confirmadas
-        </button>
+  return (
+    <div className="space-y-10 pb-24 px-4 max-w-4xl mx-auto">
+      <PageHeader
+        title="Actividades"
+        description="Explora actividades confirmadas o propuestas por el grupo."
+      />
+
+      {/* Tabs Selector */}
+      <div className="max-w-md mx-auto">
+        <FilterTabBar
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as "pending" | "confirmed")}
+        />
       </div>
 
       {/* Content */}

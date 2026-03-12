@@ -150,9 +150,6 @@ export const ProposalForm = ({
     return localDate.toISOString().slice(0, 16);
   };
 
-  // Deprecated: use toISO instead for clarity. Keeping for compatibility if needed.
-  const toLocalISO = (date: Date | null | undefined, includeTime: boolean = false) => toISO(date, includeTime);
-
   // Calculate the floor date (max of today and trip start)
   const getFloorDate = (includeTime: boolean = false) => {
     const today = new Date();
@@ -193,7 +190,7 @@ export const ProposalForm = ({
       cleanedData.estimatedCost === undefined ||
       cleanedData.estimatedCost === null ||
       (typeof cleanedData.estimatedCost === "number" && isNaN(cleanedData.estimatedCost)) ||
-      (typeof cleanedData.estimatedCost === "string" && (cleanedData.estimatedCost as any).trim() === "")
+      (typeof cleanedData.estimatedCost === "string" && (cleanedData.estimatedCost as string).trim() === "")
     ) {
       cleanedData.estimatedCost = null;
     }
@@ -310,7 +307,7 @@ export const ProposalForm = ({
 
       if (newStart && newEnd) {
         const overlappingAccommodation = allProposals.find((p) => {
-          if (p.type !== "accommodation" || p.status !== "confirmed") return false;
+          if (p.type !== "accommodation" || p.status === "rejected") return false;
           if (initialData && p.id === initialData.id) return false;
           
           const existStartNode = p.startDate?.toDate();

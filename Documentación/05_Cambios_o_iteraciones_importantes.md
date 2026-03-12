@@ -92,3 +92,12 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
   - **Cambios realizados:**
     - Se implementó un helper `normalizeToMidnight` para evitar el corrimiento de fechas generado por el uso mixto de fechas UTC y fechas locales según el tipo de input de la UI.
     - Se modificó la validación de solapamiento para comparar mediante `getTime()` absoluto, previniendo falsos positivos de `overlappingAccommodation`.
+  
+  - **Mejora en validación de solapamiento:**
+    - La validación de solapamiento de fechas ahora también evalúa propuestas de alojamiento en estado "draft" o "voted". Antes solo evaluaba las "confirmed". Solo se ignoran las que tienen estado "rejected".
+  
+### 🎨 UI & UX
+
+- **[MODIFICADO]** **Sincronización de Tabs en Actividades:**
+  - Se homogeneizó la vista de Actividades (`src/app/trips/[tripId]/activities/page.tsx`) reemplazando los botones manuales por el componente reutlizable `FilterTabBar`.
+  - Esto garantiza coherencia visual con la vista de Logística y un mejor mantenimiento a nivel código.
