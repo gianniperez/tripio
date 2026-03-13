@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { 
-  Loader2,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { type ProposalType, type Proposal } from "@/features/proposals/types";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuth } from "@/features/auth/hooks";
-import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks";
+import {
+  useCreateProposal,
+  useUpdateProposal,
+} from "@/features/proposals/hooks";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
-import { ProposalForm } from "@/features/proposals/components/ProposalForm/ProposalForm";
+import { LogisticsForm } from "@/features/proposals/components";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
@@ -20,8 +21,10 @@ export default function LogisticsPage() {
   const { tripId } = useParams<{ tripId: string }>();
   const { user } = useAuth();
   const { data: trip, isLoading: loadingTrip } = useTrip(tripId);
-  const { mutate: createProposal, isPending: isCreating } = useCreateProposal(tripId);
-  const { mutate: updateProposal, isPending: isUpdating } = useUpdateProposal(tripId);
+  const { mutate: createProposal, isPending: isCreating } =
+    useCreateProposal(tripId);
+  const { mutate: updateProposal, isPending: isUpdating } =
+    useUpdateProposal(tripId);
 
   const [activeTab, setActiveTab] = useState("confirmados");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -31,7 +34,10 @@ export default function LogisticsPage() {
   if (loadingTrip || !trip) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-10 h-10 text-primary animate-spin"
+        />
         <p className="text-gray-500 font-medium">Cargando logística...</p>
       </div>
     );
@@ -85,27 +91,34 @@ export default function LogisticsPage() {
           isAdmin={isAdmin}
           onEdit={handleEdit}
           typeFilter={["accommodation", "transport"]}
-          statusFilter={activeTab === "confirmados" ? ["confirmed"] : ["draft", "voted"]}
+          statusFilter={
+            activeTab === "confirmados" ? ["confirmed"] : ["draft", "voted"]
+          }
         />
       </div>
 
-      <Modal 
-        isOpen={isFormOpen} 
-        onClose={handleCloseForm} 
+      <Modal
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
         title={editingProposal ? "Editar" : "Nuevo"}
       >
-        <ProposalForm 
-          tripId={tripId} 
+        <LogisticsForm
+          tripId={tripId}
           trip={trip}
           onClose={handleCloseForm}
-          initialData={editingProposal || ({ type: formType } as Partial<Proposal> as Proposal)}
-          defaultType={formType}
-          allowedTypes={["accommodation", "transport"]}
+          initialData={editingProposal || undefined}
+          defaultType={formType as "accommodation" | "transport"}
           onSubmit={(data) => {
             if (editingProposal) {
-              updateProposal({ proposalId: editingProposal.id, ...data }, { onSuccess: handleCloseForm });
+              updateProposal(
+                { proposalId: editingProposal.id, ...data },
+                { onSuccess: handleCloseForm },
+              );
             } else {
-              createProposal({ ...data, userId: user?.uid || "" }, { onSuccess: handleCloseForm });
+              createProposal(
+                { ...data, userId: user?.uid || "" },
+                { onSuccess: handleCloseForm },
+              );
             }
           }}
           isSubmitting={isCreating || isUpdating}

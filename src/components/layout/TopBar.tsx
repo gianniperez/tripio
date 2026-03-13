@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, LogOut, X, ArrowLeft } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useAuthStore } from "@/features/auth/stores";
 import { auth } from "@/lib/firebase";
 import Image from "next/image";
@@ -14,7 +14,7 @@ export const TopBar = () => {
 
   return (
     <>
-      <header className="h-16 glass-header flex items-center justify-between px-6 sticky top-0 z-40 border-b border-secondary/20">
+      <header className="bg-background  h-16 glass-header flex items-center justify-between px-6 sticky top-0 z-40 border-b-2 border-gray-200">
         {/* Desktop & Mobile Identity */}
         <div className="flex items-center gap-3">
           <Link href="/trips" className="flex items-center gap-3">
@@ -23,7 +23,7 @@ export const TopBar = () => {
               alt="Tripio Logo"
               width={32}
               height={32}
-              className="rounded-md"
+              className="rounded-md w-auto h-auto"
             />
             <h1 className="text-2xl font-black text-primary tracking-tight">
               tripio
@@ -37,7 +37,7 @@ export const TopBar = () => {
                 href="/trips"
                 className="flex items-center gap-1 text-sm font-bold text-secondary"
               >
-                <ArrowLeft size={16} />
+                <Icon name="arrow_back" size={16} />
                 <span>Mis viajes</span>
               </Link>
             )}
@@ -70,7 +70,7 @@ export const TopBar = () => {
             className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
             title="Cerrar Sesión"
           >
-            <LogOut size={18} />
+            <Icon name="logout" size={18} />
           </button>
         </div>
 
@@ -79,7 +79,7 @@ export const TopBar = () => {
           onClick={() => setIsOpen(true)}
           className="md:hidden p-2 text-secondary-deep hover:text-primary rounded-full transition-colors"
         >
-          <Menu className="w-6 h-6" />
+          <Icon name="menu" size={32} />
         </button>
       </header>
 
@@ -93,7 +93,7 @@ export const TopBar = () => {
 
       {/* Mobile Drawer Menu */}
       <div
-        className={`md:hidden fixed inset-y-0 right-0 z-50 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out flex flex-col ${
+        className={`md:hidden fixed inset-y-0 right-0 z-50 w-72 bg-white shadow-2xl rounded-l-xl transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -103,7 +103,7 @@ export const TopBar = () => {
             onClick={() => setIsOpen(false)}
             className="p-2 -mr-2 text-gray-500 hover:bg-gray-50 rounded-full"
           >
-            <X className="w-5 h-5" />
+            <Icon name="close" className="w-5 h-5" />
           </button>
         </div>
 
@@ -125,7 +125,7 @@ export const TopBar = () => {
                   alt="Tripio Logo"
                   width={32}
                   height={32}
-                  className="rounded-md"
+                  className="rounded-md w-auto h-auto"
                 />
               </div>
             )}
@@ -143,7 +143,7 @@ export const TopBar = () => {
               }}
               className="rounded-tripio w-full flex items-center justify-center gap-2 p-4 text-sm font-bold text-white bg-danger hover:bg-red-600 transition-colors shadow-sm"
             >
-              <LogOut className="w-4 h-4" />
+              <Icon name="logout" className="w-4 h-4" />
               Cerrar Sesión
             </button>
           </div>

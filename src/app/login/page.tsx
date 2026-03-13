@@ -16,7 +16,7 @@ export default function LoginPage() {
           alt="Tripio Logo"
           width={80}
           height={80}
-          className="drop-shadow-sm"
+          className="drop-shadow-sm w-auto h-auto"
         />
         <h1 className="text-4xl font-black text-primary tracking-tighter">
           tripio

@@ -3,34 +3,46 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Loader2 } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuth } from "@/features/auth/hooks";
 import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
-import { ProposalForm } from "@/features/proposals/components/ProposalForm/ProposalForm";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { Proposal } from "@/features/proposals/types";
-import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks";
+import {
+  useCreateProposal,
+  useUpdateProposal,
+} from "@/features/proposals/hooks";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
+import { ActivityForm } from "@/features/proposals/components";
 
 export default function ActivitiesPage() {
   const { tripId } = useParams<{ tripId: string }>();
   const { user } = useAuth();
   const { data: trip, isLoading: isLoadingTrip } = useTrip(tripId);
-  const [activeTab, setActiveTab] = useState<"pending" | "confirmed">("pending");
+  const [activeTab, setActiveTab] = useState<"pending" | "confirmed">(
+    "pending",
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProposal, setEditingProposal] = useState<Proposal | undefined>(undefined);
+  const [editingProposal, setEditingProposal] = useState<Proposal | undefined>(
+    undefined,
+  );
 
-  const { mutate: createProposal, isPending: isCreating } = useCreateProposal(tripId);
-  const { mutate: updateProposal, isPending: isUpdating } = useUpdateProposal(tripId);
+  const { mutate: createProposal, isPending: isCreating } =
+    useCreateProposal(tripId);
+  const { mutate: updateProposal, isPending: isUpdating } =
+    useUpdateProposal(tripId);
 
   const isAdmin = trip?.createdBy === user?.uid;
 
   if (isLoadingTrip || !trip) {
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Icon
+          name="progress_activity"
+          className="w-8 h-8 animate-spin text-primary"
+        />
       </div>
     );
   }
@@ -67,37 +79,41 @@ export default function ActivitiesPage() {
       </div>
 
       {/* Content */}
-      <div className="px-4">
-        <ProposalsList 
-          tripId={tripId}
-          currentUserId={user?.uid || ""}
-          isAdmin={isAdmin}
-          onEdit={handleEdit}
-          typeFilter={["activity"]}
-          statusFilter={activeTab === "pending" ? ["draft", "voted"] : ["confirmed"]}
-        />
-      </div>
+      <ProposalsList
+        tripId={tripId}
+        currentUserId={user?.uid || ""}
+        isAdmin={isAdmin}
+        onEdit={handleEdit}
+        typeFilter={["activity"]}
+        statusFilter={
+          activeTab === "pending" ? ["draft", "voted"] : ["confirmed"]
+        }
+      />
 
       <FloatingActionButton onClick={() => setIsFormOpen(true)} />
 
       {/* Creation/Edit Modal */}
-      <Modal 
-        isOpen={isFormOpen} 
-        onClose={handleCloseForm} 
+      <Modal
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
         title={editingProposal ? "Editar Actividad" : "Crear Nueva Actividad"}
       >
-        <ProposalForm 
-          tripId={tripId} 
+        <ActivityForm
+          tripId={tripId}
           trip={trip}
           onClose={handleCloseForm}
           initialData={editingProposal}
-          defaultType="activity"
-          allowedTypes={["activity"]}
           onSubmit={(data) => {
             if (editingProposal) {
-              updateProposal({ proposalId: editingProposal.id, ...data }, { onSuccess: handleCloseForm });
+              updateProposal(
+                { proposalId: editingProposal.id, ...data },
+                { onSuccess: handleCloseForm },
+              );
             } else {
-              createProposal({ ...data, userId: user?.uid || "" }, { onSuccess: handleCloseForm });
+              createProposal(
+                { ...data, userId: user?.uid || "" },
+                { onSuccess: handleCloseForm },
+              );
             }
           }}
           isSubmitting={isCreating || isUpdating}

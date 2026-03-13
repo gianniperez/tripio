@@ -1,6 +1,6 @@
 import React from "react";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { AlertCircle } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -21,8 +21,15 @@ export const EmptyState = ({
     <NeumorphicCard
       className={`p-8 flex flex-col items-center gap-4 text-center ${className}`}
     >
-      <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center shadow-neumorphic-inset-sm">
-        {icon || <AlertCircle size={32} className="text-amber-500" />}
+      <div className="rounded-tripio flex items-center justify-center">
+        {icon || (
+          <Icon
+            name="info"
+            fill={true}
+            size={48}
+            className="text-primary-extralight"
+          />
+        )}
       </div>
       <div className="space-y-2">
         <h3 className="font-bold text-text-main">{title}</h3>

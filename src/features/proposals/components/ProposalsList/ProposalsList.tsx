@@ -9,13 +9,8 @@ import {
 import { useParticipants } from "@/features/participants/hooks";
 import { Proposal } from "@/features/proposals/types";
 import { ProposalCard } from "../ProposalCard/ProposalCard";
-import {
-  Loader2,
-  Bed,
-  Utensils,
-  Plane,
-  MoreVertical,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface ProposalsListProps {
   tripId: string;
@@ -46,10 +41,12 @@ export const ProposalsList = ({
 
   // Group participants for the card
   const userProfiles = (participants || []).reduce(
-    (acc, p) => ({ 
-      ...acc, 
-      [p.uid]: (p as { displayName?: string; email?: string }).displayName || 
-               (p as { displayName?: string; email?: string }).email || "Usuario" 
+    (acc, p) => ({
+      ...acc,
+      [p.uid]:
+        (p as { displayName?: string; email?: string }).displayName ||
+        (p as { displayName?: string; email?: string }).email ||
+        "Usuario",
     }),
     {} as Record<string, string>,
   );
@@ -57,7 +54,10 @@ export const ProposalsList = ({
   if (isLoading) {
     return (
       <div className="flex justify-center p-8">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-8 h-8 text-primary animate-spin"
+        />
       </div>
     );
   }
@@ -78,19 +78,22 @@ export const ProposalsList = ({
 
   if (!filteredProposals || filteredProposals.length === 0) {
     return (
-      <div className="text-center p-12 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-        <p className="text-slate-400 font-medium">No hay propuestas todavía.</p>
-        <p className="text-slate-400 text-sm mt-1">¡Sé el primero en proponer algo!</p>
-      </div>
+      <EmptyState
+        title="No hay propuestas todavía."
+        description="¡Sé el primero en proponer algo!"
+      />
     );
   }
 
   // Grouping Logic (Simplified)
-  const groupedByType = filteredProposals.reduce((acc, p) => {
-    if (!acc[p.type]) acc[p.type] = [];
-    acc[p.type].push(p);
-    return acc;
-  }, {} as Record<string, Proposal[]>);
+  const groupedByType = filteredProposals.reduce(
+    (acc, p) => {
+      if (!acc[p.type]) acc[p.type] = [];
+      acc[p.type].push(p);
+      return acc;
+    },
+    {} as Record<string, Proposal[]>,
+  );
 
   const sortedTypes = Object.keys(groupedByType).sort(
     (a, b) => TYPE_ORDER.indexOf(a) - TYPE_ORDER.indexOf(b),
@@ -108,17 +111,24 @@ export const ProposalsList = ({
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "accommodation": return <Bed className="w-5 h-5" />;
-      case "activity": return <Utensils className="w-5 h-5" />;
-      case "transport": return <Plane className="w-5 h-5" />;
-      default: return <MoreVertical className="w-5 h-5" />;
+      case "accommodation":
+        return <Icon name="bed" className="w-5 h-5" />;
+      case "activity":
+        return <Icon name="restaurant" className="w-5 h-5" />;
+      case "transport":
+        return <Icon name="travel" className="w-5 h-5" />;
+      default:
+        return <Icon name="more_vert" className="w-5 h-5" />;
     }
   };
 
   return (
     <div className="space-y-10">
       {sortedTypes.map((type) => (
-        <section key={type} className="animate-in slide-in-from-bottom-4 duration-500">
+        <section
+          key={type}
+          className="animate-in slide-in-from-bottom-4 duration-500"
+        >
           <div className="flex items-center gap-3 mb-5 ml-2">
             <div className="p-2 bg-white rounded-xl shadow-neumorphic-sm text-primary">
               {getIcon(type)}
@@ -135,13 +145,22 @@ export const ProposalsList = ({
                 <ProposalCard
                   proposal={proposal}
                   currentUserId={currentUserId}
-                  onVote={(voteType, voteValue) => 
-                    vote({ proposalId: proposal.id, voteType, voteValue, userId: currentUserId })
+                  onVote={(voteType, voteValue) =>
+                    vote({
+                      proposalId: proposal.id,
+                      voteType,
+                      voteValue,
+                      userId: currentUserId,
+                    })
                   }
-                  onConfirm={(winningOption) => 
-                    confirm({ proposalId: proposal.id, userId: currentUserId, winningOption })
+                  onConfirm={(winningOption) =>
+                    confirm({
+                      proposalId: proposal.id,
+                      userId: currentUserId,
+                      winningOption,
+                    })
                   }
-                  onReject={() => {}} 
+                  onReject={() => {}}
                   onEdit={() => onEdit(proposal)}
                   onDelete={() => deleteProposal(proposal.id)}
                   isAdmin={isAdmin}

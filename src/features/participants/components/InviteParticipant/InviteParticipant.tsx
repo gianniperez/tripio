@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { InviteParticipantProps } from "./InviteParticipant.types";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { Link as LinkIcon, Copy, Check, Loader2 } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { TripRole } from "@/types/tripio";
 
 export function InviteParticipant({
@@ -55,9 +55,9 @@ export function InviteParticipant({
           className="w-full sm:w-auto px-8"
         >
           {isInviting ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            <Icon name="progress_activity" className="w-4 h-4 mr-2 animate-spin" />
           ) : (
-            <LinkIcon className="w-4 h-4 mr-2" />
+            <Icon name="link" className="w-4 h-4 mr-2" />
           )}
           {isInviting ? "Generando..." : "Generar Link de Invitación"}
         </NeumorphicButton>
@@ -73,9 +73,9 @@ export function InviteParticipant({
             className="px-4 py-2 text-xs"
           >
             {copied ? (
-              <Check className="w-3 h-3 text-green-500 mr-1" />
+              <Icon name="check" className="w-3 h-3 text-green-500 mr-1" />
             ) : (
-              <Copy className="w-3 h-3 mr-1" />
+              <Icon name="content_copy" className="w-3 h-3 mr-1" />
             )}
             {copied ? "Copiado" : "Copiar"}
           </NeumorphicButton>

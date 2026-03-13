@@ -1,7 +1,7 @@
 import React from "react";
 import { Timestamp } from "firebase/firestore";
 import { differenceInDays } from "date-fns";
-import { CalendarDays, Wallet } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 
 interface DailyBudgetCardProps {
@@ -32,7 +32,7 @@ export const DailyBudgetCard = ({
     return (
       <NeumorphicCard className="p-4 flex items-center gap-3 w-full">
         <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0 shadow-neumorphic-inset">
-          <CalendarDays className="w-5 h-5 text-gray-400" />
+          <Icon name="calendar_month" className="w-5 h-5 text-gray-400" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-gray-700">Presupuesto Diario</p>
@@ -54,7 +54,7 @@ export const DailyBudgetCard = ({
   return (
     <NeumorphicCard className="p-4 flex items-center gap-4 w-full">
       <div className="w-12 h-12 rounded-xl bg-secondary-light flex items-center justify-center shrink-0 shadow-neumorphic-inset">
-        <Wallet className="w-6 h-6 text-secondary" />
+        <Icon name="payments" className="w-6 h-6 text-secondary" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs text-gray-500 font-bold mb-0.5">

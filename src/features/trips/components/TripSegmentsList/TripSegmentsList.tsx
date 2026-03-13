@@ -1,9 +1,9 @@
 import { useTripSegments, useCreateTripSegment } from "../../hooks";
-import { Loader2, Plus, MapPin, CalendarDays } from "lucide-react";
 import { useState } from "react";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { TripSegmentForm } from "../TripSegmentForm";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Icon } from "@/components/ui/Icon";
 
 export const TripSegmentsList = ({ tripId }: { tripId: string }) => {
   const { user } = useAuth();
@@ -14,7 +14,10 @@ export const TripSegmentsList = ({ tripId }: { tripId: string }) => {
   if (isLoading) {
     return (
       <div className="flex justify-center p-6">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        <Icon
+          name="progress_activity"
+          className="w-6 h-6 animate-spin text-primary"
+        />
       </div>
     );
   }
@@ -23,13 +26,13 @@ export const TripSegmentsList = ({ tripId }: { tripId: string }) => {
     <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-          <MapPin className="text-primary w-5 h-5" /> Tramos del Viaje
+          <Icon name="map" className="text-primary w-5 h-5" /> Tramos del Viaje
         </h3>
         <button
           onClick={() => setIsAdding(!isAdding)}
           className="p-2 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors shadow-soft"
         >
-          <Plus className="w-5 h-5" />
+          <Icon name="add" className="w-5 h-5" />
         </button>
       </div>
 
@@ -76,12 +79,13 @@ export const TripSegmentsList = ({ tripId }: { tripId: string }) => {
               <h4 className="font-bold text-slate-800">{segment.name}</h4>
               {segment.destination && (
                 <p className="text-xs text-slate-500 flex items-center mt-1">
-                  <MapPin className="w-3 h-3 mr-1" /> {segment.destination}
+                  <Icon name="map" className="w-3 h-3 mr-1" />{" "}
+                  {segment.destination}
                 </p>
               )}
               {(segment.startDate || segment.endDate) && (
                 <p className="text-xs text-primary font-medium flex items-center mt-2 bg-primary/5 p-1.5 rounded-lg w-fit">
-                  <CalendarDays className="w-3 h-3 mr-1" />
+                  <Icon name="calendar_month" className="w-3 h-3 mr-1" />
                   {segment.startDate
                     ? segment.startDate.toDate().toLocaleDateString()
                     : "??"}{" "}

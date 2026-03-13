@@ -10,7 +10,7 @@ import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { signInWithGoogle, loginWithEmail } from "../../api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Mail } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -68,7 +68,8 @@ export function LoginForm() {
           placeholder="tu@email.com"
           {...register("email")}
           error={errors.email?.message}
-          rightIcon={<Mail size={20} />}
+          icon={<Icon name="mail" size={20} />}
+          iconPosition="right"
         />
         <NeumorphicInput
           label="Contraseña"

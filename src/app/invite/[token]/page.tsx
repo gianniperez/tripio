@@ -7,13 +7,7 @@ import { getInvitation, acceptInvitation } from "@/features/participants/api";
 import { Invitation } from "@/types/tripio";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import {
-  MapPin,
-  UserPlus,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import Link from "next/link";
 
 export default function InvitationPage() {
@@ -73,7 +67,10 @@ export default function InvitationPage() {
   if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-        <Loader2 className="w-10 h-10 text-[--primary-color] animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-10 h-10 text-[--primary-color] animate-spin"
+        />
       </div>
     );
   }
@@ -83,7 +80,7 @@ export default function InvitationPage() {
       <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
         <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
           <div className="flex justify-center">
-            <AlertCircle className="w-16 h-16 text-red-500" />
+            <Icon name="error" className="w-16 h-16 text-red-500" />
           </div>
           <h1 className="text-2xl font-bold text-[--text-color]">
             ¡Ups! Algo salió mal
@@ -104,7 +101,10 @@ export default function InvitationPage() {
       <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
         <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
           <div className="flex justify-center">
-            <CheckCircle2 className="w-16 h-16 text-green-500 animate-bounce" />
+            <Icon
+              name="check_circle"
+              className="w-16 h-16 text-green-500 animate-bounce"
+            />
           </div>
           <h1 className="text-2xl font-bold text-[--text-color]">
             ¡Ya eres parte del equipo!
@@ -121,7 +121,10 @@ export default function InvitationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
         <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
-          <UserPlus className="w-16 h-16 text-[--primary-color] mx-auto" />
+          <Icon
+            name="person_add"
+            className="w-16 h-16 text-[--primary-color] mx-auto"
+          />
           <h1 className="text-2xl font-bold text-[--text-color]">
             Invitación a viajar
           </h1>
@@ -147,7 +150,7 @@ export default function InvitationPage() {
       <NeumorphicCard className="max-w-md w-full p-8 space-y-8">
         <div className="text-center space-y-2">
           <div className="w-20 h-20 bg-[--primary-color] rounded-3xl rotate-12 mx-auto flex items-center justify-center shadow-lg mb-6">
-            <MapPin className="w-10 h-10 text-white -rotate-12" />
+            <Icon name="map" className="w-10 h-10 text-white -rotate-12" />
           </div>
           <h1 className="text-3xl font-bold text-[--text-color]">
             ¡Te invitaron!
@@ -179,9 +182,12 @@ export default function InvitationPage() {
             disabled={joining}
           >
             {joining ? (
-              <Loader2 className="w-6 h-6 animate-spin mr-2" />
+              <Icon
+                name="progress_activity"
+                className="w-6 h-6 animate-spin mr-2"
+              />
             ) : (
-              <UserPlus className="w-6 h-6 mr-2" />
+              <Icon name="person_add" className="w-6 h-6 mr-2" />
             )}
             {joining ? "Uniéndome..." : "Aceptar Invitación"}
           </NeumorphicButton>

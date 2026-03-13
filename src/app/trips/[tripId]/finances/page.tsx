@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/features/auth/hooks";
 import {
@@ -20,8 +20,8 @@ import {
 import { doc, collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Participant, Proposal } from "@/types/tripio";
-import { Loader2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { Icon } from "@/components/ui/Icon";
 
 export default function TripFinances() {
   const { tripId } = useParams<{ tripId: string }>();
@@ -76,7 +76,10 @@ export default function TripFinances() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-10 h-10 text-primary animate-spin"
+        />
         <p className="text-gray-500 font-medium">Cargando finanzas...</p>
       </div>
     );
@@ -149,7 +152,6 @@ export default function TripFinances() {
           currency={trip.currency}
         />
       </div>
-
     </div>
   );
 }

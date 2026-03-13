@@ -1,5 +1,21 @@
-export interface NeumorphicInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+import { InputHTMLAttributes, ReactNode } from "react";
+
+export interface InputOption {
+  value: string | number;
+  label: string;
+}
+
+export interface NeumorphicInputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement | HTMLSelectElement>,
+  "type"
+> {
   label?: string;
   error?: string;
-  rightIcon?: React.ReactNode;
+  icon?: ReactNode;
+  iconPosition?: "left" | "right";
+  type?: InputHTMLAttributes<HTMLInputElement>["type"] | "select";
+  options?: InputOption[];
+  containerClassName?: string;
+  labelRightContent?: ReactNode;
+  helperText?: string;
 }

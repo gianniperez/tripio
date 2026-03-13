@@ -36,7 +36,7 @@ export const createTripSchema = z
         const d = new Date(dateStr);
         return isNaN(d.getTime()) ? undefined : d;
       }),
-    currency: z.string(),
+    currency: z.string().min(1, "Debes seleccionar una moneda"),
     enabledFeatures: z
       .object({
         finances: z.boolean(),

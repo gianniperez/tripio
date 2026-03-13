@@ -7,7 +7,7 @@ import {
 } from "../../../trips/types/segment";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
-import { MapPin, Calendar, Type } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface TripSegmentFormProps {
   onSubmit: (data: TripSegmentFormValues) => void;
@@ -70,7 +70,8 @@ export const TripSegmentForm = ({
       >
         <div>
           <label className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-1">
-            <Type className="w-3 h-3 text-primary/70" /> Nombre del Tramo
+            <Icon name="label" className="w-3 h-3 text-primary/70" /> Nombre del
+            Tramo
           </label>
           <NeumorphicInput
             {...register("name")}
@@ -81,7 +82,8 @@ export const TripSegmentForm = ({
 
         <div>
           <label className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-primary/70" /> Destino (Opcional)
+            <Icon name="map" className="w-3 h-3 text-primary/70" /> Destino
+            (Opcional)
           </label>
           <NeumorphicInput
             {...register("destination")}
@@ -93,7 +95,7 @@ export const TripSegmentForm = ({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> Inicio
+              <Icon name="calendar_month" className="w-3 h-3" /> Inicio
             </label>
             <input
               type="date"
@@ -104,7 +106,7 @@ export const TripSegmentForm = ({
           </div>
           <div>
             <label className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-1">
-              <Calendar className="w-3 h-3" /> Fin
+              <Icon name="calendar_month" className="w-3 h-3" /> Fin
             </label>
             <input
               type="date"

@@ -5,25 +5,18 @@ import { Event } from "@/types/tripio";
 import { format } from "date-fns";
 import { ListItemCard } from "@/components/ui/ListItemCard";
 import { useRouter, useParams } from "next/navigation";
-import {
-  Clock,
-  Bed,
-  Car,
-  Utensils,
-  Camera,
-  MoreHorizontal,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface EventCardProps {
   event: Event;
 }
 
 const CATEGORY_ICONS = {
-  accommodation: { icon: Bed, color: "text-blue-500", bg: "bg-blue-50" },
-  transport: { icon: Car, color: "text-purple-500", bg: "bg-purple-50" },
-  food: { icon: Utensils, color: "text-orange-500", bg: "bg-orange-50" },
-  activity: { icon: Camera, color: "text-green-500", bg: "bg-green-50" },
-  other: { icon: MoreHorizontal, color: "text-gray-500", bg: "bg-gray-50" },
+  accommodation: { icon: "bed", color: "text-blue-500", bg: "bg-blue-50" },
+  transport: { icon: "car_repair", color: "text-purple-500", bg: "bg-purple-50" },
+  food: { icon: "restaurant", color: "text-orange-500", bg: "bg-orange-50" },
+  activity: { icon: "photo_camera", color: "text-green-500", bg: "bg-green-50" },
+  other: { icon: "more_horiz", color: "text-gray-500", bg: "bg-gray-50" },
 };
 
 export const EventCard = ({ event }: EventCardProps) => {
@@ -32,7 +25,7 @@ export const EventCard = ({ event }: EventCardProps) => {
   const categoryConfig =
     CATEGORY_ICONS[event.category as keyof typeof CATEGORY_ICONS] ||
     CATEGORY_ICONS.other;
-  const Icon = categoryConfig.icon;
+  const iconName = categoryConfig.icon;
 
   const handleClick = () => {
     if (params.tripId) {
@@ -55,7 +48,7 @@ export const EventCard = ({ event }: EventCardProps) => {
 
   return (
     <ListItemCard
-      icon={<Icon size={20} className={categoryConfig.color} />}
+      icon={<Icon name={iconName} size={20} className={categoryConfig.color} />}
       iconWrapperClassName={`${categoryConfig.bg} rounded-xl`}
       title={event.title}
       description={event.description}
@@ -63,7 +56,7 @@ export const EventCard = ({ event }: EventCardProps) => {
       rightDetail={
         event.startTime ? (
           <div className="flex items-center gap-1 text-[10px] font-bold text-gray-400 shrink-0 bg-transparent px-0 py-0">
-            <Clock size={10} />
+            <Icon name="schedule" size={10} />
             <span>{format(event.startTime.toDate(), "HH:mm")}</span>
           </div>
         ) : undefined

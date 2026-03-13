@@ -9,14 +9,14 @@ function cn(...inputs: ClassValue[]) {
 interface NeumorphicCardProps {
   children: ReactNode;
   className?: string;
-  variant?: "raised" | "sm";
+  variant?: "cream" | "gray";
   onClick?: () => void;
 }
 
 export const NeumorphicCard = ({
   children,
   className,
-  variant = "raised",
+  variant = "cream",
   onClick,
 }: NeumorphicCardProps) => {
   return (
@@ -24,7 +24,7 @@ export const NeumorphicCard = ({
       onClick={onClick}
       className={cn(
         "bg-white rounded-tripio p-6",
-        variant === "raised" ? "shadow-neumorphic" : "shadow-neumorphic-sm",
+        variant === "cream" ? "shadow-cream" : "shadow-gray",
         className,
       )}
     >

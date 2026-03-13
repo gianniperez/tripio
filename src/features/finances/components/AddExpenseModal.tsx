@@ -7,7 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateCost } from "../hooks/useCostMutations";
 import { EventCategory } from "@/types/tripio";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 const expenseSchema = z.object({
   description: z
@@ -134,7 +134,7 @@ export const AddExpenseModal = ({
           </div>
           {errors.category?.message && (
             <p className="text-xs text-red-500 font-medium ml-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
+              <Icon name="warning" className="w-3 h-3" />
               {errors.category.message}
             </p>
           )}
@@ -155,7 +155,7 @@ export const AddExpenseModal = ({
             className="flex-1 flex justify-center items-center gap-2"
             disabled={isSubmitting}
           >
-            {isSubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {isSubmitting && <Icon name="progress_activity" className="w-4 h-4 animate-spin" />}
             {isSubmitting ? "Guardando..." : "Guardar"}
           </NeumorphicButton>
         </div>

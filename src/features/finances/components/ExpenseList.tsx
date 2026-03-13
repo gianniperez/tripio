@@ -1,12 +1,6 @@
 import React from "react";
 import { Cost, Proposal } from "@/types/tripio";
-import {
-  Calendar,
-  CheckSquare,
-  MessageSquare,
-  Trash2,
-  Loader2,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useDeleteCost } from "../hooks/useCostMutations";
 import { useState } from "react";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -57,7 +51,7 @@ export const ExpenseList = ({
       <EmptyState
         title="No tienes gastos proyectados"
         description="Los gastos asociados a tus actividades confirmadas aparecerán aquí."
-        icon={<CheckSquare className="w-6 h-6 text-amber-500" />}
+        icon={<Icon name="check_box" className="w-6 h-6 text-amber-500" />}
       />
     );
   }
@@ -69,7 +63,7 @@ export const ExpenseList = ({
       </h3>
       <div className="bg-white flex flex-col gap-3">
         {costs.map((cost) => {
-          let sourceIcon = <Calendar className="w-6 h-6 text-primary" />;
+          let sourceIcon = <Icon name="calendar_month" className="w-6 h-6 text-primary" />;
           let isProposal = false;
 
           if (cost.linkedEventId) {
@@ -79,7 +73,7 @@ export const ExpenseList = ({
               (p) => p.id === cost.linkedProposalId,
             );
             if (proposal) {
-              sourceIcon = <MessageSquare />;
+              sourceIcon = <Icon name="forum" />;
               isProposal = true;
             }
           }
@@ -109,9 +103,9 @@ export const ExpenseList = ({
                     className="cursor-pointer p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                   >
                     {deletingId === cost.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Icon name="progress_activity" className="w-4 h-4 animate-spin" />
                     ) : (
-                      <Trash2 className="w-4 h-4" />
+                      <Icon name="delete" className="w-4 h-4" />
                     )}
                   </button>
                 )

@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { cn } from "@/lib/utils"; // Assuming cn is available or I can import logic
 
@@ -13,7 +13,7 @@ interface FloatingActionButtonProps {
 
 export const FloatingActionButton = ({
   onClick,
-  icon = <Plus className="w-8 h-8" />,
+  icon = <Icon name="add" className="w-8 h-8" />,
   ariaLabel = "Agregar nuevo",
   className,
   isSubPage = true,

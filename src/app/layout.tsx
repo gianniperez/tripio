@@ -26,12 +26,15 @@ export const metadata: Metadata = {
     type: "website",
   },
   manifest: "/manifest.json",
-  themeColor: "#001523",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Tripio",
   },
+};
+
+export const viewport = {
+  themeColor: "#001523",
 };
 
 export default function RootLayout({
@@ -41,6 +44,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${inter.variable} ${nunito.variable}`}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-25..200"
+        />
+      </head>
       <body>
         <AppProvider>{children}</AppProvider>
       </body>

@@ -5,7 +5,6 @@ import type { ParticipantsManagerProps } from "./ParticipantsManager.types";
 import { ParticipantCard } from "../ParticipantCard";
 import { InviteParticipant } from "../InviteParticipant";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { Users } from "lucide-react";
 import { hasPermission } from "@/features/auth/utils/permissions";
 import { Participant } from "@/types/tripio";
 

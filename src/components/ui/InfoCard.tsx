@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { ChevronRight } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 export type CardVariant = "primary" | "secondary" | "tertiary";
 
@@ -56,7 +56,8 @@ export const InfoCard = ({
         className={`flex items-center gap-1 text-xs font-semibold ${styles.text} shrink-0`}
       >
         <span>{ctaLabel}</span>
-        <ChevronRight
+        <Icon
+          name="chevron_right"
           size={14}
           className="group-hover:translate-x-0.5 transition-transform"
         />

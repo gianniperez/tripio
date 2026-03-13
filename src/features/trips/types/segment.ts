@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Timestamp } from "firebase/firestore";
 import { TripSegment } from "@/types/tripio";
 
 export const tripSegmentSchema = z.object({

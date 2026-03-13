@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Lightbulb, Wallet, Plane, Package, Loader2 } from "lucide-react";
 import { useTrip } from "@/features/trips/hooks";
+import { Icon } from "@/components/ui/Icon";
 
 export const BottomBar = ({ tripId }: { tripId: string }) => {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export const BottomBar = ({ tripId }: { tripId: string }) => {
   if (isLoading || !trip) {
     return (
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe h-20 flex items-center justify-center">
-        <Loader2 className="w-5 h-5 animate-spin text-gray-300" />
+        <Icon name="loader" className="w-5 h-5 animate-spin text-gray-300" />
       </nav>
     );
   }
@@ -25,39 +25,39 @@ export const BottomBar = ({ tripId }: { tripId: string }) => {
   };
 
   const MOBILE_NAV = [
-    { 
-      name: "Actividades", 
-      href: `/trips/${tripId}/activities`, 
-      icon: Lightbulb,
-      enabled: features.activities 
+    {
+      name: "Actividades",
+      href: `/trips/${tripId}/activities`,
+      icon: "lightbulb",
+      enabled: features.activities,
     },
-    { 
-      name: "Logística", 
-      href: `/trips/${tripId}/logistics`, 
-      icon: Plane,
-      enabled: features.logistics
+    {
+      name: "Logística",
+      href: `/trips/${tripId}/logistics`,
+      icon: "travel",
+      enabled: features.logistics,
     },
-    { 
-      name: "Inicio", 
-      href: `/trips/${tripId}`, 
-      icon: LayoutDashboard,
-      enabled: true 
+    {
+      name: "Inicio",
+      href: `/trips/${tripId}`,
+      icon: "dashboard",
+      enabled: true,
     },
-    { 
-      name: "Inventario", 
-      href: `/trips/${tripId}/inventory`, 
-      icon: Package,
-      enabled: features.inventory 
+    {
+      name: "Inventario",
+      href: `/trips/${tripId}/inventory`,
+      icon: "package_2",
+      enabled: features.inventory,
     },
-    { 
-      name: "Finanzas", 
-      href: `/trips/${tripId}/finances`, 
-      icon: Wallet,
-      enabled: features.finances 
+    {
+      name: "Finanzas",
+      href: `/trips/${tripId}/finances`,
+      icon: "payments",
+      enabled: features.finances,
     },
   ];
 
-  const visibleNav = MOBILE_NAV.filter(item => item.enabled);
+  const visibleNav = MOBILE_NAV.filter((item) => item.enabled);
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
@@ -77,7 +77,8 @@ export const BottomBar = ({ tripId }: { tripId: string }) => {
                     : "text-gray-400 hover:text-gray-600"
                 }`}
               >
-                <item.icon
+                <Icon
+                  name={item.icon}
                   className={`w-5 h-5 ${isActive ? "text-primary" : ""}`}
                 />
                 <span

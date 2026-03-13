@@ -3,21 +3,11 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTrip } from "@/features/trips/hooks";
-import { 
-  Calendar, 
-  AlertTriangle, 
-  Loader2, 
-  Settings,
-  MapPin,
-  Tent,
-  Package,
-  CreditCard
-} from "lucide-react";
 import { FinanceWidget } from "@/features/finances/components/FinanceWidget";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { QuickAccessCard } from "@/components/ui/QuickAccessCard";
 import { SettingsModal, ItineraryManager } from "@/features/trips/components";
+import { Icon } from "@/components/ui/Icon";
 
 export default function TripHome() {
   const params = useParams<{ tripId: string }>();
@@ -27,7 +17,10 @@ export default function TripHome() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-10 h-10 text-primary animate-spin"
+        />
         <p className="text-gray-500 font-medium">Cargando viaje...</p>
       </div>
     );
@@ -50,7 +43,7 @@ export default function TripHome() {
       <PageHeader
         title={trip.name}
         actionButton={{
-          icon: <Settings className="w-6 h-6 text-white" />,
+          icon: <Icon name="settings" className="w-6 h-6 text-white" />,
           onClick: () => setIsSettingsOpen(true),
           ariaLabel: "Configuración del viaje",
         }}
@@ -60,7 +53,7 @@ export default function TripHome() {
       {hasMissingFields && (
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-amber-600">
-            <AlertTriangle size={18} />
+            <Icon name="info" className="w-4 h-4 text-amber-600" />
             <h3 className="font-bold text-sm">Información por definir</h3>
           </div>
           <p className="text-xs text-gray-500 -mt-1 ml-6">
@@ -70,7 +63,9 @@ export default function TripHome() {
           <div>
             {missingDates && (
               <InfoCard
-                icon={<Calendar size={20} className="text-white" />}
+                icon={
+                  <Icon name="calendar_month" className="w-5 h-5 text-white" />
+                }
                 title="¿Cuando viajamos?"
                 description="Las fechas del viaje no están definidas."
                 ctaLabel="Sugerir fechas"

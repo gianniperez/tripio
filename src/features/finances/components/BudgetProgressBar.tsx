@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface BudgetProgressBarProps {
   budgetLimit: number;
@@ -46,7 +46,7 @@ export const BudgetProgressBar = ({
             <span className="text-3xl font-black text-text-main font-nunito tracking-tighter">
               {formatMoney(currentCost, currency)}
             </span>
-            {isOverBudget && <AlertCircle className="w-5 h-5 text-red-500" />}
+            {isOverBudget && <Icon name="warning" className="w-5 h-5 text-red-500" />}
           </div>
         </div>
         <div className="text-right flex flex-col items-end">
@@ -96,14 +96,14 @@ export const BudgetProgressBar = ({
 
         {isOverBudget ? (
           <div className="flex items-center gap-1 text-red-500">
-            <TrendingUp className="w-4 h-4" />
+            <Icon name="trending_up" className="w-4 h-4" />
             <span>
               Te pasaste por {formatMoney(Math.abs(remaining), currency)}
             </span>
           </div>
         ) : (
           <div className="flex items-center gap-1 text-green-600">
-            <TrendingDown className="w-4 h-4" />
+            <Icon name="trending_down" className="w-4 h-4" />
             <span>Quedan {formatMoney(remaining, currency)}</span>
           </div>
         )}

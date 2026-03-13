@@ -2,7 +2,7 @@
 
 import { Modal } from "../Modal/Modal";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { AlertTriangle } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -29,15 +29,13 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} hideCloseButton>
-      <div className="flex flex-col items-center text-center gap-4">
+      <div className="flex flex-col items-center text-center gap-6">
         <div
-          className={`w-14 h-14 rounded-full flex items-center justify-center ${
-            variant === "danger"
-              ? "bg-red-100 text-red-500"
-              : "bg-primary/10 text-primary"
+          className={`${
+            variant === "danger" ? " text-danger" : " text-primary"
           }`}
         >
-          <AlertTriangle className="w-7 h-7" />
+          <Icon name="error" fill={true} size={56} />
         </div>
 
         <div>
@@ -46,18 +44,20 @@ export function ConfirmDialog({
         </div>
 
         <div className="flex gap-3 w-full mt-2">
-          <button
+          <NeumorphicButton
             onClick={onClose}
             disabled={isLoading}
-            className="cursor-pointer flex-1 py-3 px-4 rounded-tripio text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors disabled:opacity-50"
+            variant="secondary"
+            className="flex-1"
           >
             {cancelLabel}
-          </button>
+          </NeumorphicButton>
           <NeumorphicButton
             onClick={() => {
               onConfirm();
             }}
             disabled={isLoading}
+            variant="primary"
             className="flex-1"
           >
             {isLoading ? "Procesando..." : confirmLabel}

@@ -2,26 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Plane,
-  Lightbulb,
-  Users,
-  Settings,
-  Wallet,
-  ArrowLeft,
-} from "lucide-react";
+import { Icon } from "../ui/Icon";
 
 export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
   const pathname = usePathname();
 
   const NAV_ITEMS = [
-    { label: "Inicio", path: "", icon: LayoutDashboard },
-    { label: "Logística", path: "/logistics", icon: Plane },
-    { label: "Actividades", path: "/activities", icon: Lightbulb },
-    { label: "Finanzas", path: "/finances", icon: Wallet },
-    { label: "Participantes", path: "/participants", icon: Users },
-    { label: "Configuración", path: "/settings", icon: Settings },
+    { label: "Inicio", path: "", icon: "Dashboard" },
+    { label: "Actividades", path: "/activities", icon: "lightbulb" },
+    { label: "Logística", path: "/logistics", icon: "travel" },
+    { label: "Inventario", path: "/inventory", icon: "package_2" },
+    { label: "Finanzas", path: "/finances", icon: "payments" },
   ];
 
   if (!tripId) return null;
@@ -34,7 +25,8 @@ export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
           href="/trips"
           className="flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary transition-colors group"
         >
-          <ArrowLeft
+          <Icon
+            name="arrow_back"
             size={16}
             className="group-hover:-translate-x-1 transition-transform"
           />
@@ -44,7 +36,6 @@ export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
 
       <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
-          const Icon = item.icon;
           const href = `/trips/${tripId}${item.path}`;
           const isActive = pathname === href;
 
@@ -59,7 +50,9 @@ export const DesktopSidebar = ({ tripId }: { tripId?: string }) => {
               }`}
             >
               <Icon
+                name={item.icon}
                 size={20}
+                fill={true}
                 className={isActive ? "text-white" : "text-secondary font-bold"}
               />
               {item.label}

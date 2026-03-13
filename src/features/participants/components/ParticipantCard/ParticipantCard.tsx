@@ -3,7 +3,7 @@
 import type { ParticipantCardProps } from "./ParticipantCard.types";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { Shield, ShieldAlert, UserX, Settings2 } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useUser } from "@/features/auth/hooks";
 import { TripRole, TripPermission } from "@/types/tripio";
 import { useState } from "react";
@@ -69,13 +69,13 @@ export function ParticipantCard({
             )}
             {participant.role === "owner" && (
               <span title="Propietario">
-                <ShieldAlert className="w-4 h-4 text-yellow-500" />
+                <Icon name="admin_panel_settings" className="w-4 h-4 text-yellow-500" />
               </span>
             )}
             {participant.customPermissions &&
               Object.keys(participant.customPermissions).length > 0 && (
                 <span title="Permisos especiales">
-                  <Shield className="w-4 h-4 text-orange-500" />
+                  <Icon name="shield" className="w-4 h-4 text-orange-500" />
                 </span>
               )}
           </div>
@@ -105,7 +105,7 @@ export function ParticipantCard({
                 onClick={() => setShowOverrides(!showOverrides)}
                 title="Configurar permisos"
               >
-                <Settings2 className="w-4 h-4" />
+                <Icon name="settings" className="w-4 h-4" />
               </NeumorphicButton>
 
               <NeumorphicButton
@@ -114,7 +114,7 @@ export function ParticipantCard({
                 onClick={onRemove}
                 title="Eliminar participante"
               >
-                <UserX className="w-4 h-4" />
+                <Icon name="person_remove" className="w-4 h-4" />
               </NeumorphicButton>
             </>
           ) : (

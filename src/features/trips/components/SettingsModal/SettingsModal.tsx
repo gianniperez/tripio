@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useTrip, useUpdateTrip, useDeleteTrip } from "@/features/trips/hooks";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { createTripSchema } from "@/features/trips/types";
-import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
-import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import {
   Timestamp,
   collection,
@@ -17,25 +11,19 @@ import {
 import { db } from "@/lib/firebase";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { useRouter } from "next/navigation";
-import {
-  Calendar,
-  Type,
-  Save,
-  Loader2,
-  Users,
-  ToggleLeft,
-  Trash2,
-  Image as LucideImage,
-  LayoutGrid,
-  Package,
-  Wallet,
-  Settings,
-} from "lucide-react";
 import { ParticipantsManager } from "@/features/participants/components/ParticipantsManager/ParticipantsManager";
-import { useParticipants, useRemoveParticipant, useInviteParticipant } from "@/features/participants/hooks";
+import {
+  useParticipants,
+  useRemoveParticipant,
+  useInviteParticipant,
+} from "@/features/participants/hooks";
 import { useAuth } from "@/features/auth/hooks";
 import { useUpdateParticipant } from "@/features/trips/hooks";
-import Image from "next/image";
+import { Icon } from "@/components/ui/Icon";
+import { FilterTabBar } from "@/components/ui/FilterTabBar";
+import { TripForm } from "../TripForm/TripForm";
+import { TripFormValues } from "../TripForm/TripForm.types";
+import { createTripSchema } from "@/features/trips/types";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -44,6 +32,51 @@ interface SettingsModalProps {
 }
 
 type TabType = "general" | "features" | "participants";
+
+interface ToggleFeatureProps {
+  isEnabled: boolean;
+  label: string;
+  icon: React.ReactNode;
+  onToggle: () => void;
+}
+
+const ToggleFeature = ({
+  isEnabled,
+  label,
+  icon,
+  onToggle,
+}: ToggleFeatureProps) => {
+  return (
+    <div
+      onClick={onToggle}
+      className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-all ${
+        isEnabled
+          ? "bg-primary/5 border border-primary/10"
+          : "bg-gray-50 border border-transparent"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`p-2 rounded-xl ${isEnabled ? "bg-primary/10 text-primary" : "bg-gray-200 text-gray-400"}`}
+        >
+          {icon}
+        </div>
+        <span
+          className={`text-sm font-bold ${isEnabled ? "text-primary" : "text-gray-500"}`}
+        >
+          {label}
+        </span>
+      </div>
+      <div
+        className={`w-10 h-5 rounded-full relative transition-all ${isEnabled ? "bg-primary" : "bg-gray-300"}`}
+      >
+        <div
+          className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isEnabled ? "right-1" : "left-1"}`}
+        />
+      </div>
+    </div>
+  );
+};
 
 export const SettingsModal = ({
   isOpen,
@@ -58,35 +91,20 @@ export const SettingsModal = ({
   const deleteMutation = useDeleteTrip();
   const updateParticipantMutation = useUpdateParticipant();
   const removeParticipantMutation = useRemoveParticipant();
-  const inviteParticipantMutation = useInviteParticipant(tripId, trip?.name || "Viaje");
+  const inviteParticipantMutation = useInviteParticipant(
+    tripId,
+    trip?.name || "Viaje",
+  );
   const [activeTab, setActiveTab] = useState<TabType>("general");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<z.input<typeof createTripSchema>>({
-    resolver: zodResolver(createTripSchema),
-  });
-
-  const currentCoverImage = watch("coverImage");
-  const enabledFeatures = watch("enabledFeatures");
+  const [formDefaultValues, setFormDefaultValues] = useState<
+    Partial<TripFormValues>
+  >({});
 
   useEffect(() => {
     if (trip) {
-      // Ensure all features are present, default to true if missing (for legacy trips)
-      const features = {
-        logistics: trip.enabledFeatures?.logistics ?? true,
-        activities: trip.enabledFeatures?.activities ?? true,
-        inventory: trip.enabledFeatures?.inventory ?? true,
-        finances: trip.enabledFeatures?.finances ?? true,
-      };
-      
-      reset({
+      setFormDefaultValues({
         name: trip.name,
         description: trip.description || "",
         startDate: trip.startDate
@@ -97,19 +115,24 @@ export const SettingsModal = ({
           : undefined,
         currency: trip.currency || "USD",
         coverImage: trip.coverImage || "",
-        enabledFeatures: features,
+        enabledFeatures: trip.enabledFeatures || {
+          logistics: true,
+          activities: true,
+          inventory: true,
+          finances: true,
+        },
       });
     }
-  }, [trip, reset]);
+  }, [trip]);
 
-  const onSubmit = async (data: z.input<typeof createTripSchema>) => {
+  const onSubmit = async (data: TripFormValues) => {
     try {
       const values = createTripSchema.parse(data);
       const newStartDate = values.startDate
-        ? Timestamp.fromDate(values.startDate)
+        ? Timestamp.fromDate(values.startDate as Date)
         : null;
       const newEndDate = values.endDate
-        ? Timestamp.fromDate(values.endDate)
+        ? Timestamp.fromDate(values.endDate as Date)
         : null;
 
       await updateMutation.mutateAsync({
@@ -180,193 +203,177 @@ export const SettingsModal = ({
     router.push("/trips");
   };
 
-  const ToggleFeature = ({ name, label, icon: Icon }: { name: keyof NonNullable<z.input<typeof createTripSchema>["enabledFeatures"]>, label: string, icon: React.ElementType }) => {
-    const isEnabled = enabledFeatures?.[name];
-    return (
-      <div 
-        onClick={() => setValue(`enabledFeatures.${name}`, !isEnabled, { shouldDirty: true })}
-        className={`flex items-center justify-between p-4 rounded-2xl cursor-pointer transition-all ${
-          isEnabled ? "bg-primary/5 border border-primary/10" : "bg-gray-50 border border-transparent"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-xl ${isEnabled ? "bg-primary/10 text-primary" : "bg-gray-200 text-gray-400"}`}>
-            <Icon size={18} />
-          </div>
-          <span className={`text-sm font-bold ${isEnabled ? "text-primary" : "text-gray-500"}`}>{label}</span>
-        </div>
-        <div className={`w-10 h-5 rounded-full relative transition-all ${isEnabled ? "bg-primary" : "bg-gray-300"}`}>
-          <div className={`absolute top-1 w-3 h-3 rounded-full bg-white transition-all ${isEnabled ? "right-1" : "left-1"}`} />
-        </div>
-      </div>
-    );
+  const handleUpdateFeatures = (
+    feature: "activities" | "inventory" | "finances" | "logistics",
+  ) => {
+    if (!formDefaultValues.enabledFeatures) return;
+
+    const newFeatures = {
+      ...formDefaultValues.enabledFeatures,
+      [feature]:
+        !formDefaultValues.enabledFeatures[
+          feature as keyof typeof formDefaultValues.enabledFeatures
+        ],
+    };
+
+    setFormDefaultValues((prev) => ({
+      ...prev,
+      enabledFeatures: newFeatures,
+    }));
+
+    // Perform actual update
+    onSubmit({
+      ...formDefaultValues,
+      enabledFeatures: newFeatures,
+    } as TripFormValues);
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Administrar Viaje">
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <Loader2 className="w-10 h-10 text-primary animate-spin" />
+          <Icon
+            name="progress_activity"
+            className="w-10 h-10 text-primary animate-spin"
+          />
           <p className="text-gray-500 font-medium">Cargando...</p>
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Tabs Navigation */}
-          <div className="flex gap-2 p-1 bg-gray-100 rounded-2xl shadow-neumorphic-inset-sm">
-            <button
-              onClick={() => setActiveTab("general")}
-              className={`flex-1 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                activeTab === "general" ? "bg-white shadow-neumorphic-sm text-primary" : "text-gray-400"
-              }`}
-            >
-              <Settings size={14} />
-              General
-            </button>
-            <button
-              onClick={() => setActiveTab("features")}
-              className={`flex-1 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                activeTab === "features" ? "bg-white shadow-neumorphic-sm text-primary" : "text-gray-400"
-              }`}
-            >
-              <ToggleLeft size={14} />
-              Features
-            </button>
-            <button
-              onClick={() => setActiveTab("participants")}
-              className={`flex-1 py-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                activeTab === "participants" ? "bg-white shadow-neumorphic-sm text-primary" : "text-gray-400"
-              }`}
-            >
-              <Users size={14} />
-              Personas
-            </button>
-          </div>
+          <FilterTabBar
+            activeTab={activeTab}
+            onTabChange={(id) => setActiveTab(id as TabType)}
+            tabs={[
+              {
+                id: "general",
+                label: "General",
+                icon: <Icon name="settings" size={16} />,
+              },
+              {
+                id: "participants",
+                label: "Personas",
+                icon: <Icon name="group" size={16} />,
+              },
+            ]}
+          />
 
           <div className="min-h-[400px]">
             {activeTab === "general" && (
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-4">
-                  <NeumorphicInput
-                    label="Nombre del Viaje"
-                    leftIcon={<Type size={18} />}
-                    placeholder="Ej. Roadtrip Europa 2025"
-                    error={errors.name?.message}
-                    {...register("name")}
-                  />
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <NeumorphicInput
-                      label="Fecha Inicio"
-                      type="date"
-                      leftIcon={<Calendar size={18} />}
-                      error={errors.startDate?.message}
-                      {...register("startDate")}
-                    />
-                    <NeumorphicInput
-                      label="Fecha Fin"
-                      type="date"
-                      leftIcon={<Calendar size={18} />}
-                      error={errors.endDate?.message}
-                      {...register("endDate")}
-                    />
-                  </div>
-
-                  <NeumorphicInput
-                    label="Moneda Principal"
-                    placeholder="USD"
-                    {...register("currency")}
-                  />
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-400 ml-1">Portada</label>
-                    {currentCoverImage && (
-                      <div className="w-full h-32 rounded-2xl overflow-hidden mb-2 relative">
-                      <Image src={currentCoverImage} alt="Portada" fill className="object-cover" />
-                    </div>
-                    )}
-                    <NeumorphicInput
-                      leftIcon={<LucideImage size={18} />}
-                      placeholder="https://ejemplo.com/imagen.jpg"
-                      error={errors.coverImage?.message}
-                      {...register("coverImage")}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-gray-400 ml-1">Descripción</label>
-                    <textarea
-                      className="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm shadow-neumorphic-inset-sm min-h-[100px]"
-                      placeholder="Cuéntanos más..."
-                      {...register("description")}
-                    />
-                  </div>
-                </div>
-
-                <NeumorphicButton type="submit" variant="primary" className="w-full py-4" disabled={updateMutation.isPending}>
-                  {updateMutation.isPending ? <Loader2 size={18} className="animate-spin mr-2" /> : <Save size={18} className="mr-2" />}
-                  GUARDAR CAMBIOS
-                </NeumorphicButton>
+              <div className="space-y-6">
+                <TripForm
+                  onSubmit={onSubmit}
+                  defaultValues={formDefaultValues}
+                  isPending={updateMutation.isPending}
+                  submitLabel="Guardar Cambios"
+                />
 
                 <div className="pt-4 border-t border-gray-100">
                   {!showConfirmDelete ? (
-                    <button type="button" onClick={() => setShowConfirmDelete(true)} className="flex items-center justify-center w-full py-3 text-red-500 text-xs font-bold hover:bg-red-50 rounded-xl transition-all">
-                      <Trash2 size={14} className="mr-2" />
-                      ELIMINAR VIAJE
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmDelete(true)}
+                      className="flex items-center justify-center w-full py-3 text-red-500 text-xs font-bold hover:bg-red-50 rounded-xl transition-all"
+                    >
+                      <Icon name="delete" size={14} className="mr-2" />
+                      Eliminar Viaje
                     </button>
                   ) : (
                     <div className="space-y-3 p-4 bg-red-50 rounded-2xl">
-                      <p className="text-[10px] text-red-600 font-black text-center uppercase tracking-wider">¿Estás seguro? Se borrará todo.</p>
+                      <p className="text-[10px] text-red-600 font-black text-center uppercase tracking-wider">
+                        ¿Estás seguro? Se borrará todo.
+                      </p>
                       <div className="flex gap-2">
-                        <NeumorphicButton variant="danger" className="flex-1 py-2 text-xs" onClick={handleDelete}>SÍ, BORRAR</NeumorphicButton>
-                        <NeumorphicButton variant="secondary" className="flex-1 py-2 text-xs" onClick={() => setShowConfirmDelete(false)}>NO</NeumorphicButton>
+                        <div className="flex-1">
+                          <button
+                            onClick={handleDelete}
+                            disabled={deleteMutation.isPending}
+                            className="w-full bg-red-500 text-white font-bold py-2 rounded-xl text-xs hover:bg-red-600 transition-colors disabled:opacity-50"
+                          >
+                            {deleteMutation.isPending
+                              ? "Borrando..."
+                              : "Sí, Borrar"}
+                          </button>
+                        </div>
+                        <div className="flex-1">
+                          <button
+                            onClick={() => setShowConfirmDelete(false)}
+                            className="w-full bg-gray-200 text-gray-700 font-bold py-2 rounded-xl text-xs hover:bg-gray-300 transition-colors"
+                          >
+                            No
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
-              </form>
+              </div>
             )}
 
             {activeTab === "features" && (
               <div className="space-y-4">
-                <p className="text-xs text-gray-400 font-medium px-1">Activa o desactiva las secciones principales del viaje.</p>
+                <p className="text-xs text-gray-400 font-medium px-1">
+                  Activa o desactiva las secciones principales del viaje.
+                </p>
                 <div className="grid gap-3">
-                  <ToggleFeature name="activities" label="Actividades" icon={LayoutGrid} />
-                  <ToggleFeature name="inventory" label="Inventario" icon={Package} />
-                  <ToggleFeature name="finances" label="Finanzas" icon={Wallet} />
-                  <ToggleFeature name="logistics" label="Logística" icon={Calendar} />
-                </div>
-                <div className="pt-6">
-                  <NeumorphicButton variant="primary" className="w-full" onClick={handleSubmit(onSubmit)} disabled={updateMutation.isPending}>
-                    {updateMutation.isPending ? <Loader2 size={18} className="animate-spin mr-2" /> : <Save size={18} className="mr-2" />}
-                    GUARDAR PREFERENCIAS
-                  </NeumorphicButton>
+                  <ToggleFeature
+                    isEnabled={!!formDefaultValues.enabledFeatures?.activities}
+                    label="Actividades"
+                    icon={<Icon name="grid_view" size={18} />}
+                    onToggle={() => handleUpdateFeatures("activities")}
+                  />
+                  <ToggleFeature
+                    isEnabled={!!formDefaultValues.enabledFeatures?.inventory}
+                    label="Inventario"
+                    icon={<Icon name="package" size={18} />}
+                    onToggle={() => handleUpdateFeatures("inventory")}
+                  />
+                  <ToggleFeature
+                    isEnabled={!!formDefaultValues.enabledFeatures?.finances}
+                    label="Finanzas"
+                    icon={<Icon name="payments" size={18} />}
+                    onToggle={() => handleUpdateFeatures("finances")}
+                  />
+                  <ToggleFeature
+                    isEnabled={!!formDefaultValues.enabledFeatures?.logistics}
+                    label="Logística"
+                    icon={<Icon name="calendar_month" size={18} />}
+                    onToggle={() => handleUpdateFeatures("logistics")}
+                  />
                 </div>
               </div>
             )}
 
             {activeTab === "participants" && (
               <div className="space-y-4">
-                  <ParticipantsManager 
-                    participants={participants}
-                    currentUserId={currentUser?.uid || ""}
-                    onUpdateRole={(participantId, role) => 
-                      updateParticipantMutation.mutate({ tripId, participantId, data: { role } })
-                    }
-                    onUpdatePermissions={(participantId, customPermissions) => 
-                      updateParticipantMutation.mutate({ tripId, participantId, data: { customPermissions } })
-                    }
-                    onRemoveParticipant={(participantId) => 
-                      removeParticipantMutation.mutate({ tripId, participantId })
-                    }
-                    onInviteParticipant={async (role) => {
-                      const id = await inviteParticipantMutation.mutateAsync({ 
-                        role, 
-                        invitedByToken: currentUser?.uid || "", 
-                        invitedByName: currentUser?.displayName || "Admin" 
-                      });
-                      return id;
-                    }}
-                  />
+                <ParticipantsManager
+                  participants={participants}
+                  currentUserId={currentUser?.uid || ""}
+                  onUpdateRole={(participantId, role) =>
+                    updateParticipantMutation.mutate({
+                      tripId,
+                      participantId,
+                      data: { role },
+                    })
+                  }
+                  onUpdatePermissions={(participantId, customPermissions) =>
+                    updateParticipantMutation.mutate({
+                      tripId,
+                      participantId,
+                      data: { customPermissions },
+                    })
+                  }
+                  onRemoveParticipant={(participantId) =>
+                    removeParticipantMutation.mutate({ tripId, participantId })
+                  }
+                  onInviteParticipant={async (role) => {
+                    const id = await inviteParticipantMutation.mutateAsync({
+                      role,
+                      invitedByToken: currentUser?.uid || "",
+                      invitedByName: currentUser?.displayName || "Admin",
+                    });
+                    return id;
+                  }}
+                />
               </div>
             )}
           </div>

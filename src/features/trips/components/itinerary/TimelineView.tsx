@@ -1,15 +1,10 @@
 "use client";
 
-import React from "react";
 import { Event } from "@/types/tripio";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { EventCard } from "./EventCard";
-import {
-  Calendar as CalendarIcon,
-  MapPin,
-  BedDouble,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { useRouter } from "next/navigation";
 
@@ -19,18 +14,14 @@ interface TimelineViewProps {
   tripId: string;
 }
 
-export const TimelineView = ({
-  events,
-  trip,
-  tripId,
-}: TimelineViewProps) => {
+export const TimelineView = ({ events, trip, tripId }: TimelineViewProps) => {
   const router = useRouter();
 
   if (events.length === 0) {
     return (
       <NeumorphicCard className="p-12 flex flex-col items-center gap-4 text-center">
         <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center shadow-neumorphic-inset-sm">
-          <CalendarIcon size={32} className="text-gray-300" />
+          <Icon name="calendar_month" size={32} className="text-gray-300" />
         </div>
         <div>
           <h3 className="font-bold text-text-main">Tu itinerario está vacío</h3>
@@ -148,18 +139,13 @@ export const TimelineView = ({
   );
 
   // Accommodation card renderer
-  const renderAccommodationCard = (
-    acc: Event,
-    idx: number,
-  ) => (
+  const renderAccommodationCard = (acc: Event, idx: number) => (
     <div
       key={acc.id}
       className="ml-8 mb-6 bg-blue-50/50 border border-blue-100 rounded-2xl p-4 relative overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
       onClick={() => {
         if (acc.linkedProposalId) {
-          router.push(
-            `/trips/${tripId}/logistics`,
-          );
+          router.push(`/trips/${tripId}/logistics`);
         }
       }}
     >
@@ -167,7 +153,7 @@ export const TimelineView = ({
 
       <div className="flex items-start gap-4 relative z-10">
         <div className="w-10 h-10 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
-          <BedDouble size={20} />
+          <Icon name="bed" size={20} />
         </div>
         <div>
           <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1 block">
@@ -179,7 +165,11 @@ export const TimelineView = ({
           <div className="flex items-center gap-3 text-xs text-slate-500 font-medium mt-2">
             {acc.startTime && (
               <span className="flex items-center bg-white px-2 py-1 rounded-lg border border-slate-100">
-                <CalendarIcon size={12} className="mr-1.5 text-slate-400" />
+                <Icon
+                  name="calendar_month"
+                  size={12}
+                  className="mr-1.5 text-slate-400"
+                />
                 {format(acc.startTime.toDate(), "d MMM", {
                   locale: es,
                 })}
@@ -189,7 +179,8 @@ export const TimelineView = ({
             )}
             {acc.location && (
               <span className="flex items-center text-slate-500 truncate max-w-[150px]">
-                <MapPin
+                <Icon
+                  name="map"
                   size={12}
                   className="mr-1 text-slate-400 shrink-0"
                 />

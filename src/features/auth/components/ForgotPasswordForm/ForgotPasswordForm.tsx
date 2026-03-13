@@ -8,7 +8,7 @@ import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { sendPasswordReset } from "../../api";
-import { Mail, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
 
 const forgotSchema = z.object({
@@ -49,7 +49,11 @@ export function ForgotPasswordForm() {
   if (success) {
     return (
       <NeumorphicCard className="w-full flex flex-col gap-6 items-center text-center">
-        <CheckCircle2 className="w-16 h-16 text-green-500 animate-bounce" />
+        <Icon
+          name="check_circle"
+          size={64}
+          className="text-success animate-bounce"
+        />
         <div className="space-y-2">
           <h2 className="text-2xl font-display font-black text-primary">
             ¡Email enviado!
@@ -76,7 +80,7 @@ export function ForgotPasswordForm() {
             href="/login"
             className="p-2 -ml-2 text-gray-400 hover:text-primary transition-colors"
           >
-            <ArrowLeft size={20} />
+            <Icon name="arrow_back" size={20} />
           </Link>
           <h2 className="text-2xl font-display font-black text-primary">
             Recuperar Contraseña
@@ -93,7 +97,8 @@ export function ForgotPasswordForm() {
           placeholder="tu@email.com"
           {...register("email")}
           error={errors.email?.message}
-          rightIcon={<Mail size={20} />}
+          icon={<Icon name="mail" size={20} />}
+          iconPosition="right"
         />
 
         {error && (

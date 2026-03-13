@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { DollarSign, ChevronRight } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useCosts } from "@/features/finances/hooks/useCosts";
 import { useEvents } from "@/features/trips/hooks";
 import { useProposals } from "@/features/proposals/hooks/useProposals";
@@ -48,7 +48,7 @@ export function FinanceWidget({ tripId }: FinanceWidgetProps) {
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center shrink-0">
-            <DollarSign size={24} className="text-white" />
+            <Icon name="attach_money" size={24} className="text-white" />
           </div>
           <div>
             <h4 className="font-black text-base text-secondary-deep tracking-tight">
@@ -62,7 +62,8 @@ export function FinanceWidget({ tripId }: FinanceWidgetProps) {
           </div>
         </div>
         <div className="w-8 h-8 rounded-full bg-secondary/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-          <ChevronRight
+          <Icon
+            name="chevron_right"
             size={18}
             className="text-secondary group-hover:text-primary group-hover:translate-x-0.5 transition-all"
           />

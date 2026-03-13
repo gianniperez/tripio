@@ -5,3 +5,4 @@ export * from "./SettingsModal/SettingsModal";
 export * from "./TripSegmentForm";
 export * from "./TripSegmentsList";
 export * from "./itinerary";
+export * from "./TripForm/TripForm";

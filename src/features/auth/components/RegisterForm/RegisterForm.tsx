@@ -10,7 +10,7 @@ import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { registerWithEmail, syncUserProfile } from "../../api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Mail, User } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 const registerSchema = z
   .object({
@@ -73,14 +73,16 @@ export function RegisterForm() {
           placeholder="Juan Pérez"
           {...register("name")}
           error={errors.name?.message}
-          rightIcon={<User size={20} />}
+          icon={<Icon name="person" size={24} />}
+          iconPosition="right"
         />
         <NeumorphicInput
           label="Email"
           placeholder="tu@email.com"
           {...register("email")}
           error={errors.email?.message}
-          rightIcon={<Mail size={20} />}
+          icon={<Icon name="mail" size={24} />}
+          iconPosition="right"
         />
         <NeumorphicInput
           label="Contraseña"

@@ -3,21 +3,7 @@ import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import {
-  MapPin,
-  Calendar,
-  DollarSign,
-  Check,
-  ThumbsUp,
-  ThumbsDown,
-  UserMinus,
-  Edit2,
-  Trash2,
-  MoreVertical,
-  Info,
-  Car,
-  Bus,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useState } from "react";
 import { VoteType } from "../../api/voteProposal";
 import { ConfirmDialog } from "@/components/ui/dialog/ConfirmDialog/ConfirmDialog";
@@ -37,11 +23,11 @@ interface ProposalCardProps {
 }
 
 const typeConfig = {
-  accommodation: { color: "text-blue-500", label: "Alojamiento", icon: MapPin },
-  transport: { color: "text-emerald-500", label: "Transporte", icon: MapPin },
-  activity: { color: "text-purple-500", label: "Actividad", icon: MapPin },
-  inventory: { color: "text-amber-500", label: "Item para llevar", icon: Info },
-  other: { color: "text-slate-500", label: "Otro", icon: Info },
+  accommodation: { color: "text-blue-500", label: "Alojamiento", icon: "location_on" },
+  transport: { color: "text-emerald-500", label: "Transporte", icon: "location_on" },
+  activity: { color: "text-purple-500", label: "Actividad", icon: "location_on" },
+  inventory: { color: "text-amber-500", label: "Item para llevar", icon: "info" },
+  other: { color: "text-slate-500", label: "Otro", icon: "info" },
 };
 
 export const ProposalCard = ({
@@ -71,7 +57,7 @@ export const ProposalCard = ({
     {
       value: "si",
       label: proposal.requiresVoting ? "Sí" : "Me sumo",
-      icon: ThumbsUp,
+      icon: "thumb_up",
       color: "text-green-500",
       bg: "bg-green-500/10",
       border: "border-green-500",
@@ -79,7 +65,7 @@ export const ProposalCard = ({
     {
       value: "no",
       label: proposal.requiresVoting ? "No" : "No me sumo",
-      icon: ThumbsDown,
+      icon: "thumb_down",
       color: "text-red-500",
       bg: "bg-red-500/10",
       border: "border-red-500",
@@ -89,7 +75,7 @@ export const ProposalCard = ({
           {
             value: "maybe",
             label: "Tal vez",
-            icon: UserMinus,
+            icon: "person_remove",
             color: "text-slate-500",
             bg: "bg-slate-500/10",
             border: "border-slate-500",
@@ -103,12 +89,12 @@ export const ProposalCard = ({
       <div className="absolute top-2 right-2 flex items-center gap-2 z-20">
         {isConfirmed && (
           <div className="bg-success text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center">
-            <Check className="w-2.5 h-2.5 mr-1" /> Confirmado
+            <Icon name="check" className="w-2.5 h-2.5 mr-1" /> Confirmado
           </div>
         )}
         {isRejected && (
           <div className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center">
-            <ThumbsDown className="w-2.5 h-2.5 mr-1" /> Descartada
+            <Icon name="thumb_down" className="w-2.5 h-2.5 mr-1" /> Descartada
           </div>
         )}
 
@@ -118,7 +104,7 @@ export const ProposalCard = ({
               onClick={() => setShowActions(!showActions)}
               className="p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-full transition-all cursor-pointer"
             >
-              <MoreVertical className="w-4 h-4" />
+              <Icon name="more_vert" className="w-4 h-4" />
             </button>
 
             {showActions && (
@@ -131,7 +117,7 @@ export const ProposalCard = ({
                     }}
                     className="w-full flex items-center px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
                   >
-                    <Edit2 className="w-3.5 h-3.5 mr-2" /> Editar
+                    <Icon name="edit" className="w-3.5 h-3.5 mr-2" /> Editar
                   </button>
                 )}
                 <button
@@ -141,7 +127,7 @@ export const ProposalCard = ({
                   }}
                   className="w-full flex items-center px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
                 >
-                  <Trash2 className="w-3.5 h-3.5 mr-2" /> Eliminar
+                  <Icon name="delete" className="w-3.5 h-3.5 mr-2" /> Eliminar
                 </button>
               </div>
             )}
@@ -172,7 +158,7 @@ export const ProposalCard = ({
       {proposal.segmentId && (
         <div className="mb-4">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest border border-indigo-100">
-            <MapPin className="w-3 h-3" />
+            <Icon name="location_on" className="w-3 h-3" />
             Tramo asignado
           </span>
         </div>
@@ -186,9 +172,9 @@ export const ProposalCard = ({
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border ${proposal.isPersonalTransport ? "bg-indigo-50 text-indigo-600 border-indigo-100" : "bg-slate-50 text-slate-600 border-slate-200"}`}
             >
               {proposal.isPersonalTransport ? (
-                <Car className="w-3 h-3" />
+                <Icon name="directions_car" className="w-3 h-3" />
               ) : (
-                <Bus className="w-3 h-3" />
+                <Icon name="directions_bus" className="w-3 h-3" />
               )}
               {proposal.isPersonalTransport
                 ? "Transporte Personal"
@@ -220,7 +206,7 @@ export const ProposalCard = ({
       <div className="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-500 font-medium">
         {proposal.startDate && (
           <div className="flex items-center">
-            <Calendar className="w-3.5 h-3.5 mr-2 text-primary/50" />
+            <Icon name="calendar_month" className="w-3.5 h-3.5 mr-2 text-primary/50" />
             <span className="truncate">
               {format(proposal.startDate.toDate(), "d MMM", { locale: es })}
               {proposal.endDate &&
@@ -230,7 +216,7 @@ export const ProposalCard = ({
         )}
         {proposal.location && (
           <div className="flex items-center">
-            <MapPin className="w-3.5 h-3.5 mr-2 text-primary/50" />
+            <Icon name="location_on" className="w-3.5 h-3.5 mr-2 text-primary/50" />
             <span className="truncate" title={proposal.location}>
               {proposal.location}
             </span>
@@ -238,7 +224,7 @@ export const ProposalCard = ({
         )}
         {proposal.estimatedCost && (
           <div className="flex items-center">
-            <DollarSign className="w-3.5 h-3.5 mr-2 text-green-500/50" />
+            <Icon name="attach_money" className="w-3.5 h-3.5 mr-2 text-green-500/50" />
             <span>
               ${proposal.estimatedCost}{" "}
               {proposal.type === "accommodation" ? "total" : "est."}
@@ -260,7 +246,7 @@ export const ProposalCard = ({
             <div className="flex bg-slate-100/50 p-1 rounded-2xl border border-slate-200/50">
               {rsvpOptions.map((opt) => {
                 const isActive = userRsvp === opt.value;
-                const Icon = opt.icon;
+                const iconName = opt.icon;
 
                 // Count RSVP votes
                 const count = Object.values(proposal.votes || {}).filter(
@@ -302,6 +288,7 @@ export const ProposalCard = ({
                 `}
                   >
                     <Icon
+                      name={iconName as string}
                       className={`w-4 h-4 mb-0.5 ${isActive ? opt.color : "text-slate-300"}`}
                     />
                     <span className="text-[10px] font-bold">
@@ -361,7 +348,7 @@ export const ProposalCard = ({
                       `}
                         >
                           {iVotedThis && (
-                            <Check className="w-2.5 h-2.5 text-white" />
+                            <Icon name="check" className="w-2.5 h-2.5 text-white" />
                           )}
                         </div>
                         <span

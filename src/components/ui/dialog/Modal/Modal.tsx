@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { X } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/utils";
 import type { ModalProps } from "./Modal.types";
 
@@ -41,7 +41,7 @@ export function Modal(props: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
       <div
         ref={overlayRef}
         className="absolute inset-0"
@@ -55,7 +55,7 @@ export function Modal(props: ModalProps) {
         aria-labelledby={title ? "modal-title" : undefined}
         aria-describedby={description ? "modal-description" : undefined}
         className={cn(
-          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]",
+          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] p-2",
           className,
         )}
       >
@@ -87,7 +87,7 @@ export function Modal(props: ModalProps) {
                 className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="Cerrar modal"
               >
-                <X className="w-5 h-5" />
+                <Icon name="close" className="w-5 h-5" />
               </button>
             )}
           </div>

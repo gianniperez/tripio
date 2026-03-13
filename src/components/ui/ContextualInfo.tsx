@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Info } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -43,10 +43,13 @@ export const ContextualInfo = ({
   }, [isOpen]);
 
   return (
-    <div className={cn("relative inline-block ml-1", className)} ref={containerRef}>
+    <div
+      className={cn("relative inline-block ml-1", className)}
+      ref={containerRef}
+    >
       <button
         type="button"
-        className="text-slate-400 hover:text-primary transition-colors p-0.5 focus:outline-none"
+        className="cursor-pointer text-gray-400 hover:text-primary transition-colors p-0.5 focus:outline-none"
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
         onClick={(e) => {
@@ -56,15 +59,15 @@ export const ContextualInfo = ({
         }}
         aria-label="Más información"
       >
-        <Info size={14} strokeWidth={2.5} />
+        <Icon name="info" size={14} weight={600} />
       </button>
 
       {isOpen && (
-        <div className="absolute z-100 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-white rounded-xl shadow-2xl border border-slate-100 animate-in fade-in zoom-in duration-200 pointer-events-none">
+        <div className="absolute z-100 bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-white rounded-xl shadow-2xl border border-gray-100 animate-in fade-in zoom-in duration-200 pointer-events-none">
           {title && (
-            <h5 className="font-bold text-xs text-slate-800 mb-1">{title}</h5>
+            <h5 className="font-bold text-xs text-gray-800 mb-1">{title}</h5>
           )}
-          <p className="text-[11px] text-slate-600 leading-relaxed">
+          <p className="text-[11px] text-gray-600 leading-relaxed">
             {description}
           </p>
           <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-white border-r border-b border-slate-100 rotate-45"></div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DollarSign, ChevronRight, X } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 
 interface SetBudgetCardProps {
@@ -35,7 +35,7 @@ export const SetBudgetCard = ({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm shrink-0">
-              <DollarSign className="w-5 h-5 text-white" />
+              <Icon name="attach_money" className="w-5 h-5 text-white" />
             </div>
             <div>
               <h3 className="font-bold text-lg font-nunito tracking-tight">
@@ -52,7 +52,7 @@ export const SetBudgetCard = ({
               onClick={onCancel}
               className="cursor-pointer w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
             >
-              <X className="w-4 h-4 text-white" />
+              <Icon name="close" className="w-4 h-4 text-white" />
             </button>
           )}
         </div>
@@ -74,7 +74,7 @@ export const SetBudgetCard = ({
             variant="secondary"
             className="shadow-transparent"
           >
-            Guardar Presupuesto <ChevronRight className="w-4 h-4" />
+            Guardar Presupuesto <Icon name="chevron_right" className="w-4 h-4" />
           </NeumorphicButton>
         </form>
       </div>

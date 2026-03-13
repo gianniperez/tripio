@@ -5,10 +5,12 @@
   --color-primary: #f46a1f; /* Orange Vibrant */
   --color-primary-light: #f78104;
   --color-primary-extralight: #faab36;
+  --color-primary-dark: #c84f23;
+  --color-primary-deep: #b93100;
 
-  --color-secondary: #5646a3;
-  --color-secondary-light: #c8bff2;
-  --color-secondary-dark: #343779;
+  --color-secondary: #008b8b;
+  --color-secondary-light: #00c4c4;
+  --color-secondary-dark: #005959;
   --color-secondary-deep: #454545;
 
   --color-background: #fffaf5;
@@ -27,13 +29,10 @@
   --font-display: var(--font-nunito);
 
   /* Shadows for Neumorphism */
-  --shadow-neumorphic: 8px 8px 16px #e4e4e7, -8px -8px 16px #ffffff;
-  --shadow-neumorphic-sm:
-    6px 6px 12px rgba(215, 204, 193, 0.3), -6px -6px 12px #ffffff;
-  --shadow-neumorphic-inset:
-    inset 8px 8px 16px #e4e4e7, inset -8px -8px 16px #ffffff;
-  --shadow-neumorphic-inset-sm:
-    inset 4px 4px 8px rgba(215, 204, 193, 0.3), inset -4px -4px 8px #ffffff;
+  --shadow-cream: 6px 6px 12px #e4ddd6;
+  --shadow-gray: 6px 6px 12px #d1d5dc;
+  --shadow-cream-inset: inset 4px 4px 8px #e4ddd6;
+  --shadow-gray-inset: inset 4px 4px 8px #d1d5dc;
 
   /* Shadows - Refined and Colored */
   /*  --shadow-neumorphic:
@@ -55,14 +54,13 @@ h2,
 h3,
 h4,
 h5,
-h6,
-.font-display {
+h6 .font-display {
   font-family: var(--font-nunito);
 }
 
 @layer utilities {
   .rounded-tripio {
-    border-radius: 1.5rem;
+    border-radius: 2rem;
     /* rounded-2xl */
   }
 

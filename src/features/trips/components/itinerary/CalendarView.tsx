@@ -16,7 +16,7 @@ import {
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 
 interface CalendarViewProps {
   events: Event[];
@@ -54,13 +54,13 @@ export const CalendarView = ({ events, trip }: CalendarViewProps) => {
             onClick={prevMonth}
             className="cursor-pointer p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
           >
-            <ChevronLeft size={20} />
+            <Icon name="chevron_left" size={20} />
           </button>
           <button
             onClick={nextMonth}
             className="cursor-pointer p-2 bg-white rounded-xl shadow-neumorphic-sm text-gray-400 hover:text-primary transition-all active:shadow-neumorphic-inset-sm"
           >
-            <ChevronRight size={20} />
+            <Icon name="chevron_right" size={20} />
           </button>
         </div>
       </div>

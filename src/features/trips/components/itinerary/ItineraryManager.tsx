@@ -8,7 +8,7 @@ import { ProposalForm } from "@/features/proposals/components";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
-import { Calendar, List, Loader2, Settings } from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
 import { useAuth } from "@/features/auth/hooks";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -101,7 +101,7 @@ export const ItineraryManager = ({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <Icon name="progress_activity" className="w-8 h-8 text-primary animate-spin" />
         <p className="text-gray-500 text-sm font-medium">
           Cargando itinerario...
         </p>
@@ -117,12 +117,12 @@ export const ItineraryManager = ({
           {
             id: "timeline",
             label: "Timeline",
-            icon: <List />,
+            icon: <Icon name="list" />,
           },
           {
             id: "calendar",
             label: "Calendario",
-            icon: <Calendar />,
+            icon: <Icon name="calendar_month" />,
           },
         ]}
         activeTab={view}
@@ -138,7 +138,7 @@ export const ItineraryManager = ({
             action={
               canEdit ? (
                 <NeumorphicButton onClick={onOpenSettings}>
-                  <Settings size={18} />
+                  <Icon name="settings" size={18} />
                   <span>Configurar fechas</span>
                 </NeumorphicButton>
               ) : (
@@ -162,7 +162,7 @@ export const ItineraryManager = ({
       {backlogItems.length > 0 && (
         <div className="mt-8 pt-6 border-t border-slate-100">
           <h3 className="font-bold text-slate-700 flex items-center gap-2 mb-4">
-            <Calendar className="w-4 h-4 text-amber-500" />
+            <Icon name="calendar_month" className="w-4 h-4 text-amber-500" />
             Pendientes de asignar fecha
           </h3>
           <div className="space-y-3">
