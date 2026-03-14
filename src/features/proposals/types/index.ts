@@ -54,12 +54,7 @@ export const createProposalSchema = z
   .object({
     title: z.string().min(1, "El título es obligatorio"),
     description: z.string().optional().nullable(),
-    type: z.enum([
-      "accommodation",
-      "transport",
-      "activity",
-      "inventory",
-    ]),
+    type: z.enum(["accommodation", "transport", "activity", "inventory"]),
     location: z.string().optional().nullable(),
     locationUrl: z
       .string()
@@ -71,13 +66,20 @@ export const createProposalSchema = z
     endDate: z.date().optional().nullable(),
     estimatedCost: z
       .number()
-      .min(0, "Costo no puede ser negativo")
-      .optional()
       .nullable()
-      .or(z.literal("")),
+      .optional()
+      .or(z.nan().transform(() => null)),
     isPersonalTransport: z.boolean().default(false).optional().nullable(),
-    capacity: z.number().min(1).optional().nullable(),
-    quantity: z.number().min(1).optional().nullable(),
+    capacity: z
+      .number()
+      .nullable()
+      .optional()
+      .or(z.nan().transform(() => null)),
+    quantity: z
+      .number()
+      .nullable()
+      .optional()
+      .or(z.nan().transform(() => null)),
     assignedTo: z.string().optional().nullable(),
     accessible: z.boolean().default(false).optional(),
     referenceUrl: z

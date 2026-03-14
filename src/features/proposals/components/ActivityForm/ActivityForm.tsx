@@ -28,7 +28,7 @@ export const ActivityForm = ({
       title: initialData?.title || "",
       description: initialData?.description || "",
       type: "activity",
-      estimatedCost: initialData?.estimatedCost ?? 0,
+      estimatedCost: initialData?.estimatedCost,
       location: initialData?.location || "",
       startDate: initialData?.startDate?.toDate() || null,
       endDate: null,
@@ -47,11 +47,9 @@ export const ActivityForm = ({
   };
 
   const getFloorDate = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     const tripStart = trip.startDate?.toDate();
-    const floor = tripStart && tripStart > today ? tripStart : today;
-    return toISO(floor);
+    if (!tripStart) return "";
+    return toISO(tripStart);
   };
 
   const floorDateISO = getFloorDate();

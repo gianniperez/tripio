@@ -3,7 +3,7 @@ import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { Icon } from "@/components/ui/Icon";
 
 interface EmptyStateProps {
-  icon?: React.ReactNode;
+  icon?: string;
   title: string;
   description: string;
   action?: React.ReactNode;
@@ -22,14 +22,12 @@ export const EmptyState = ({
       className={`p-8 flex flex-col items-center gap-4 text-center ${className}`}
     >
       <div className="rounded-tripio flex items-center justify-center">
-        {icon || (
-          <Icon
-            name="info"
-            fill={true}
-            size={48}
-            className="text-primary-extralight"
-          />
-        )}
+        <Icon
+          name={icon || "info"}
+          fill={true}
+          size={48}
+          className="text-primary-extralight"
+        />
       </div>
       <div className="space-y-2">
         <h3 className="font-bold text-text-main">{title}</h3>

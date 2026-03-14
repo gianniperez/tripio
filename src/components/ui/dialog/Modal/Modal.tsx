@@ -84,10 +84,10 @@ export function Modal(props: ModalProps) {
             {!hideCloseButton && (
               <button
                 onClick={onClose}
-                className="cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                className="h-10 w-10 cursor-pointer p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 aria-label="Cerrar modal"
               >
-                <Icon name="close" className="w-5 h-5" />
+                <Icon name="close" />
               </button>
             )}
           </div>

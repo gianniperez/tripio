@@ -44,7 +44,7 @@ export const AddExpenseModal = ({
   tripId,
   userId,
 }: AddExpenseModalProps) => {
-  const createCost = useCreateCost();
+  const createCost = useCreateCost(tripId);
 
   const {
     register,
@@ -63,7 +63,6 @@ export const AddExpenseModal = ({
   const onSubmit = async (data: ExpenseFormValues) => {
     try {
       await createCost.mutateAsync({
-        tripId,
         data: {
           description: data.description,
           amount: Number(data.amount),

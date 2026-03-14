@@ -5,6 +5,7 @@ import type { InviteParticipantProps } from "./InviteParticipant.types";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Icon } from "@/components/ui/Icon";
 import { TripRole } from "@/types/tripio";
+import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 
 export function InviteParticipant({
   onInvite,
@@ -33,53 +34,36 @@ export function InviteParticipant({
 
   return (
     <div className="space-y-4">
-      <form
-        onSubmit={handleGenerate}
-        className="flex flex-col sm:flex-row gap-3"
-      >
-        <div className="flex-1">
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as TripRole)}
-            className="w-full h-[46px] px-4 rounded-xl bg-[--bg-color] text-[--text-color] border-2 border-transparent focus:border-[--primary-color] outline-none shadow-[inset_3px_3px_6px_var(--shadow-dark),inset_-3px_-3px_6px_var(--shadow-light)] transition-all appearance-none cursor-pointer"
-          >
-            <option value="admin">Administrador</option>
-            <option value="collaborator">Colaborador</option>
-            <option value="viewer">Lector</option>
-          </select>
-        </div>
+      <form onSubmit={handleGenerate} className="flex flex-col gap-3">
+        <NeumorphicInput
+          type="select"
+          value={role}
+          onChange={(e) => setRole(e.target.value as TripRole)}
+          options={[
+            { value: "admin", label: "Administrador" },
+            { value: "collaborator", label: "Colaborador" },
+            { value: "viewer", label: "Lector" },
+          ]}
+        />
         <NeumorphicButton
           type="submit"
           disabled={isInviting}
           variant="primary"
-          className="w-full sm:w-auto px-8"
+          className="w-full px-8"
+          icon={isInviting ? "progress_activity" : "link"}
         >
-          {isInviting ? (
-            <Icon name="progress_activity" className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Icon name="link" className="w-4 h-4 mr-2" />
-          )}
           {isInviting ? "Generando..." : "Generar Link de Invitación"}
         </NeumorphicButton>
       </form>
 
       {generatedLink && (
-        <div className="p-4 bg-[--bg-color] rounded-xl shadow-[inset_2px_2px_5px_var(--shadow-dark),inset_-2px_-2px_5px_var(--shadow-light)] flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
-          <div className="flex-1 truncate text-sm text-gray-500 font-mono">
-            {generatedLink}
-          </div>
-          <NeumorphicButton
-            onClick={copyToClipboard}
-            className="px-4 py-2 text-xs"
-          >
-            {copied ? (
-              <Icon name="check" className="w-3 h-3 text-green-500 mr-1" />
-            ) : (
-              <Icon name="content_copy" className="w-3 h-3 mr-1" />
-            )}
-            {copied ? "Copiado" : "Copiar"}
-          </NeumorphicButton>
-        </div>
+        <NeumorphicButton
+          icon={copied ? "check" : "content_copy"}
+          onClick={copyToClipboard}
+          variant="terciary"
+        >
+          {copied ? "Copiado" : "Copiar"}
+        </NeumorphicButton>
       )}
     </div>
   );

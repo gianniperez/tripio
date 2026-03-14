@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { NeumorphicButtonProps } from "./NeumorphicButton.types";
+import { Icon } from "@/components/ui/Icon";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -11,6 +12,7 @@ export function NeumorphicButton({
   className,
   variant = "primary",
   disabled,
+  icon,
   ...props
 }: NeumorphicButtonProps) {
   const variantStyles = {
@@ -28,13 +30,14 @@ export function NeumorphicButton({
   return (
     <button
       className={cn(
-        "flex w-full gap-2 items-center justify-center cursor-pointer rounded-tripio px-6 py-4 font-display font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center",
+        "flex w-full gap-1 items-center justify-center cursor-pointer rounded-tripio px-6 py-4 font-display font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-center",
         variantStyles[variant],
         className,
       )}
       disabled={disabled}
       {...props}
     >
+      {icon && <Icon name={icon} size={24} />}
       {children}
     </button>
   );

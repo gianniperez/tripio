@@ -8,5 +8,6 @@ export interface LogisticsFormProps {
   tripId: string;
   trip: Trip;
   onClose?: () => void;
-  defaultType?: "accommodation" | "transport";
+  defaultType?: "accommodation" | "transport" | null;
+  onTypeChange?: (type: "accommodation" | "transport") => void;
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTrip } from "../../hooks";
 import { useProposals, useUpdateProposal } from "@/features/proposals/hooks";
 import { Proposal, CreateProposalFormValues } from "@/features/proposals/types";
-import { ProposalForm } from "@/features/proposals/components";
+import { ActivityForm, ProposalForm } from "@/features/proposals/components";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
@@ -62,8 +62,7 @@ export const ItineraryManager = ({
     proposals?.filter((p: Proposal) => p.status === "confirmed") || [];
   const timelineItems = confirmedProposals.filter((p: Proposal) => p.startDate);
   const backlogItems = confirmedProposals.filter(
-    (p: Proposal) =>
-      !p.startDate && p.type !== "inventory",
+    (p: Proposal) => !p.startDate && p.type !== "inventory",
   );
 
   const mappedEvents: Event[] = timelineItems.map(
@@ -101,7 +100,10 @@ export const ItineraryManager = ({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-4">
-        <Icon name="progress_activity" className="w-8 h-8 text-primary animate-spin" />
+        <Icon
+          name="progress_activity"
+          className="w-8 h-8 text-primary animate-spin"
+        />
         <p className="text-gray-500 text-sm font-medium">
           Cargando itinerario...
         </p>
@@ -149,11 +151,7 @@ export const ItineraryManager = ({
             }
           />
         ) : view === "timeline" && trip ? (
-          <TimelineView
-            events={mappedEvents}
-            trip={trip}
-            tripId={tripId}
-          />
+          <TimelineView events={mappedEvents} trip={trip} tripId={tripId} />
         ) : trip ? (
           <CalendarView events={mappedEvents} trip={trip} />
         ) : null}
@@ -200,7 +198,7 @@ export const ItineraryManager = ({
           title="Asignar Fecha"
           description="Añade una fecha para que aparezca en el itinerario."
         >
-          <ProposalForm
+          <ActivityForm
             onSubmit={handleUpdateProposal}
             isSubmitting={isUpdating}
             initialData={editingItem}

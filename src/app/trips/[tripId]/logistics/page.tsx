@@ -12,6 +12,7 @@ import {
 } from "@/features/proposals/hooks";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { LogisticsForm } from "@/features/proposals/components";
+import { getLogisticsFormConfig } from "@/features/proposals/data/logisticsForms";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
@@ -28,7 +29,7 @@ export default function LogisticsPage() {
 
   const [activeTab, setActiveTab] = useState("confirmados");
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [formType, setFormType] = useState<ProposalType>("accommodation");
+  const [formType, setFormType] = useState<ProposalType | null>(null);
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
 
   if (loadingTrip || !trip) {
@@ -43,7 +44,7 @@ export default function LogisticsPage() {
     );
   }
 
-  const handleOpenForm = (type: ProposalType = "accommodation") => {
+  const handleOpenForm = (type: ProposalType | null = null) => {
     setFormType(type);
     setEditingProposal(null);
     setIsFormOpen(true);
@@ -61,8 +62,8 @@ export default function LogisticsPage() {
   };
 
   const tabs: Tab[] = [
-    { id: "confirmados", label: "Confirmados" },
     { id: "pendientes", label: "Pendientes" },
+    { id: "confirmados", label: "Confirmadas" },
   ];
 
   const isAdmin = trip.createdBy === user?.uid;
@@ -100,14 +101,25 @@ export default function LogisticsPage() {
       <Modal
         isOpen={isFormOpen}
         onClose={handleCloseForm}
-        title={editingProposal ? "Editar" : "Nuevo"}
+        title={
+          editingProposal
+            ? `Editar ${getLogisticsFormConfig(editingProposal.type).title}`
+            : formType
+              ? `Crear Nuevo ${getLogisticsFormConfig(formType).title}`
+              : "Crear Nueva Propuesta"
+        }
+        description={
+          getLogisticsFormConfig(formType || editingProposal?.type || null)
+            .description
+        }
       >
         <LogisticsForm
           tripId={tripId}
           trip={trip}
           onClose={handleCloseForm}
           initialData={editingProposal || undefined}
-          defaultType={formType as "accommodation" | "transport"}
+          defaultType={formType as "accommodation" | "transport" | null}
+          onTypeChange={setFormType}
           onSubmit={(data) => {
             if (editingProposal) {
               updateProposal(
@@ -125,7 +137,7 @@ export default function LogisticsPage() {
         />
       </Modal>
 
-      <FloatingActionButton onClick={() => handleOpenForm()} />
+      <FloatingActionButton onClick={() => handleOpenForm(null)} />
     </div>
   );
 }

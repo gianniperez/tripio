@@ -26,8 +26,8 @@ export const InventoryForm = ({
       title: initialData?.title || "",
       description: initialData?.description || "",
       type: "inventory",
-      estimatedCost: initialData?.estimatedCost ?? 0,
-      quantity: initialData?.quantity ?? 1,
+      estimatedCost: initialData?.estimatedCost,
+      quantity: initialData?.quantity,
       assignedTo: initialData?.assignedTo || "",
       isPersonal: initialData?.isPersonal ?? defaultIsPersonal,
       inventoryCategory: initialData?.inventoryCategory || "General",
@@ -83,9 +83,9 @@ export const InventoryForm = ({
 
         <div className="grid grid-cols-2 gap-4">
           <NeumorphicInput
+            label="Categoría"
             type="select"
             {...register("inventoryCategory")}
-            label="Categoría"
             options={categories}
           />
           <NeumorphicInput

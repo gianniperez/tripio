@@ -17,6 +17,7 @@ import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { SettingsModal } from "@/features/trips/components/SettingsModal/SettingsModal";
 import { ConfirmDialog } from "@/components/ui/dialog/ConfirmDialog/ConfirmDialog";
 import { useDeleteTrip, useCreateTrip } from "@/features/trips/hooks";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 function TripCardInfo({ trip }: { trip: Trip }) {
   const hasDates = !!trip.startDate && !!trip.endDate;
@@ -66,9 +67,7 @@ export default function TripsList() {
       <TopBar />
 
       <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 space-y-8 pb-24">
-        <h1 className="text-4xl font-black text-secondary-deep drop-shadow-sm">
-          Mis Viajes
-        </h1>
+        <PageHeader title="Mis Viajes" />
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-60 gap-4">
@@ -144,9 +143,9 @@ export default function TripsList() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-24 text-center space-y-8 glass-card rounded-tripio p-12">
-            <NeumorphicCard className="w-24 h-24 flex justify-center items-center">
-              <Icon name="calendar_month" className="text-primary" size={48} />
-            </NeumorphicCard>
+            <div className="w-24 h-24 flex justify-center items-center bg-primary rounded-full">
+              <Icon name="calendar_month" className="text-white" size={48} />
+            </div>
             <div className="space-y-3">
               <h3 className="text-3xl font-black text-secondary-deep font-display">
                 ¿Listo para partir?
@@ -188,7 +187,7 @@ export default function TripsList() {
           }}
           title="Eliminar Viaje"
           message="¿Estás seguro? Esta acción no se puede deshacer y se borrarán todos los datos asociados (itinerario, finanzas, actividades, etc.)."
-          confirmLabel="Confirmar"
+          confirmLabel="Eliminar"
           variant="danger"
           isLoading={deleteMutation.isPending}
         />

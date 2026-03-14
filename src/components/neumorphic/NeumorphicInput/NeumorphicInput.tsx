@@ -26,6 +26,7 @@ export const NeumorphicInput = forwardRef<
       containerClassName,
       labelRightContent,
       helperText,
+      required,
       ...props
     },
     ref,
@@ -36,6 +37,9 @@ export const NeumorphicInput = forwardRef<
     const isSelect = type === "select";
     const isNumber = type === "number";
     const isDate = type === "date" || type === "datetime-local";
+    const isFile = type === "file";
+
+    const [fileName, setFileName] = useState<string | null>(null);
 
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
@@ -87,7 +91,7 @@ export const NeumorphicInput = forwardRef<
             {label && (
               <label className="font-display text-sm font-semibold text-text-main">
                 {label}
-                {props.required && (
+                {required && (
                   <span className="text-danger ml-1" title="Campo obligatorio">
                     *
                   </span>
@@ -132,6 +136,32 @@ export const NeumorphicInput = forwardRef<
                 <Icon name="expand_more" size={24} />
               </div>
             </div>
+          ) : isFile ? (
+            <div className="w-full">
+              <input
+                ref={innerRef as React.Ref<HTMLInputElement>}
+                type="file"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  setFileName(file ? file.name : null);
+                  props.onChange?.(e as any);
+                }}
+                {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+              />
+              <button
+                type="button"
+                onClick={() => (innerRef.current as HTMLInputElement)?.click()}
+                className={cn(
+                  "flex w-full gap-2 items-center justify-center cursor-pointer rounded-tripio px-6 py-4 font-display font-bold transition-all text-center",
+                  "bg-secondary text-white hover:bg-secondary-dark active:shadow-secondary-inset shadow-secondary",
+                  className
+                )}
+              >
+                <Icon name={fileName ? "check_circle" : "cloud_upload"} size={20} />
+                {fileName || props.placeholder || "Subir archivo"}
+              </button>
+            </div>
           ) : type === "textarea" ? (
             <textarea
               ref={innerRef as React.Ref<HTMLTextAreaElement>}
@@ -144,6 +174,12 @@ export const NeumorphicInput = forwardRef<
                 ref={innerRef as React.Ref<HTMLInputElement>}
                 type={inputType}
                 className={baseInputStyles}
+                required={required}
+                placeholder={props.placeholder ?? (isNumber ? "0" : undefined)}
+                onClick={(e) => {
+                  if (isDate) handleIconClick();
+                  props.onClick?.(e as any);
+                }}
                 {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
               />
               {((renderedIcon && renderedIconPosition === "right") ||

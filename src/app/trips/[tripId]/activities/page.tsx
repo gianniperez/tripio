@@ -58,8 +58,8 @@ export default function ActivitiesPage() {
   };
 
   const tabs: Tab[] = [
-    { id: "confirmed", label: "Confirmadas" },
     { id: "pending", label: "Pendientes" },
+    { id: "confirmed", label: "Confirmadas" },
   ];
 
   return (

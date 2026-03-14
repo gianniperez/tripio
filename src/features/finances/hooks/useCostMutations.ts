@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   collection,
   addDoc,
@@ -8,14 +8,15 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Cost } from "@/types/tripio";
+import { useSyncTripSummary } from "@/features/trips/hooks";
 
-export const useCreateCost = () => {
+export const useCreateCost = (tripId: string) => {
+  const { mutate: syncSummary } = useSyncTripSummary();
+
   return useMutation({
     mutationFn: async ({
-      tripId,
       data,
     }: {
-      tripId: string;
       data: Omit<Cost, "id" | "createdAt">;
     }) => {
       const expensesRef = collection(db, "trips", tripId, "costs");
@@ -25,20 +26,22 @@ export const useCreateCost = () => {
       });
       return docRef.id;
     },
+    onSuccess: () => {
+      syncSummary(tripId);
+    },
   });
 };
 
-export const useDeleteCost = () => {
+export const useDeleteCost = (tripId: string) => {
+  const { mutate: syncSummary } = useSyncTripSummary();
+
   return useMutation({
-    mutationFn: async ({
-      tripId,
-      costId,
-    }: {
-      tripId: string;
-      costId: string;
-    }) => {
+    mutationFn: async (costId: string) => {
       const costRef = doc(db, "trips", tripId, "costs", costId);
       await deleteDoc(costRef);
+    },
+    onSuccess: () => {
+      syncSummary(tripId);
     },
   });
 };

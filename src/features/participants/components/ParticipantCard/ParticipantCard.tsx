@@ -53,29 +53,29 @@ export function ParticipantCard({
   };
 
   return (
-    <NeumorphicCard className="p-4 flex flex-col gap-4">
+    <NeumorphicCard variant="gray">
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h4 className="font-semibold text-[--text-color] text-lg">
-              {isLoading
-                ? "Cargando..."
-                : userProfile?.displayName || participant.id}{" "}
+              {isLoading ? "Cargando..." : userProfile?.displayName}
             </h4>
             {isCurrentUser && (
-              <span className="text-xs bg-[--primary-color] text-white px-2 py-1 rounded-full">
-                Tú
-              </span>
+              <span className="text-xs px-2 py-1 rounded-full">Tú</span>
             )}
             {participant.role === "owner" && (
               <span title="Propietario">
-                <Icon name="admin_panel_settings" className="w-4 h-4 text-yellow-500" />
+                <Icon
+                  name="admin_panel_settings"
+                  className="w-4 h-4 text-primary-extralight"
+                  fill
+                />
               </span>
             )}
             {participant.customPermissions &&
               Object.keys(participant.customPermissions).length > 0 && (
                 <span title="Permisos especiales">
-                  <Icon name="shield" className="w-4 h-4 text-orange-500" />
+                  <Icon name="shield" className="w-4 h-4 text-primary" fill />
                 </span>
               )}
           </div>
@@ -154,8 +154,8 @@ export function ParticipantCard({
                         className={`px-2 py-1 text-xs rounded-md ${
                           isOverridden
                             ? currentValue
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-red-500/20 text-red-500"
+                              ? "bg-success/20 text-success"
+                              : "bg-danger/20 text-danger"
                             : "bg-[--bg-color] text-[--text-muted]"
                         }`}
                       >
@@ -168,7 +168,7 @@ export function ParticipantCard({
                       {isOverridden && (
                         <button
                           onClick={() => handleClearOverride(perm)}
-                          className="text-gray-400 hover:text-red-500 px-1"
+                          className="text-gray-400 hover:text-danger px-1"
                           title="Restaurar al valor del rol"
                         >
                           ×

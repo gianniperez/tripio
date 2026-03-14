@@ -24,6 +24,7 @@ import { FilterTabBar } from "@/components/ui/FilterTabBar";
 import { TripForm } from "../TripForm/TripForm";
 import { TripFormValues } from "../TripForm/TripForm.types";
 import { createTripSchema } from "@/features/trips/types";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -251,7 +252,7 @@ export const SettingsModal = ({
               },
               {
                 id: "participants",
-                label: "Personas",
+                label: "Participantes",
                 icon: <Icon name="group" size={16} />,
               },
             ]}
@@ -269,38 +270,40 @@ export const SettingsModal = ({
 
                 <div className="pt-4 border-t border-gray-100">
                   {!showConfirmDelete ? (
-                    <button
+                    <NeumorphicButton
                       type="button"
+                      variant="danger"
                       onClick={() => setShowConfirmDelete(true)}
-                      className="flex items-center justify-center w-full py-3 text-red-500 text-xs font-bold hover:bg-red-50 rounded-xl transition-all"
                     >
                       <Icon name="delete" size={14} className="mr-2" />
                       Eliminar Viaje
-                    </button>
+                    </NeumorphicButton>
                   ) : (
-                    <div className="space-y-3 p-4 bg-red-50 rounded-2xl">
-                      <p className="text-[10px] text-red-600 font-black text-center uppercase tracking-wider">
+                    <div className="space-y-3 p-4 rounded-2xl">
+                      <p className="text-xs text-danger font-black text-center">
                         ¿Estás seguro? Se borrará todo.
                       </p>
                       <div className="flex gap-2">
                         <div className="flex-1">
-                          <button
+                          <NeumorphicButton
+                            onClick={() => setShowConfirmDelete(false)}
+                            variant="secondary"
+                            className="text-sm py-2"
+                          >
+                            Cancelar
+                          </NeumorphicButton>
+                        </div>
+                        <div className="flex-1">
+                          <NeumorphicButton
                             onClick={handleDelete}
                             disabled={deleteMutation.isPending}
-                            className="w-full bg-red-500 text-white font-bold py-2 rounded-xl text-xs hover:bg-red-600 transition-colors disabled:opacity-50"
+                            variant="danger"
+                            className="text-sm py-2"
                           >
                             {deleteMutation.isPending
                               ? "Borrando..."
-                              : "Sí, Borrar"}
-                          </button>
-                        </div>
-                        <div className="flex-1">
-                          <button
-                            onClick={() => setShowConfirmDelete(false)}
-                            className="w-full bg-gray-200 text-gray-700 font-bold py-2 rounded-xl text-xs hover:bg-gray-300 transition-colors"
-                          >
-                            No
-                          </button>
+                              : "Eliminar"}
+                          </NeumorphicButton>
                         </div>
                       </div>
                     </div>
@@ -309,72 +312,36 @@ export const SettingsModal = ({
               </div>
             )}
 
-            {activeTab === "features" && (
-              <div className="space-y-4">
-                <p className="text-xs text-gray-400 font-medium px-1">
-                  Activa o desactiva las secciones principales del viaje.
-                </p>
-                <div className="grid gap-3">
-                  <ToggleFeature
-                    isEnabled={!!formDefaultValues.enabledFeatures?.activities}
-                    label="Actividades"
-                    icon={<Icon name="grid_view" size={18} />}
-                    onToggle={() => handleUpdateFeatures("activities")}
-                  />
-                  <ToggleFeature
-                    isEnabled={!!formDefaultValues.enabledFeatures?.inventory}
-                    label="Inventario"
-                    icon={<Icon name="package" size={18} />}
-                    onToggle={() => handleUpdateFeatures("inventory")}
-                  />
-                  <ToggleFeature
-                    isEnabled={!!formDefaultValues.enabledFeatures?.finances}
-                    label="Finanzas"
-                    icon={<Icon name="payments" size={18} />}
-                    onToggle={() => handleUpdateFeatures("finances")}
-                  />
-                  <ToggleFeature
-                    isEnabled={!!formDefaultValues.enabledFeatures?.logistics}
-                    label="Logística"
-                    icon={<Icon name="calendar_month" size={18} />}
-                    onToggle={() => handleUpdateFeatures("logistics")}
-                  />
-                </div>
-              </div>
-            )}
-
             {activeTab === "participants" && (
-              <div className="space-y-4">
-                <ParticipantsManager
-                  participants={participants}
-                  currentUserId={currentUser?.uid || ""}
-                  onUpdateRole={(participantId, role) =>
-                    updateParticipantMutation.mutate({
-                      tripId,
-                      participantId,
-                      data: { role },
-                    })
-                  }
-                  onUpdatePermissions={(participantId, customPermissions) =>
-                    updateParticipantMutation.mutate({
-                      tripId,
-                      participantId,
-                      data: { customPermissions },
-                    })
-                  }
-                  onRemoveParticipant={(participantId) =>
-                    removeParticipantMutation.mutate({ tripId, participantId })
-                  }
-                  onInviteParticipant={async (role) => {
-                    const id = await inviteParticipantMutation.mutateAsync({
-                      role,
-                      invitedByToken: currentUser?.uid || "",
-                      invitedByName: currentUser?.displayName || "Admin",
-                    });
-                    return id;
-                  }}
-                />
-              </div>
+              <ParticipantsManager
+                participants={participants}
+                currentUserId={currentUser?.uid || ""}
+                onUpdateRole={(participantId, role) =>
+                  updateParticipantMutation.mutate({
+                    tripId,
+                    participantId,
+                    data: { role },
+                  })
+                }
+                onUpdatePermissions={(participantId, customPermissions) =>
+                  updateParticipantMutation.mutate({
+                    tripId,
+                    participantId,
+                    data: { customPermissions },
+                  })
+                }
+                onRemoveParticipant={(participantId) =>
+                  removeParticipantMutation.mutate({ tripId, participantId })
+                }
+                onInviteParticipant={async (role) => {
+                  const id = await inviteParticipantMutation.mutateAsync({
+                    role,
+                    invitedByToken: currentUser?.uid || "",
+                    invitedByName: currentUser?.displayName || "Admin",
+                  });
+                  return id;
+                }}
+              />
             )}
           </div>
         </div>

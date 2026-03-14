@@ -27,6 +27,8 @@ export type TripPermission =
   | "view_finances"
   | "manage_participants";
 
+export type DashboardStatus = "missing" | "pending" | "confirmed";
+
 // --- 8.2 Colección: users ---
 export interface User {
   uid: string;
@@ -37,6 +39,28 @@ export interface User {
 }
 
 // --- 8.3 Colección: trips ---
+export interface TripSummary {
+  activeProposalsCount: number;
+  proposalsByCategory: {
+    activity: number;
+    logistics: number; // accommodation + transport
+    inventory: number;
+  };
+  logistics: {
+    accommodation: DashboardStatus;
+    transport: DashboardStatus;
+  };
+  finances: {
+    totalBudget: number;
+    totalCollected: number;
+    totalExpenses: number;
+  };
+  inventory: {
+    criticalItemsCount: number;
+  };
+  updatedAt: Timestamp;
+}
+
 export interface Trip {
   id: string;
   name: string;
@@ -55,6 +79,8 @@ export interface Trip {
     activities: boolean;
     logistics: boolean;
   };
+  budget?: number | null;
+  summary?: TripSummary;
 }
 
 // --- 8.3.1 Subcolección: segments (Tramos del viaje) ---

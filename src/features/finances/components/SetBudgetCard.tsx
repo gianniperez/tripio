@@ -38,10 +38,8 @@ export const SetBudgetCard = ({
               <Icon name="attach_money" className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-lg font-nunito tracking-tight">
-                Define un Presupuesto
-              </h3>
-              <p className="text-white/80 text-sm leading-tight mt-0.5">
+              <h3 className="font-bold font-nunito">Define un Presupuesto</h3>
+              <p className="text-white/80 text-sm">
                 Llevá un control personal de cuánto planeas gastar en este
                 viaje.
               </p>
@@ -74,7 +72,8 @@ export const SetBudgetCard = ({
             variant="secondary"
             className="shadow-transparent"
           >
-            Guardar Presupuesto <Icon name="chevron_right" className="w-4 h-4" />
+            Guardar Presupuesto{" "}
+            <Icon name="chevron_right" className="w-4 h-4" />
           </NeumorphicButton>
         </form>
       </div>

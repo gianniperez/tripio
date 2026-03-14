@@ -86,14 +86,14 @@ export const TopBar = () => {
       {/* Mobile Drawer Overlay */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 z-100 bg-black/20 backdrop-blur-sm"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Drawer Menu */}
       <div
-        className={`md:hidden fixed inset-y-0 right-0 z-50 w-72 bg-white shadow-2xl rounded-l-xl transform transition-transform duration-300 ease-in-out flex flex-col ${
+        className={`md:hidden fixed inset-y-0 right-0 z-150 w-72 bg-white shadow-2xl rounded-l-xl transform transition-transform duration-300 ease-in-out flex flex-col ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

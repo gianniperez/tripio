@@ -138,23 +138,15 @@ export const ProposalForm = ({
     return localDate.toISOString().slice(0, 16);
   };
 
-  // Calculate the floor date (max of today and trip start)
+  // Calculate the floor date (trip start)
   const getFloorDate = (includeTime: boolean = false) => {
-    const today = new Date();
-    if (!includeTime) {
-      // Create a UTC midnight date for today to match valueAsDate behavior
-      const utcToday = new Date(
-        Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()),
-      );
-      const tripStart = trip.startDate?.toDate();
-      const floor = tripStart && tripStart > utcToday ? tripStart : utcToday;
-      return toISO(floor, false);
-    }
-
-    today.setHours(0, 0, 0, 0);
     const tripStart = trip.startDate?.toDate();
-    const floor = tripStart && tripStart > today ? tripStart : today;
-    return toISO(floor, true);
+    if (!includeTime) {
+      if (!tripStart) return "";
+      return toISO(tripStart, false);
+    }
+    if (!tripStart) return "";
+    return toISO(tripStart, true);
   };
 
   const safeToLocalISO = (
@@ -260,20 +252,10 @@ export const ProposalForm = ({
         isAccommodation,
       );
 
-      const todayMidnight = normalizeToMidnight(today);
       const tStart = normalizeToMidnight(tripStart, isAccommodation);
       const tEnd = tripEnd
         ? normalizeToMidnight(tripEnd, isAccommodation)
         : null;
-
-      // Past date check
-      if (proposalStart && todayMidnight && proposalStart < todayMidnight) {
-        setError("startDate", {
-          type: "manual",
-          message: "La fecha no puede ser anterior a hoy",
-        });
-        return;
-      }
 
       // Trip range check
       if (tStart && proposalStart && proposalStart < tStart) {

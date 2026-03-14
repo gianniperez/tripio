@@ -56,10 +56,7 @@ export const createTripSchema = z
     (data) => {
       const start = data.startDate as Date | undefined;
       const end = data.endDate as Date | undefined;
-      if (start && end) {
-        return end >= start;
-      }
-      return true;
+      return !start || !end || end >= start;
     },
     {
       message: "La fecha de fin no puede ser anterior a la de inicio",

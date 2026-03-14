@@ -7,6 +7,7 @@ import { EventCard } from "./EventCard";
 import { Icon } from "@/components/ui/Icon";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { useRouter } from "next/navigation";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface TimelineViewProps {
   events: Event[];
@@ -19,17 +20,10 @@ export const TimelineView = ({ events, trip, tripId }: TimelineViewProps) => {
 
   if (events.length === 0) {
     return (
-      <NeumorphicCard className="p-12 flex flex-col items-center gap-4 text-center">
-        <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center shadow-neumorphic-inset-sm">
-          <Icon name="calendar_month" size={32} className="text-gray-300" />
-        </div>
-        <div>
-          <h3 className="font-bold text-text-main">Tu itinerario está vacío</h3>
-          <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
-            Confirmá propuestas para que aparezcan automáticamente aquí.
-          </p>
-        </div>
-      </NeumorphicCard>
+      <EmptyState
+        title="Tu itinerario está vacío"
+        description="Confirmá propuestas para que aparezcan automáticamente aquí."
+      />
     );
   }
 

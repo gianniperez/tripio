@@ -111,3 +111,4 @@ export const useEvents = (tripId: string | undefined) => {
 
 export * from "./useTripSegments";
 export * from "./useCreateTripSegment";
+export * from "./useSyncTripSummary";

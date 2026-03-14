@@ -4,4 +4,5 @@ export interface NeumorphicButtonProps extends ButtonHTMLAttributes<HTMLButtonEl
   children: ReactNode;
   variant?: "primary" | "secondary" | "terciary" | "ghost" | "danger";
   className?: string;
+  icon?: string;
 }

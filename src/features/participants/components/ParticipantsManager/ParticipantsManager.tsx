@@ -33,14 +33,19 @@ export function ParticipantsManager({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {canManageParticipants && (
-        <NeumorphicCard className="p-4">
-          <h3 className="text-lg font-semibold mb-3 text-[--text-color]">
+        <div>
+          <h3 className="text-lg font-semibold mb-2">
             Invitar nuevo participante
           </h3>
-          <InviteParticipant onInvite={handleInvite} isInviting={isInviting} />
-        </NeumorphicCard>
+          <NeumorphicCard variant="gray">
+            <InviteParticipant
+              onInvite={handleInvite}
+              isInviting={isInviting}
+            />
+          </NeumorphicCard>
+        </div>
       )}
 
       <div className="grid gap-4">

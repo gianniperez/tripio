@@ -57,7 +57,7 @@ export function ConfirmDialog({
               onConfirm();
             }}
             disabled={isLoading}
-            variant="primary"
+            variant={variant}
             className="flex-1"
           >
             {isLoading ? "Procesando..." : confirmLabel}

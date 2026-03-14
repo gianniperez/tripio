@@ -3,6 +3,7 @@ import { Timestamp } from "firebase/firestore";
 import { differenceInDays } from "date-fns";
 import { Icon } from "@/components/ui/Icon";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
+import { formatMoney } from "../utils/formatters";
 
 interface DailyBudgetCardProps {
   budgetLimit: number;
@@ -12,14 +13,6 @@ interface DailyBudgetCardProps {
   endDate: Timestamp | null;
 }
 
-const formatMoney = (amount: number, currency: string) => {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 export const DailyBudgetCard = ({
   budgetLimit,

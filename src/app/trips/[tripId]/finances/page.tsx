@@ -7,6 +7,8 @@ import {
   useTrip,
   useEvents,
   useUpdateParticipant,
+  useUpdateTrip,
+  useSyncTripSummary,
 } from "@/features/trips/hooks";
 import { useCosts } from "@/features/finances/hooks/useCosts";
 import { BudgetProgressBar } from "@/features/finances/components/BudgetProgressBar";
@@ -31,6 +33,8 @@ export default function TripFinances() {
   const { data: events, isLoading: isLoadingEvents } = useEvents(tripId);
   const { data: costs, isLoading: isLoadingCosts } = useCosts(tripId);
   const updateParticipant = useUpdateParticipant();
+  const updateTrip = useUpdateTrip();
+  const { mutate: syncSummary } = useSyncTripSummary();
 
   const [participant, setParticipant] = useState<Participant | null>(null);
   const [proposals, setProposals] = useState<Proposal[]>([]);
@@ -88,11 +92,21 @@ export default function TripFinances() {
   if (!trip || !participant || !user) return null;
 
   const handleSetBudget = async (amount: number) => {
+    // 1. Update the personal budget limit for this view
     await updateParticipant.mutateAsync({
       tripId,
       participantId: user.uid,
       data: { budgetLimit: amount },
     });
+
+    // 2. Update the global trip budget (used by the dashboard widget)
+    await updateTrip.mutateAsync({
+      tripId,
+      data: { budget: amount },
+    });
+
+    // 3. Trigger summary sync to update denormalized data
+    syncSummary(tripId);
   };
 
   const myTotalCosts = calculateMyCosts(costs, events, proposals, user.uid);

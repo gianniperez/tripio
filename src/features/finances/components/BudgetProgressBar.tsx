@@ -1,5 +1,6 @@
 import React from "react";
 import { Icon } from "@/components/ui/Icon";
+import { formatMoney } from "../utils/formatters";
 
 interface BudgetProgressBarProps {
   budgetLimit: number;
@@ -7,15 +8,6 @@ interface BudgetProgressBarProps {
   currency: string;
   onEdit?: () => void;
 }
-
-const formatMoney = (amount: number, currency: string) => {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 export const BudgetProgressBar = ({
   budgetLimit,
@@ -46,7 +38,9 @@ export const BudgetProgressBar = ({
             <span className="text-3xl font-black text-text-main font-nunito tracking-tighter">
               {formatMoney(currentCost, currency)}
             </span>
-            {isOverBudget && <Icon name="warning" className="w-5 h-5 text-red-500" />}
+            {isOverBudget && (
+              <Icon name="warning" className="w-5 h-5 text-red-500" />
+            )}
           </div>
         </div>
         <div className="text-right flex flex-col items-end">

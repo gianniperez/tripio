@@ -6,6 +6,7 @@ import { useState } from "react";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ListItemCard } from "@/components/ui/ListItemCard";
 import { useRouter } from "next/navigation";
+import { formatMoney } from "../utils/formatters";
 
 interface ExpenseListProps {
   tripId: string;
@@ -15,15 +16,6 @@ interface ExpenseListProps {
   currency: string;
 }
 
-const formatMoney = (amount: number, currency: string) => {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
-
 export const ExpenseList = ({
   tripId,
   currentUserId,
@@ -31,14 +23,14 @@ export const ExpenseList = ({
   proposals,
   currency,
 }: ExpenseListProps) => {
-  const deleteCost = useDeleteCost();
+  const deleteCost = useDeleteCost(tripId);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const router = useRouter();
 
   const handleDelete = async (costId: string) => {
     try {
       setDeletingId(costId);
-      await deleteCost.mutateAsync({ tripId, costId });
+      await deleteCost.mutateAsync(costId);
     } catch (error) {
       console.error("Error deleting cost:", error);
     } finally {
@@ -51,7 +43,7 @@ export const ExpenseList = ({
       <EmptyState
         title="No tienes gastos proyectados"
         description="Los gastos asociados a tus actividades confirmadas aparecerán aquí."
-        icon={<Icon name="check_box" className="w-6 h-6 text-amber-500" />}
+        icon="check_box"
       />
     );
   }
@@ -63,7 +55,9 @@ export const ExpenseList = ({
       </h3>
       <div className="bg-white flex flex-col gap-3">
         {costs.map((cost) => {
-          let sourceIcon = <Icon name="calendar_month" className="w-6 h-6 text-primary" />;
+          let sourceIcon = (
+            <Icon name="calendar_month" className="w-6 h-6 text-primary" />
+          );
           let isProposal = false;
 
           if (cost.linkedEventId) {
@@ -87,10 +81,7 @@ export const ExpenseList = ({
               rightDetail={formatMoney(cost.amount, currency)}
               onClick={
                 isProposal && cost.linkedProposalId
-                  ? () =>
-                      router.push(
-                        `/trips/${tripId}/finances`,
-                      )
+                  ? () => router.push(`/trips/${tripId}/finances`)
                   : undefined
               }
               actions={
@@ -103,7 +94,10 @@ export const ExpenseList = ({
                     className="cursor-pointer p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
                   >
                     {deletingId === cost.id ? (
-                      <Icon name="progress_activity" className="w-4 h-4 animate-spin" />
+                      <Icon
+                        name="progress_activity"
+                        className="w-4 h-4 animate-spin"
+                      />
                     ) : (
                       <Icon name="delete" className="w-4 h-4" />
                     )}

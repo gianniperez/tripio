@@ -36,7 +36,7 @@ export const FilterTabBar = ({
           aria-pressed={activeTab === tab.id}
         >
           {tab.icon && (
-            <span className="w-3.5 h-3.5 mr-1.5 flex items-center justify-center">
+            <span className="w-3.5 h-3.5 mr-3 flex items-center justify-center">
               {tab.icon}
             </span>
           )}

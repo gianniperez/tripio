@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTripSchema } from "../../types";
@@ -7,6 +8,7 @@ import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Icon } from "@/components/ui/Icon";
 import Image from "next/image";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { TripFormProps, TripFormValues } from "./TripForm.types";
 
 export const TripForm = ({
@@ -16,10 +18,14 @@ export const TripForm = ({
   submitLabel = "Guardar",
   onCancel,
 }: TripFormProps) => {
+  const [isUploading, setIsUploading] = useState(false);
+
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm<TripFormValues>({
     resolver: zodResolver(createTripSchema),
@@ -31,6 +37,18 @@ export const TripForm = ({
       ...defaultValues,
     },
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      reset({
+        name: "",
+        currency: "USD",
+        description: "",
+        coverImage: "",
+        ...defaultValues,
+      });
+    }
+  }, [defaultValues, reset]);
 
   const startDate = useWatch({ control, name: "startDate" });
   const currentCoverImage = useWatch({ control, name: "coverImage" });
@@ -101,11 +119,27 @@ export const TripForm = ({
             </div>
           )}
           <NeumorphicInput
-            icon={<Icon name="image" size={18} />}
-            placeholder="https://ejemplo.com/imagen.jpg"
-            error={errors.coverImage?.message}
-            {...register("coverImage")}
+            type="file"
+            label="Cambiar Portada"
+            placeholder={isUploading ? "Subiendo..." : "Seleccionar imagen"}
+            onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setIsUploading(true);
+                try {
+                  const url = await uploadToCloudinary(file);
+                  setValue("coverImage", url);
+                } catch (error) {
+                  alert(
+                    "Error al subir la imagen. Por favor, intenta de nuevo.",
+                  );
+                } finally {
+                  setIsUploading(false);
+                }
+              }
+            }}
           />
+          <input type="hidden" {...register("coverImage")} />
         </div>
 
         <div className="flex flex-col gap-1.5">

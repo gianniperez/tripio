@@ -90,11 +90,7 @@ export default function InventoryPage() {
       <Modal
         isOpen={isFormOpen}
         onClose={handleCloseForm}
-        title={
-          editingProposal
-            ? "Editar Ítem"
-            : `Añadir Ítem ${activeTab === "personal" ? "Personal" : "Grupal"}`
-        }
+        title={editingProposal ? "Editar Ítem" : "Crear Ítem"}
       >
         <InventoryForm
           tripId={tripId}

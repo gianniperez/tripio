@@ -13,6 +13,9 @@
   --color-secondary-dark: #005959;
   --color-secondary-deep: #454545;
 
+  --color-accent: #7b61ff;
+  --color-accent-dark: #5e2390;
+
   --color-background: #fffaf5;
   --color-text-main: #001523;
 
@@ -33,14 +36,6 @@
   --shadow-gray: 6px 6px 12px #d1d5dc;
   --shadow-cream-inset: inset 4px 4px 8px #e4ddd6;
   --shadow-gray-inset: inset 4px 4px 8px #d1d5dc;
-
-  /* Shadows - Refined and Colored */
-  /*  --shadow-neumorphic:
-    12px 12px 24px rgba(215, 204, 193, 0.4), -12px -12px 24px #ffffff;
-  --shadow-neumorphic-sm:
-    6px 6px 12px rgba(215, 204, 193, 0.3), -6px -6px 12px #ffffff;
-  --shadow-neumorphic-inset-sm:
-    inset 4px 4px 8px rgba(215, 204, 193, 0.3), inset -4px -4px 8px #ffffff; */
 }
 
 body {
