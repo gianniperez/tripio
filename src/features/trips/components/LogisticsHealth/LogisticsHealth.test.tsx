@@ -4,7 +4,9 @@ import { LogisticsHealth } from "./LogisticsHealth";
 
 describe("LogisticsHealth Component", () => {
   it("renders correctly", () => {
-    const { container } = render(<LogisticsHealth />);
+    const { container } = render(
+      <LogisticsHealth accommodation={"confirmed"} transport={"confirmed"} />,
+    );
     expect(container).toBeInTheDocument();
   });
 });

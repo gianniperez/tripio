@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useTrip, useSyncTripSummary } from "@/features/trips/hooks";
-import { useAuth } from "@/features/auth/hooks";
 import {
   DecisionHub,
   LogisticsHealth,
@@ -21,7 +20,6 @@ export default function TripHome() {
   const params = useParams<{ tripId: string }>();
   const { data: trip, isLoading } = useTrip(params.tripId);
   const { mutate: syncSummary } = useSyncTripSummary();
-  const { user } = useAuth();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Auto-sync if summary is missing to handle existing data

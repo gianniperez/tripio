@@ -109,6 +109,4 @@ export const useEvents = (tripId: string | undefined) => {
   return { data: events, isLoading, error };
 };
 
-export * from "./useTripSegments";
-export * from "./useCreateTripSegment";
 export * from "./useSyncTripSummary";
