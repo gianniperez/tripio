@@ -4,7 +4,7 @@ import { Icon } from "./Icon";
 
 describe("Icon Component", () => {
   it("renders correctly", () => {
-    const { container } = render(<Icon />);
+    const { container } = render(<Icon name="home" />);
     expect(container).toBeInTheDocument();
   });
 });

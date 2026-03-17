@@ -1,22 +1,28 @@
 import { doc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { CreateProposalFormValues, Proposal } from "../types";
+import { CreateProposalFormValues, Proposal, ProposalType } from "../types";
+import { getProposalCollectionPath } from "../utils/paths";
 
 export interface UpdateProposalParams extends Partial<CreateProposalFormValues> {
   tripId: string;
   proposalId: string;
+  type: ProposalType;
 }
 
 export const updateProposal = async ({
   tripId,
   proposalId,
+  type,
   ...data
 }: UpdateProposalParams) => {
-  const proposalRef = doc(db, "trips", tripId, "proposals", proposalId);
+  const proposalRef = doc(
+    db,
+    getProposalCollectionPath(tripId, type),
+    proposalId,
+  );
 
   const updateData: Partial<Proposal> = {};
 
-  if (data.type !== undefined) updateData.type = data.type;
   if (data.title !== undefined) updateData.title = data.title;
   if (data.description !== undefined)
     updateData.description = data.description || null;

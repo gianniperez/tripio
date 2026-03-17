@@ -11,18 +11,19 @@ En su Primera Etapa (MVP), el proyecto abarcará el desarrollo de una Aplicació
    - Sistema de invitación de participantes mediante Magic Links.
    - Roles: Admin (creador, extensible a otros) y Member.
 
-2. **Propuestas Colaborativas (Ideas + Encuestas)**
-   - Módulo unificado de propuestas ricas (con ubicación, costo, fechas) y encuestas simples (opciones votables con deadline).
-   - RSVP y votación grupal para medir interés.
-   - Ciclo de vida: Draft → Voted → Confirmed/Rejected.
-   - Las propuestas confirmadas se convierten en eventos del Timeline.
+2. **Propuestas Distribuidas (Actividades, Alojamiento, Transporte, Inventario)**
+   - Cada módulo gestiona sus propias ideas y decisiones con pestañas "Pendientes" y "Confirmadas".
+   - Centralización vía **Decision Hub** en el Dashboard para seguimiento grupal.
+   - Ciclo de vida: `Pending` → `Confirmed` / `Rejected`.
+   - Las propuestas confirmadas se integran automáticamente al Timeline o sección logística.
 
-3. **Gestión de Presupuesto (3 Niveles)**
-   - **Costos Fijos:** Gastos comprometidos (alquiler, pasajes).
-   - **Costos Proyectados:** Estimaciones para variables grupales (combustible, comida).
-   - **Presupuesto Diario:** Monto fijo por día que escala por duración.
-   - Total Cost individual = `Fijos/n + Proyectados/n + (Diarios * días)`.
-   - Budget Limit personal con alertas al exceder.
+3. **Gestión Económica Avanzada**
+   - **Gastos Directos:** Pagados por un usuario (ej: un souvenir personal).
+   - **Gastos Compartidos (Shared):** Tickets grupales con **Split Variable** (montos distintos por persona).
+   - **Presupuesto Diario Sugerido:** Cálculo dinámico basado en el remanente del Límite Personal y los días restantes.
+   - **Simplificación de Deudas:** Algoritmo opcional (Splitwise-style) para consolidar pagos entre participantes.
+   - Vínculo bidireccional entre Gastos y Entidades (Actividades, Logística, etc).
+   - Budget Limit personal con alertas de exceso de presupuesto.
 
 4. **Logística y Transporte**
    - Registro de medios de transporte disponibles (quién lleva auto).
@@ -46,6 +47,5 @@ En su Primera Etapa (MVP), el proyecto abarcará el desarrollo de una Aplicació
 - Aplicaciones Desktop nativas (Electron/Tauri).
 - Sistema de reservas de vuelos/hoteles integrado con agencias externas.
 - Pasarelas de pago internas (los pagos/transferencias se acuerdan fuera de la app).
-- Gestión de deuda interna entre participantes (Tripio presupuesta, no gestiona deudas).
 - Push Notifications (se usan Email para MVP).
 - Soporte Offline / Service Workers.

@@ -1,6 +1,6 @@
 # Roadmap de Implementación MVP - Tripio
 
-Este documento centraliza el paso a paso técnico para llevar Tripio de un boilerplate a un MVP funcional, basado en el **SRD v3.0**.
+Este documento centraliza el paso a paso técnico para llevar Tripio de un boilerplate a un MVP funcional, basado en el **SRD v4.0**.
 
 ---
 
@@ -72,33 +72,35 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
 
 _Objetivo: Control financiero proyectado según duración del viaje._
 
-- [✅] **Motor Económico:**
+- [✅] **Motor Económico Avanzado:**
   - [✅] Configuración de Presupuesto Diario Disponible en el viaje.
   - [✅] Configuración de Budget Limit personal.
-  - [🚫] ~~CRUD de Gastos Fijos (ABM manual)~~ → _Movido a Post-MVP por solicitud de usuario (11/03/2026)._
-  - [✅] Lógica de cálculo del "Total Cost" (basado en propuestas y eventos).
+  - [✅] **Split Variable:** Implementar lógica para cargar montos específicos por persona en un gasto.
+  - [✅] **Simplificación de Deudas (Splitwise style):** Lógica para consolidar pagos entre participantes.
+  - [✅] **Vínculo Bidireccional:** Asociación de gastos con Actividades, Alojamientos, Transportes o Ítems.
+  - [✅] Lógica de cálculo del "Total Cost" (incluyendo participación en gastos compartidos).
 
 - [✅] **Alertas de Presupuesto:**
-  - [✅] Watcher visual (BudgetProgressBar) de gastos que lanza advertencia sobre si se excede el límite personal.
+  - [✅] Watcher visual (BudgetProgressBar) que confronta `Gastos + Presupuesto Diario` vs `Budget Limit`.
 
 ---
 
-## 💡 Fase 3: Propuestas y Logística
+## 💡 Fase 3: Propuestas Distribuidas y Logística
 
-_Objetivo: Colaboración activa y organización de recursos._
+_Objetivo: Toma de decisiones en contexto y organización de recursos._
 
-- [✅] **Módulo de Propuestas Unificado:**
-  - [✅] Creación de Propuestas Ricas (costo, ubicación, links).
-  - [✅] Creación de Encuestas Simples (opciones votables).
-  - [✅] RSVP/Votación y cierre automático de propuestas.
-  - [✅] Lógica de "Confirmar Propuesta" → Auto-crear evento en Timeline.
+- [✅] **Propuestas Distribuidas por Módulo:**
+  - [✅] Estructura de subcolecciones espejo (`_proposals` / `_confirmed`) para Actividades, Alojamientos, Transporte e Inventario.
+  - [✅] Pestañas "Pendientes" (votación/RSVP) y "Confirmadas" (finalizado) en cada vista.
+  - [✅] Decision Hub central en el Home para seguimiento de todas las votaciones pendientes.
+  - [✅] Lógica de "Confirmar Propuesta" → Transición de datos a la colección `_confirmed` y creación de evento en el Timeline.
 
 - [✅] **Logística de Transporte:**
-  - [✅] Registro de vehículos y capacidad.
-  - [✅] Asignación de pasajeros (con validación de límite).
+  - [✅] Registro de vehículos y capacidad máxima.
+  - [✅] Sistema de Auto-Asignación de pasajeros con validación de límite (Error 409).
 
 - [✅] **Inventario e ítems:**
-  - [✅] Checklist de ítems necesarios.
+  - [✅] Checklist de ítems grupales compartidos.
   - [✅] Vínculo Ítem → Tarea automática al asignar responsable.
 
 ---
@@ -125,5 +127,3 @@ _Sección detectada tras la auditoría de Arquitectura e UI del 10/03/2026. Refa
 - [ ] **Refactor `Badge/Chip`:** Unificar las píldoras de colores crudas ubicadas en tarjetas de participantes y encabezados de propuestas en un componente tipado `<Badge variant="prop" />`.
 
 ---
-
-

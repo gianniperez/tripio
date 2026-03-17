@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useTrip } from "../../hooks";
 import { useProposals, useUpdateProposal } from "@/features/proposals/hooks";
 import { Proposal, CreateProposalFormValues } from "@/features/proposals/types";
-import { ActivityForm, ProposalForm } from "@/features/proposals/components";
+import { ActivityForm } from "@/features/proposals/components";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
@@ -89,7 +89,7 @@ export const ItineraryManager = ({
   const handleUpdateProposal = (data: CreateProposalFormValues) => {
     if (editingItem) {
       updateProposal(
-        { ...data, proposalId: editingItem.id },
+        { ...data, proposalId: editingItem.id, type: editingItem.type },
         {
           onSuccess: () => setEditingItem(null),
         },

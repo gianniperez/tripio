@@ -15,9 +15,9 @@ La organización de viajes grupales suele ser caótica cuando se maneja a travé
 
 ## Valor Aportado
 
-- Herramientas democráticas (propuestas colaborativas con RSVP y encuestas integradas).
-- Trazabilidad y claridad financiera (presupuesto estructurado en 3 niveles).
-- Organización logística detallada (asignación de vehículos, equipaje/provisiones).
+- Herramientas democráticas (propuestas distribuidas por módulo con Decision Hub central).
+- Trazabilidad y claridad financiera (split variable por usuario y simplificación de deudas).
+- Organización logística detallada (pestañas Pendientes/Confirmadas en cada módulo).
 - Accesibilidad universal (PWA Mobile-First).
 
 ---

@@ -1,11 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { subscribeToProposals } from "../api";
-import { Proposal } from "../types";
+import { Proposal, ProposalType } from "../types";
 
-export function useProposals(tripId: string) {
+export function useProposals(tripId: string, type?: ProposalType | "all") {
   const queryClient = useQueryClient();
-  const queryKey = useMemo(() => ["proposals", tripId], [tripId]);
+  const queryKey = useMemo(
+    () => ["proposals", tripId, type || "all"],
+    [tripId, type],
+  );
 
   useEffect(() => {
     if (!tripId) return;
@@ -18,10 +21,11 @@ export function useProposals(tripId: string) {
       (error) => {
         console.error("Error subscribing to proposals:", error);
       },
+      type,
     );
 
     return () => unsubscribe();
-  }, [tripId, queryClient, queryKey]);
+  }, [tripId, queryClient, queryKey, type]);
 
   return useQuery<Proposal[]>({
     queryKey,

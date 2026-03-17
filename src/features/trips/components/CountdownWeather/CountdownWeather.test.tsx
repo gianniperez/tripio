@@ -4,7 +4,7 @@ import { CountdownWeather } from "./CountdownWeather";
 
 describe("CountdownWeather Component", () => {
   it("renders correctly", () => {
-    const { container } = render(<CountdownWeather />);
+    const { container } = render(<CountdownWeather startDate={new Date()} />);
     expect(container).toBeInTheDocument();
   });
 });

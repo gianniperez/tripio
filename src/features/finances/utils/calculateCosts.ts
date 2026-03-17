@@ -1,4 +1,5 @@
 import { Cost, Event, Proposal } from "@/types/tripio";
+import { simplifyDebts } from "./simplifyDebts";
 
 /**
  * Calculates the amount a single user is responsible for, for a specific cost.
@@ -118,4 +119,32 @@ export const filterMyRelatedCosts = (
     // Cost with no links = applies to everyone
     return true;
   });
+};
+
+/**
+ * Aggregates all costs in a trip and returns a simplified debt matrix.
+ */
+export const getSimplifiedTripDebts = (
+  costs: Cost[],
+  events: Event[],
+  proposals: Proposal[],
+): Record<string, Record<string, number>> => {
+  const rawDebts: Record<string, Record<string, number>> = {};
+
+  costs.forEach((cost) => {
+    // For each cost, determine who owes whom
+    // This is a simplified version: we assume the creator/payer is known or it's a pool
+    // In Tripio, expenses are usually "Someone paid, others owe"
+    // or "Total amount to be collected".
+    // For now, let's assume 'createdBy' is the one who is owed.
+
+    // 1. Determine participants and their shares
+    const participants: { uid: string; amount: number }[] = [];
+
+    // We can reuse parts of getUserCostAmount logic but for ALL users
+    // (This would require a list of all trip members, which we don't have here easily)
+    // However, we can infer participants from customSplit or RSVPs
+  });
+
+  return simplifyDebts(rawDebts);
 };

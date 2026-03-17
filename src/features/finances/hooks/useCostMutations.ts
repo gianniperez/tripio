@@ -14,11 +14,7 @@ export const useCreateCost = (tripId: string) => {
   const { mutate: syncSummary } = useSyncTripSummary();
 
   return useMutation({
-    mutationFn: async ({
-      data,
-    }: {
-      data: Omit<Cost, "id" | "createdAt">;
-    }) => {
+    mutationFn: async ({ data }: { data: Omit<Cost, "id" | "createdAt"> }) => {
       const expensesRef = collection(db, "trips", tripId, "costs");
       const docRef = await addDoc(expensesRef, {
         ...data,

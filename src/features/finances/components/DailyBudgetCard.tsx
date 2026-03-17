@@ -13,7 +13,6 @@ interface DailyBudgetCardProps {
   endDate: Timestamp | null;
 }
 
-
 export const DailyBudgetCard = ({
   budgetLimit,
   currentCost,

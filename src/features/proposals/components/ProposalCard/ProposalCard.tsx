@@ -23,10 +23,26 @@ interface ProposalCardProps {
 }
 
 const typeConfig = {
-  accommodation: { color: "text-blue-500", label: "Alojamiento", icon: "location_on" },
-  transport: { color: "text-emerald-500", label: "Transporte", icon: "location_on" },
-  activity: { color: "text-purple-500", label: "Actividad", icon: "location_on" },
-  inventory: { color: "text-amber-500", label: "Item para llevar", icon: "info" },
+  accommodation: {
+    color: "text-blue-500",
+    label: "Alojamiento",
+    icon: "location_on",
+  },
+  transport: {
+    color: "text-emerald-500",
+    label: "Transporte",
+    icon: "location_on",
+  },
+  activity: {
+    color: "text-purple-500",
+    label: "Actividad",
+    icon: "location_on",
+  },
+  inventory: {
+    color: "text-amber-500",
+    label: "Item para llevar",
+    icon: "info",
+  },
   other: { color: "text-slate-500", label: "Otro", icon: "info" },
 };
 
@@ -42,7 +58,8 @@ export const ProposalCard = ({
   totalParticipants,
   userProfiles,
 }: ProposalCardProps) => {
-  const config = typeConfig[proposal.type as keyof typeof typeConfig] || typeConfig.other;
+  const config =
+    typeConfig[proposal.type as keyof typeof typeConfig] || typeConfig.other;
   const isConfirmed = proposal.status === "confirmed";
   const isRejected = proposal.status === "rejected";
   const isClosed = isConfirmed || isRejected;
@@ -206,7 +223,10 @@ export const ProposalCard = ({
       <div className="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-500 font-medium">
         {proposal.startDate && (
           <div className="flex items-center">
-            <Icon name="calendar_month" className="w-3.5 h-3.5 mr-2 text-primary/50" />
+            <Icon
+              name="calendar_month"
+              className="w-3.5 h-3.5 mr-2 text-primary/50"
+            />
             <span className="truncate">
               {format(proposal.startDate.toDate(), "d MMM", { locale: es })}
               {proposal.endDate &&
@@ -216,7 +236,10 @@ export const ProposalCard = ({
         )}
         {proposal.location && (
           <div className="flex items-center">
-            <Icon name="location_on" className="w-3.5 h-3.5 mr-2 text-primary/50" />
+            <Icon
+              name="location_on"
+              className="w-3.5 h-3.5 mr-2 text-primary/50"
+            />
             <span className="truncate" title={proposal.location}>
               {proposal.location}
             </span>
@@ -224,7 +247,10 @@ export const ProposalCard = ({
         )}
         {proposal.estimatedCost && (
           <div className="flex items-center">
-            <Icon name="attach_money" className="w-3.5 h-3.5 mr-2 text-green-500/50" />
+            <Icon
+              name="attach_money"
+              className="w-3.5 h-3.5 mr-2 text-green-500/50"
+            />
             <span>
               ${proposal.estimatedCost}{" "}
               {proposal.type === "accommodation" ? "total" : "est."}
@@ -266,7 +292,8 @@ export const ProposalCard = ({
                 );
 
                 const isOptionDisabled = Boolean(
-                  (proposal.requiresVoting && isConfirmed) || (isYesOption && capacityReached && !isActive),
+                  (proposal.requiresVoting && isConfirmed) ||
+                  (isYesOption && capacityReached && !isActive),
                 );
 
                 return (
@@ -348,7 +375,10 @@ export const ProposalCard = ({
                       `}
                         >
                           {iVotedThis && (
-                            <Icon name="check" className="w-2.5 h-2.5 text-white" />
+                            <Icon
+                              name="check"
+                              className="w-2.5 h-2.5 text-white"
+                            />
                           )}
                         </div>
                         <span
@@ -434,19 +464,20 @@ export const ProposalCard = ({
 
           // Logic to determine winning option for polls
           const getWinningOption = () => {
-            if (proposal.responseType !== "poll" || !proposal.options) return undefined;
-            
+            if (proposal.responseType !== "poll" || !proposal.options)
+              return undefined;
+
             let winner = "";
             let maxVotes = -1;
-            
-            proposal.options.forEach(opt => {
+
+            proposal.options.forEach((opt) => {
               const count = proposal.optionVotes?.[opt]?.length || 0;
               if (count > maxVotes) {
                 maxVotes = count;
                 winner = opt;
               }
             });
-            
+
             return winner || undefined;
           };
 

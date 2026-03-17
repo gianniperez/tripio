@@ -1,6 +1,7 @@
 import { doc, runTransaction } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Proposal } from "../types";
+import { Proposal, ProposalType } from "../types";
+import { getProposalCollectionPath } from "../utils/paths";
 
 export type VoteType = "rsvp" | "option";
 
@@ -10,14 +11,20 @@ export const voteProposal = async ({
   userId,
   voteType,
   voteValue,
+  type,
 }: {
   tripId: string;
   proposalId: string;
   userId: string;
   voteType: VoteType;
   voteValue: string; // "si" | "no" | "maybe" for rsvp, or option label for option
+  type: ProposalType;
 }) => {
-  const proposalRef = doc(db, "trips", tripId, "proposals", proposalId);
+  const proposalRef = doc(
+    db,
+    getProposalCollectionPath(tripId, type),
+    proposalId,
+  );
 
   await runTransaction(db, async (transaction) => {
     const docSnap = await transaction.get(proposalRef);
@@ -27,15 +34,7 @@ export const voteProposal = async ({
 
     const proposal = docSnap.data() as Proposal;
 
-    // Status transition: if it's the first vote, move from draft to voted
-    let newStatus = proposal.status;
-    if (proposal.status === "draft") {
-      newStatus = "voted";
-    }
-
-    const updateData: Partial<Proposal> & { status: string } = {
-      status: newStatus,
-    };
+    const updateData: Partial<Proposal> = {};
 
     if (voteType === "option") {
       const currentOptionVotes = { ...(proposal.optionVotes || {}) };

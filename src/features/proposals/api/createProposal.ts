@@ -13,15 +13,30 @@ interface CreateProposalParams extends CreateProposalFormValues {
   userId: string;
 }
 
+import { getProposalCollectionPath } from "../utils/paths";
+
 export const createProposal = async ({
   tripId,
   userId,
   ...data
 }: CreateProposalParams): Promise<string> => {
-  const proposalRef = doc(collection(db, "trips", tripId, "proposals"));
+  const proposalRef = doc(
+    collection(db, getProposalCollectionPath(tripId, data.type)),
+  );
 
   const proposalData: Partial<Proposal> = {
-    type: data.type,
+    type:
+      data.type === "accommodation" ||
+      data.type === "transport" ||
+      data.type === "inventory"
+        ? "logistics"
+        : data.type,
+    subType:
+      data.type === "accommodation" ||
+      data.type === "transport" ||
+      data.type === "inventory"
+        ? data.type
+        : null,
     title: data.title,
     description: data.description || null,
     location: data.location || null,
@@ -44,7 +59,8 @@ export const createProposal = async ({
     isPersonal: data.isPersonal ?? null,
   };
 
-  const status: ProposalStatus = data.requiresVoting === false ? "confirmed" : "draft";
+  const status: ProposalStatus =
+    data.requiresVoting === false ? "confirmed" : "pending";
 
   await setDoc(proposalRef, {
     ...proposalData,

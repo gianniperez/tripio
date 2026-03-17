@@ -47,6 +47,8 @@ Tripio utiliza un **Neumorfismo Suave** para dar volumen sin saturar.
 | **`NeumorphicButton`**    | Padding generoso (`px-6 py-3`), esquinas `2xl`, sombra neumórfica. Texto siempre en `Nunito Bold`.                 |
 | **`NeumorphicCard`**      | Fondo igual al background (`var(--color-background)`), sombra neumórfica exterior. Padding interno estándar `p-6`. |
 | **`NeumorphicInput`**     | Estilo `inset` suave con bordes `2xl`. Texto `Inter`.                                                              |
+| **`BudgetProgressBar`**   | Barra indicadora de presupuesto con tres estados de color (Seguro, Warning, Danger) integrada en Finances.         |
+| **`DecisionHubCard`**     | Variante de NeumorphicCard con badge de módulo (Actividad, Alojamiento, etc.) y botón RSVP rápido.                 |
 | **`Widget` (ej Finance)** | Gradientes sutiles (ej: Naranja -> Amarillo) para destacar secciones críticas.                                     |
 
 ---

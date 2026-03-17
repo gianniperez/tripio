@@ -23,7 +23,7 @@ export const FloatingActionButton = ({
       className={cn(
         "fixed right-6 z-40 transition-all duration-300",
         isSubPage ? "bottom-24" : "bottom-6",
-        className
+        className,
       )}
     >
       <NeumorphicButton

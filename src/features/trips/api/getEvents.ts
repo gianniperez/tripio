@@ -7,7 +7,7 @@ export const getEventsByTripId = (
   callback: (events: Event[]) => void,
   onError?: (error: Error) => void,
 ) => {
-  const eventsRef = collection(db, "trips", tripId, "events");
+  const eventsRef = collection(db, "trips", tripId, "activities");
   const q = query(
     eventsRef,
     orderBy("date", "asc"),

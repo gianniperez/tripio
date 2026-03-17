@@ -13,9 +13,17 @@ interface EventCardProps {
 
 const CATEGORY_ICONS = {
   accommodation: { icon: "bed", color: "text-blue-500", bg: "bg-blue-50" },
-  transport: { icon: "car_repair", color: "text-purple-500", bg: "bg-purple-50" },
+  transport: {
+    icon: "car_repair",
+    color: "text-purple-500",
+    bg: "bg-purple-50",
+  },
   food: { icon: "restaurant", color: "text-orange-500", bg: "bg-orange-50" },
-  activity: { icon: "photo_camera", color: "text-green-500", bg: "bg-green-50" },
+  activity: {
+    icon: "photo_camera",
+    color: "text-green-500",
+    bg: "bg-green-50",
+  },
   other: { icon: "more_horiz", color: "text-gray-500", bg: "bg-gray-50" },
 };
 

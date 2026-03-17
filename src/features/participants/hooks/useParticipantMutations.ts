@@ -7,10 +7,17 @@ export const useRemoveParticipant = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ tripId, participantId }: { tripId: string; participantId: string }) =>
-      removeParticipant(tripId, participantId),
+    mutationFn: ({
+      tripId,
+      participantId,
+    }: {
+      tripId: string;
+      participantId: string;
+    }) => removeParticipant(tripId, participantId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["participants", variables.tripId] });
+      queryClient.invalidateQueries({
+        queryKey: ["participants", variables.tripId],
+      });
     },
   });
 };
@@ -19,7 +26,15 @@ export const useInviteParticipant = (tripId: string, tripName: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ role, invitedByToken, invitedByName }: { role: TripRole; invitedByToken: string; invitedByName: string }) =>
+    mutationFn: ({
+      role,
+      invitedByToken,
+      invitedByName,
+    }: {
+      role: TripRole;
+      invitedByToken: string;
+      invitedByName: string;
+    }) =>
       createInvitation(tripId, tripName, role, invitedByToken, invitedByName),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invitations", tripId] });

@@ -92,12 +92,27 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
   - **Cambios realizados:**
     - Se implementó un helper `normalizeToMidnight` para evitar el corrimiento de fechas generado por el uso mixto de fechas UTC y fechas locales según el tipo de input de la UI.
     - Se modificó la validación de solapamiento para comparar mediante `getTime()` absoluto, previniendo falsos positivos de `overlappingAccommodation`.
-  
   - **Mejora en validación de solapamiento:**
     - La validación de solapamiento de fechas ahora también evalúa propuestas de alojamiento en estado "draft" o "voted". Antes solo evaluaba las "confirmed". Solo se ignoran las que tienen estado "rejected".
-  
+
 ### 🎨 UI & UX
 
 - **[MODIFICADO]** **Sincronización de Tabs en Actividades:**
   - Se homogeneizó la vista de Actividades (`src/app/trips/[tripId]/activities/page.tsx`) reemplazando los botones manuales por el componente reutlizable `FilterTabBar`.
   - Esto garantiza coherencia visual con la vista de Logística y un mejor mantenimiento a nivel código.
+
+## 📅 17 de Marzo, 2026
+
+### 🏗️ Arquitectura y Rediseño de Módulos
+
+- **Distribución de Propuestas:**
+  - Se eliminó el "Módulo Único de Propuestas" en favor de un enfoque distribuido.
+  - Cada módulo (Actividades, Alojamiento, Transporte, Inventario) ahora gestiona sus propias propuestas mediante una **TabBar (Pendientes / Confirmadas)**.
+  - Se implementó el **Decision Hub** en la navegación principal como un agregador de todas las votaciones pendientes.
+- **Rediseño Financiero (Backend & UI):**
+  - Soporte para **Split Variable**: Cada gasto ahora permite definir montos específicos por cada participante.
+  - **Sincronización Bidireccional:** Se agregó un CTA "Crear Gasto" en las tarjetas de logística y actividades que autocompleta el vínculo y el monto estimado.
+  - Se habilitó la opción de **Simplificación de Deudas** (Debt Simplification) para facilitar la liquidación del viaje.
+- **Modelo de Datos (Firestore):**
+  - Las propuestas ahora viven en subcolecciones específicas por módulo (`/activities/proposals`, etc.).
+  - El esquema de `/costs` se actualizó para soportar el mapa de participantes con sus respectivos montos y el flag de simplificación.

@@ -5,15 +5,19 @@ export type ProposalType =
   | "accommodation"
   | "transport"
   | "activity"
-  | "inventory";
+  | "inventory"
+  | "destination"
+  | "logistics";
 
-export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
+export type ProposalStatus = "pending" | "confirmed" | "rejected";
+export type LogisticsType = "accommodation" | "transport" | "inventory";
 
 export interface Proposal {
   id: string;
   title: string;
   description: string | null;
   type: ProposalType;
+  subType?: LogisticsType | null;
   status: ProposalStatus;
   location: string | null;
   locationUrl: string | null;
@@ -54,7 +58,14 @@ export const createProposalSchema = z
   .object({
     title: z.string().min(1, "El título es obligatorio"),
     description: z.string().optional().nullable(),
-    type: z.enum(["accommodation", "transport", "activity", "inventory"]),
+    type: z.enum([
+      "accommodation",
+      "transport",
+      "activity",
+      "inventory",
+      "destination",
+      "logistics",
+    ]),
     location: z.string().optional().nullable(),
     locationUrl: z
       .string()

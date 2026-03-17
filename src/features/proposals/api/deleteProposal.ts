@@ -1,6 +1,5 @@
 import {
   doc,
-  deleteDoc,
   collection,
   query,
   where,
@@ -8,18 +7,26 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { ProposalType } from "../types";
+import { getProposalCollectionPath } from "../utils/paths";
 
 export const deleteProposal = async ({
   tripId,
   proposalId,
+  type,
 }: {
   tripId: string;
   proposalId: string;
+  type: ProposalType;
 }) => {
   const batch = writeBatch(db);
 
   // 1. Delete the proposal itself
-  const proposalRef = doc(db, "trips", tripId, "proposals", proposalId);
+  const proposalRef = doc(
+    db,
+    getProposalCollectionPath(tripId, type),
+    proposalId,
+  );
   batch.delete(proposalRef);
 
   // 2. Delete linked costs
@@ -33,8 +40,8 @@ export const deleteProposal = async ({
     batch.delete(costDoc.ref);
   });
 
-  // 3. Delete linked events
-  const eventsRef = collection(db, "trips", tripId, "events");
+  // 3. Delete linked events (activities)
+  const eventsRef = collection(db, "trips", tripId, "activities");
   const eventsQuery = query(
     eventsRef,
     where("linkedProposalId", "==", proposalId),

@@ -155,10 +155,13 @@ export const NeumorphicInput = forwardRef<
                 className={cn(
                   "flex w-full gap-2 items-center justify-center cursor-pointer rounded-tripio px-6 py-4 font-display font-bold transition-all text-center",
                   "bg-secondary text-white hover:bg-secondary-dark active:shadow-secondary-inset shadow-secondary",
-                  className
+                  className,
                 )}
               >
-                <Icon name={fileName ? "check_circle" : "cloud_upload"} size={20} />
+                <Icon
+                  name={fileName ? "check_circle" : "cloud_upload"}
+                  size={20}
+                />
                 {fileName || props.placeholder || "Subir archivo"}
               </button>
             </div>

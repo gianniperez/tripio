@@ -5,6 +5,7 @@ import {
   useVoteProposal,
   useConfirmProposal,
   useDeleteProposal,
+  useRejectProposal,
 } from "@/features/proposals/hooks";
 import { useParticipants } from "@/features/participants/hooks";
 import { Proposal } from "@/features/proposals/types";
@@ -38,6 +39,7 @@ export const ProposalsList = ({
   const { mutate: vote } = useVoteProposal(tripId);
   const { mutate: confirm } = useConfirmProposal(tripId);
   const { mutate: deleteProposal } = useDeleteProposal(tripId);
+  const { mutate: reject } = useRejectProposal(tripId);
 
   // Group participants for the card
   const userProfiles = (participants || []).reduce(
@@ -151,6 +153,7 @@ export const ProposalsList = ({
                       voteType,
                       voteValue,
                       userId: currentUserId,
+                      type: proposal.type,
                     })
                   }
                   onConfirm={(winningOption) =>
@@ -158,11 +161,22 @@ export const ProposalsList = ({
                       proposalId: proposal.id,
                       userId: currentUserId,
                       winningOption,
+                      proposalType: proposal.type,
                     })
                   }
-                  onReject={() => {}}
+                  onReject={() =>
+                    reject({
+                      proposalId: proposal.id,
+                      type: proposal.type,
+                    })
+                  }
                   onEdit={() => onEdit(proposal)}
-                  onDelete={() => deleteProposal(proposal.id)}
+                  onDelete={() =>
+                    deleteProposal({
+                      proposalId: proposal.id,
+                      type: proposal.type,
+                    })
+                  }
                   isAdmin={isAdmin}
                   totalParticipants={participants?.length || 0}
                   userProfiles={userProfiles}

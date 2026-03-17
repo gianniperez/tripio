@@ -13,8 +13,10 @@ export type ProposalType =
   | "transport"
   | "activity"
   | "inventory"
-  | "destination";
-export type ProposalStatus = "draft" | "voted" | "confirmed" | "rejected";
+  | "destination"
+  | "logistics";
+export type ProposalStatus = "pending" | "confirmed" | "rejected";
+export type LogisticsType = "accommodation" | "transport" | "inventory";
 export type InventoryStatus = "needed" | "assigned" | "confirmed";
 export type TaskStatus = "pending" | "in-progress" | "done";
 export type TransportType = "car" | "bus" | "plane" | "other";
@@ -148,6 +150,7 @@ export interface Proposal {
   title: string;
   description: string | null;
   type: ProposalType;
+  subType?: LogisticsType | null;
   status: ProposalStatus;
   location: string | null;
   locationUrl: string | null;
@@ -179,9 +182,21 @@ export interface Cost {
   category: EventCategory;
   linkedEventId: string | null;
   linkedProposalId: string | null;
+  /**
+   * Bidirectional link to confirmed entity
+   */
+  entityLink?: {
+    type: ProposalType;
+    id: string;
+  } | null;
   costType: "total" | "per_person";
   splitType: "equal" | "custom";
   customSplit?: Record<string, number>;
+  /**
+   * Simplified debts after calculation
+   * Record<fromUserId, Record<toUserId, amount>>
+   */
+  debts?: Record<string, Record<string, number>>;
   createdBy: string;
   createdAt: Timestamp;
 }

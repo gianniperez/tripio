@@ -64,8 +64,9 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 
 ## 💰 Finanzas Avanzadas
 
-### 9. Split de Gastos (División de Deudas)
+### 9. Split de Gastos (División de Deudas) - [✅ MOVIDO A MVP]
 
+- **Actualización:** Esta funcionalidad fue priorizada e integrada en la **Fase 2 (Marzo 2026)**.
 - Módulo para registrar quién pagó qué y calcular automáticamente quién le debe a quién (estilo Splitwise integrado).
 - Conversión de moneda multi-divisa con tipos de cambio actualizados.
 
@@ -78,7 +79,7 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 
 ## 🏗️ Refactorings e Ideas Arquitectónicas (11/03/2026)
 
-- [ ] **Módulo de Finanzas (Carga manual):** Rehabilitar la capacidad de sumar gastos directamente desde la pestaña de Finanzas (actualmente restringido a propuestas automáticas).
+- [x] **Módulo de Finanzas (Carga manual):** Rehabilitado en Fase 2 vía Gastos Directos y Vínculo Bidireccional.
 - [ ] **Revisión de Arquitectura de Destinos:** Evaluar si tiene sentido dejar el "Destino" simplemente como un campo adicional dentro de la propuesta de "Alojamiento", eliminando la entidad independiente o el tipo de propuesta "Destino".
 
 ---

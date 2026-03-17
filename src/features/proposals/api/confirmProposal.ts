@@ -5,20 +5,30 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Proposal } from "../types";
+import { Proposal, ProposalType } from "../types";
+import {
+  getProposalCollectionPath,
+  getConfirmedCollectionPath,
+} from "../utils/paths";
 
 export const confirmProposal = async ({
   tripId,
   proposalId,
   userId,
+  proposalType,
   winningOption,
 }: {
   tripId: string;
   proposalId: string;
   userId: string;
+  proposalType: ProposalType;
   winningOption?: string;
 }) => {
-  const proposalRef = doc(db, "trips", tripId, "proposals", proposalId);
+  const proposalRef = doc(
+    db,
+    getProposalCollectionPath(tripId, proposalType),
+    proposalId,
+  );
 
   await runTransaction(db, async (transaction) => {
     const docSnap = await transaction.get(proposalRef);
@@ -45,86 +55,84 @@ export const confirmProposal = async ({
       proposalUpdateData.winningOption = winningOption;
     }
 
-    // Only create timeline events for types that are temporal (not inventory)
-    const isTemporalType =
-      proposal.type !== "inventory";
+    // Determine destination collection
+    const confirmedPath = getConfirmedCollectionPath(tripId, proposalType);
+    const sourcePath = getProposalCollectionPath(tripId, proposalType);
+
+    // If unified collection, update in place. Otherwise, create new entity.
+    const isUnified = confirmedPath === sourcePath;
+    const newEntityId = isUnified
+      ? proposalId
+      : doc(collection(db, confirmedPath)).id;
+    const newEntityRef = doc(db, confirmedPath, newEntityId);
 
     let newEventId: string | null = null;
 
-    if (isTemporalType) {
-      const eventsRef = collection(db, "trips", tripId, "events");
-      const newEventRef = doc(eventsRef);
-      newEventId = newEventRef.id;
-
-      const eventData = {
-        title: finalTitle,
-        description: proposal.description || null,
-        date: proposal.startDate || serverTimestamp(),
-        startTime: proposal.startDate || null,
-        endTime: proposal.endDate || null,
-        location: proposal.location || null,
-        locationUrl: proposal.locationUrl || null,
-        category: proposal.type,
-        costImpact: proposal.estimatedCost || null,
-        rsvp: proposal.votes || {},
-        optionVotes: proposal.optionVotes || {},
-        linkedProposalId: proposalId,
-        createdBy: userId,
-        createdAt: serverTimestamp(),
-      };
-
-      transaction.set(newEventRef, eventData);
-    }
-
-    // Logistical Side-Effects: "Conversión Mágica"
-    if (proposal.type === "inventory") {
-      const inventoryRef = collection(db, "trips", tripId, "inventory");
-      const newItemRef = doc(inventoryRef);
-      const inventoryData = {
-        name: finalTitle,
-        description: proposal.description || null,
-        quantity: proposal.quantity || 1,
-        detail: proposal.description || null,
-        assignedTo: null,
-        status: "needed",
-        linkedTaskId: null,
-        createdBy: userId,
-        createdAt: serverTimestamp(),
-      };
-      transaction.set(newItemRef, inventoryData);
-    } else if (proposal.type === "transport") {
-      const transportRef = collection(db, "trips", tripId, "transport");
-      const newItemRef = doc(transportRef);
-      const transportData = {
-        name: finalTitle,
-        type: proposal.isPersonalTransport ? "personal" : "public",
-        capacity: proposal.capacity || 5,
-        passengers: [],
-        owner: null,
-        createdBy: userId,
-        createdAt: serverTimestamp(),
-      };
-      transaction.set(newItemRef, transportData);
-    } else if (proposal.type === "accommodation") {
-      const accommodationRef = collection(
-        db,
-        "trips",
-        tripId,
-        "accommodations",
-      );
-      const newItemRef = doc(accommodationRef);
-      const accommodationData = {
-        name: finalTitle,
-        description: proposal.description || null,
-        location: proposal.location || null,
-        locationUrl: proposal.locationUrl || null,
-        checkIn: proposal.startDate || null,
-        checkOut: proposal.endDate || null,
-        cost: proposal.estimatedCost || null,
-        createdBy: userId,
-        createdAt: serverTimestamp(),
-      };
-      transaction.set(newItemRef, accommodationData);
+    if (!isUnified) {
+      // Legacy "move" logic
+      if (proposal.type === "activity" && confirmedPath.endsWith("/events")) {
+        newEventId = newEntityId;
+        const eventData = {
+          title: finalTitle,
+          description: proposal.description || null,
+          date: proposal.startDate || serverTimestamp(),
+          startTime: proposal.startDate || null,
+          endTime: proposal.endDate || null,
+          location: proposal.location || null,
+          locationUrl: proposal.locationUrl || null,
+          category: proposal.type,
+          costImpact: proposal.estimatedCost || null,
+          rsvp: proposal.votes || {},
+          optionVotes: proposal.optionVotes || {},
+          linkedProposalId: proposalId,
+          createdBy: userId,
+          createdAt: serverTimestamp(),
+        };
+        transaction.set(newEntityRef, eventData);
+      } else if (proposal.type === "inventory") {
+        const inventoryData = {
+          name: finalTitle,
+          description: proposal.description || null,
+          quantity: proposal.quantity || 1,
+          detail: proposal.description || null,
+          assignedTo: null,
+          status: "needed",
+          linkedTaskId: null,
+          createdBy: userId,
+          createdAt: serverTimestamp(),
+        };
+        transaction.set(newEntityRef, inventoryData);
+      } else if (proposal.type === "transport") {
+        const transportData = {
+          name: finalTitle,
+          type: proposal.isPersonalTransport ? "personal" : "public",
+          capacity: proposal.capacity || 5,
+          passengers: [],
+          owner: null,
+          createdBy: userId,
+          createdAt: serverTimestamp(),
+        };
+        transaction.set(newEntityRef, transportData);
+      } else if (proposal.type === "accommodation") {
+        const accommodationData = {
+          name: finalTitle,
+          description: proposal.description || null,
+          location: proposal.location || null,
+          locationUrl: proposal.locationUrl || null,
+          checkIn: proposal.startDate || null,
+          checkOut: proposal.endDate || null,
+          cost: proposal.estimatedCost || null,
+          createdBy: userId,
+          createdAt: serverTimestamp(),
+        };
+        transaction.set(newEntityRef, accommodationData);
+      }
+    } else {
+      // Unified module logic: just add specific confirmed fields if necessary
+      // (Optional: map fields like 'status' of item sub-states if needed)
+      if (proposal.type === "inventory") {
+        proposalUpdateData.status = "confirmed"; // inventory uses confirmed too
+      }
     }
 
     // Automatic cost creation when proposal has estimatedCost
@@ -134,20 +142,21 @@ export const confirmProposal = async ({
       const costData = {
         description: finalTitle,
         amount: proposal.estimatedCost,
-        category: proposal.type,
+        category: (proposal.type === "logistics"
+          ? proposal.subType
+          : proposal.type) as any,
         linkedEventId: newEventId,
         linkedProposalId: proposalId,
+        entityLink: {
+          type: proposalType,
+          id: newEntityId,
+        },
         costType: "total" as const,
         splitType: "equal" as const,
         createdBy: userId,
         createdAt: serverTimestamp(),
       };
       transaction.set(newCostRef, costData);
-    }
-
-    // Link the created event back to the proposal (only if event was created)
-    if (newEventId) {
-      proposalUpdateData.linkedEventId = newEventId;
     }
 
     transaction.update(proposalRef, proposalUpdateData);

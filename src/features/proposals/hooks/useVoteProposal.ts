@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { voteProposal } from "../api";
+import { VoteType, voteProposal } from "../api/voteProposal";
+import { ProposalType } from "../types";
 import { useSyncTripSummary } from "@/features/trips/hooks";
 
 export function useVoteProposal(tripId: string) {
@@ -7,8 +8,13 @@ export function useVoteProposal(tripId: string) {
   const { mutate: syncSummary } = useSyncTripSummary();
 
   return useMutation({
-    mutationFn: (data: Omit<Parameters<typeof voteProposal>[0], "tripId">) =>
-      voteProposal({ ...data, tripId }),
+    mutationFn: (params: {
+      proposalId: string;
+      userId: string;
+      voteType: VoteType;
+      voteValue: string;
+      type: ProposalType;
+    }) => voteProposal({ ...params, tripId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["proposals", tripId] });
       syncSummary(tripId);
