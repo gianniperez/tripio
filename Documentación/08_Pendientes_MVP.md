@@ -89,11 +89,11 @@ _Objetivo: Control financiero proyectado según duración del viaje._
 
 _Objetivo: Toma de decisiones en contexto y organización de recursos._
 
-- [✅] **Propuestas Distribuidas por Módulo:**
-  - [✅] Estructura de subcolecciones espejo (`_proposals` / `_confirmed`) para Actividades, Alojamientos, Transporte e Inventario.
-  - [✅] Pestañas "Pendientes" (votación/RSVP) y "Confirmadas" (finalizado) en cada vista.
-  - [✅] Decision Hub central en el Home para seguimiento de todas las votaciones pendientes.
-  - [✅] Lógica de "Confirmar Propuesta" → Transición de datos a la colección `_confirmed` y creación de evento en el Timeline.
+- [ ] **Centralización de Propuestas (Decision Hub):**
+  - [✅] Estructura de subcolecciones espejo (`_proposals` / `_confirmed`) en DB.
+  - [ ] Nueva vista dedicada `/proposals` que agrupa y lista todas las propuestas pendientes (Actividades, Alojamientos, Transportes, etc.).
+  - [ ] Limpieza de las vistas `/activities` y `/logistics` para transformarlas en repositorios de "Solo Información Confirmada" con sus respectivos FABs de creación.
+  - [✅] Lógica de "Confirmar Propuesta" → Transición de datos a la colección `_confirmed` y aterrizaje automático en el Timeline/Itinerario.
 
 - [✅] **Logística de Transporte:**
   - [✅] Registro de vehículos y capacidad máxima.

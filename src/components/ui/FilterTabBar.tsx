@@ -22,7 +22,7 @@ export const FilterTabBar = ({
 }: FilterTabBarProps) => {
   return (
     <div
-      className={`bg-white flex p-2 rounded-tripio shadow-sm border border-slate-100 ${className}`}
+      className={`w-full bg-white flex p-2 rounded-tripio shadow-sm border border-slate-100 ${className}`}
     >
       {tabs.map((tab) => (
         <button

@@ -1,4 +1,3 @@
-import React from "react";
 import { Cost, Proposal } from "@/types/tripio";
 import { Icon } from "@/components/ui/Icon";
 import { useDeleteCost } from "../hooks/useCostMutations";

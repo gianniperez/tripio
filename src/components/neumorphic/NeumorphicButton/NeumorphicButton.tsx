@@ -37,7 +37,6 @@ export function NeumorphicButton({
       disabled={disabled}
       {...props}
     >
-      {icon && <Icon name={icon} size={24} />}
       {children}
     </button>
   );

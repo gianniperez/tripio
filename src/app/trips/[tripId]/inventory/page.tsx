@@ -6,15 +6,15 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Icon } from "@/components/ui/Icon";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuth } from "@/features/auth/hooks";
-import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
+import { InventoryList } from "@/features/inventory/components/InventoryList";
 import { InventoryForm } from "@/features/proposals/components";
 import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { Proposal } from "@/features/proposals/types";
 import {
-  useCreateProposal,
-  useUpdateProposal,
-} from "@/features/proposals/hooks";
+  useCreateInventory,
+  useUpdateInventory,
+} from "@/features/inventory/hooks";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
 
 export default function InventoryPage() {
@@ -27,10 +27,10 @@ export default function InventoryPage() {
     undefined,
   );
 
-  const { mutate: createProposal, isPending: isCreating } =
-    useCreateProposal(tripId);
-  const { mutate: updateProposal, isPending: isUpdating } =
-    useUpdateProposal(tripId);
+  const { mutate: createInventory, isPending: isCreating } =
+    useCreateInventory(tripId);
+  const { mutate: updateInventory, isPending: isUpdating } =
+    useUpdateInventory(tripId);
 
   const isAdmin = trip?.createdBy === user?.uid;
 
@@ -56,7 +56,7 @@ export default function InventoryPage() {
   };
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-8 pb-24">
       <PageHeader title="Inventario" />
 
       {/* Tabs */}
@@ -74,12 +74,11 @@ export default function InventoryPage() {
 
       {/* Content */}
       <div className="px-4">
-        <ProposalsList
+        <InventoryList
           tripId={tripId}
           currentUserId={user?.uid || ""}
           isAdmin={isAdmin}
           onEdit={handleEdit}
-          typeFilter={["inventory"]}
           isPersonalFilter={activeTab === "personal"}
         />
       </div>
@@ -98,14 +97,15 @@ export default function InventoryPage() {
           onClose={handleCloseForm}
           initialData={editingProposal}
           defaultIsPersonal={activeTab === "personal"}
+          isProposalMode={false}
           onSubmit={(data) => {
             if (editingProposal) {
-              updateProposal(
+              updateInventory(
                 { proposalId: editingProposal.id, ...data },
                 { onSuccess: handleCloseForm },
               );
             } else {
-              createProposal(
+              createInventory(
                 { ...data, userId: user?.uid || "" },
                 { onSuccess: handleCloseForm },
               );

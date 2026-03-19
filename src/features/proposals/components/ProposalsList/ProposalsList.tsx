@@ -4,9 +4,12 @@ import {
   useProposals,
   useVoteProposal,
   useConfirmProposal,
-  useDeleteProposal,
   useRejectProposal,
 } from "@/features/proposals/hooks";
+import { useDeleteActivity } from "@/features/activities/hooks";
+import { useDeleteAccommodation } from "@/features/accommodation/hooks";
+import { useDeleteTransport } from "@/features/transport/hooks";
+import { useDeleteInventory } from "@/features/inventory/hooks";
 import { useParticipants } from "@/features/participants/hooks";
 import { Proposal } from "@/features/proposals/types";
 import { ProposalCard } from "../ProposalCard/ProposalCard";
@@ -38,8 +41,19 @@ export const ProposalsList = ({
   const { data: participants } = useParticipants(tripId);
   const { mutate: vote } = useVoteProposal(tripId);
   const { mutate: confirm } = useConfirmProposal(tripId);
-  const { mutate: deleteProposal } = useDeleteProposal(tripId);
   const { mutate: reject } = useRejectProposal(tripId);
+  
+  const { mutate: deleteActivity } = useDeleteActivity(tripId);
+  const { mutate: deleteAccommodation } = useDeleteAccommodation(tripId);
+  const { mutate: deleteTransport } = useDeleteTransport(tripId);
+  const { mutate: deleteInventory } = useDeleteInventory(tripId);
+
+  const handleDelete = (proposalId: string, type: string) => {
+    if (type === "activity") deleteActivity(proposalId);
+    else if (type === "accommodation") deleteAccommodation(proposalId);
+    else if (type === "transport") deleteTransport(proposalId);
+    else if (type === "inventory") deleteInventory(proposalId);
+  };
 
   // Group participants for the card
   const userProfiles = (participants || []).reduce(
@@ -66,7 +80,9 @@ export const ProposalsList = ({
 
   // Apply filters
   const filteredProposals = (proposals || []).filter((p) => {
-    if (typeFilter && !typeFilter.includes(p.type)) return false;
+    const effectiveType =
+      p.type === ("logistics" as any) ? p.subType : p.type;
+    if (typeFilter && !typeFilter.includes(effectiveType as any)) return false;
     if (statusFilter && !statusFilter.includes(p.status)) return false;
     if (isPersonalFilter !== undefined) {
       if (isPersonalFilter === true) {
@@ -90,8 +106,9 @@ export const ProposalsList = ({
   // Grouping Logic (Simplified)
   const groupedByType = filteredProposals.reduce(
     (acc, p) => {
-      if (!acc[p.type]) acc[p.type] = [];
-      acc[p.type].push(p);
+      const gType = p.type === ("logistics" as any) ? p.subType! : p.type;
+      if (!acc[gType]) acc[gType] = [];
+      acc[gType].push(p);
       return acc;
     },
     {} as Record<string, Proposal[]>,
@@ -119,6 +136,8 @@ export const ProposalsList = ({
         return <Icon name="restaurant" className="w-5 h-5" />;
       case "transport":
         return <Icon name="travel" className="w-5 h-5" />;
+      case "inventory":
+        return <Icon name="inventory_2" className="w-5 h-5" />;
       default:
         return <Icon name="more_vert" className="w-5 h-5" />;
     }
@@ -171,12 +190,7 @@ export const ProposalsList = ({
                     })
                   }
                   onEdit={() => onEdit(proposal)}
-                  onDelete={() =>
-                    deleteProposal({
-                      proposalId: proposal.id,
-                      type: proposal.type,
-                    })
-                  }
+                  onDelete={() => handleDelete(proposal.id, proposal.type)}
                   isAdmin={isAdmin}
                   totalParticipants={participants?.length || 0}
                   userProfiles={userProfiles}

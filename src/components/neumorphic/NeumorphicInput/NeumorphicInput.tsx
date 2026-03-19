@@ -77,7 +77,7 @@ export const NeumorphicInput = forwardRef<
       error && "ring-2 ring-danger",
       isSelect && "appearance-none cursor-pointer",
       isNumber &&
-        "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+        "[&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield] [-moz-appearance:textfield]",
       isDate &&
         "appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-clear-button]:appearance-none",
       type == "textarea" && "resize-none",

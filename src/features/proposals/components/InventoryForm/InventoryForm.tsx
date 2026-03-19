@@ -2,7 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createProposalSchema, CreateProposalFormValues } from "../../types";
+import {
+  createInventorySchema,
+  CreateInventoryFormValues,
+} from "@/features/inventory/types";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { VotingSection } from "../VotingSection/VotingSection";
@@ -13,6 +16,7 @@ export const InventoryForm = ({
   isSubmitting = false,
   initialData,
   defaultIsPersonal = true,
+  isProposalMode = false,
 }: InventoryFormProps) => {
   const {
     register,
@@ -20,20 +24,18 @@ export const InventoryForm = ({
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<CreateProposalFormValues>({
-    resolver: zodResolver(createProposalSchema),
+  } = useForm<CreateInventoryFormValues>({
+    resolver: zodResolver(createInventorySchema),
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
-      type: "inventory",
       estimatedCost: initialData?.estimatedCost,
       quantity: initialData?.quantity,
       assignedTo: initialData?.assignedTo || "",
       isPersonal: initialData?.isPersonal ?? defaultIsPersonal,
       inventoryCategory: initialData?.inventoryCategory || "General",
       responseType: initialData?.responseType || "rsvp",
-      requiresVoting:
-        initialData?.requiresVoting ?? (defaultIsPersonal ? false : true),
+      requiresVoting: initialData?.requiresVoting ?? isProposalMode,
       options: initialData?.options?.map((opt) => ({ value: opt })) || [],
     },
   });
@@ -120,13 +122,14 @@ export const InventoryForm = ({
         />
       </div>
 
-      {!isPersonal && (
-        <VotingSection
-          register={register}
-          control={control}
-          watch={watch}
-          errors={errors}
-        />
+      {(isProposalMode || !isPersonal) && (
+          <VotingSection
+            register={register as any}
+            control={control as any}
+            watch={watch as any}
+            errors={errors as any}
+            isProposalMode={isProposalMode}
+          />
       )}
 
       <NeumorphicButton type="submit" variant="primary" disabled={isSubmitting}>

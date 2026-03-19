@@ -28,15 +28,12 @@ export const SetBudgetCard = ({
   };
 
   return (
-    <div className="bg-secondary text-white rounded-tripio p-6 shadow-neumorphic-color relative overflow-hidden">
+    <div className="bg-linear-to-br from-accent to-accent-dark text-white h-full rounded-tripio p-6 shadow-cream relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-1/3 -translate-y-1/3" />
 
       <div className="relative z-10 flex flex-col gap-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm shrink-0">
-              <Icon name="attach_money" className="w-5 h-5 text-white" />
-            </div>
             <div>
               <h3 className="font-bold font-nunito">Define un Presupuesto</h3>
               <p className="text-white/80 text-sm">
@@ -46,11 +43,11 @@ export const SetBudgetCard = ({
             </div>
           </div>
           {onCancel && (
-            <button
-              onClick={onCancel}
-              className="cursor-pointer w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors shrink-0"
-            >
-              <Icon name="close" className="w-4 h-4 text-white" />
+            <button onClick={onCancel}>
+              <Icon
+                name="close"
+                className="flex text-white justify-center align-center cursor-pointer p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all"
+              />
             </button>
           )}
         </div>
@@ -72,8 +69,7 @@ export const SetBudgetCard = ({
             variant="secondary"
             className="shadow-transparent"
           >
-            Guardar Presupuesto{" "}
-            <Icon name="chevron_right" className="w-4 h-4" />
+            Guardar Presupuesto
           </NeumorphicButton>
         </form>
       </div>

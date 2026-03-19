@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useTrip } from "../../hooks";
-import { useProposals, useUpdateProposal } from "@/features/proposals/hooks";
-import { Proposal, CreateProposalFormValues } from "@/features/proposals/types";
-import { ActivityForm } from "@/features/proposals/components";
+import { useProposals } from "@/features/proposals/hooks";
+import { Proposal } from "@/features/proposals/types";
+import {
+  ActivityForm,
+  AccommodationForm,
+  TransportForm,
+} from "@/features/proposals/components";
+import { useUpdateActivity } from "@/features/activities/hooks";
+import { useUpdateAccommodation } from "@/features/accommodation/hooks";
+import { useUpdateTransport } from "@/features/transport/hooks";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { TimelineView } from "./TimelineView";
 import { CalendarView } from "./CalendarView";
@@ -30,8 +37,11 @@ export const ItineraryManager = ({
   const [view, setView] = useState<"timeline" | "calendar">("timeline");
   const { data: trip, isLoading: isLoadingTrip } = useTrip(tripId);
   const { data: proposals, isLoading: isLoadingEvents } = useProposals(tripId);
-  const { mutate: updateProposal, isPending: isUpdating } =
-    useUpdateProposal(tripId);
+  const { mutate: updateActivity, isPending: isUpdatingActivity } = useUpdateActivity(tripId);
+  const { mutate: updateAccommodation, isPending: isUpdatingAcc } = useUpdateAccommodation(tripId);
+  const { mutate: updateTransport, isPending: isUpdatingTransport } = useUpdateTransport(tripId);
+  
+  const isUpdating = isUpdatingActivity || isUpdatingAcc || isUpdatingTransport;
   const { user } = useAuth();
   const [participant, setParticipant] = useState<Participant | null>(null);
 
@@ -62,7 +72,7 @@ export const ItineraryManager = ({
     proposals?.filter((p: Proposal) => p.status === "confirmed") || [];
   const timelineItems = confirmedProposals.filter((p: Proposal) => p.startDate);
   const backlogItems = confirmedProposals.filter(
-    (p: Proposal) => !p.startDate && p.type !== "inventory",
+    (p: Proposal) => !p.startDate && p.type === "activity",
   );
 
   const mappedEvents: Event[] = timelineItems.map(
@@ -86,14 +96,15 @@ export const ItineraryManager = ({
       }) as Event,
   );
 
-  const handleUpdateProposal = (data: CreateProposalFormValues) => {
+  const handleUpdateProposal = (data: any) => {
     if (editingItem) {
-      updateProposal(
-        { ...data, proposalId: editingItem.id, type: editingItem.type },
-        {
-          onSuccess: () => setEditingItem(null),
-        },
-      );
+      if (editingItem.type === "activity") {
+        updateActivity({ ...data, proposalId: editingItem.id }, { onSuccess: () => setEditingItem(null) });
+      } else if (editingItem.type === "accommodation") {
+        updateAccommodation({ ...data, proposalId: editingItem.id }, { onSuccess: () => setEditingItem(null) });
+      } else if (editingItem.type === "transport") {
+        updateTransport({ ...data, proposalId: editingItem.id }, { onSuccess: () => setEditingItem(null) });
+      }
     }
   };
 
@@ -198,13 +209,35 @@ export const ItineraryManager = ({
           title="Asignar Fecha"
           description="Añade una fecha para que aparezca en el itinerario."
         >
-          <ActivityForm
-            onSubmit={handleUpdateProposal}
-            isSubmitting={isUpdating}
-            initialData={editingItem}
-            tripId={tripId}
-            trip={trip!}
-          />
+          {editingItem.type === "activity" && (
+            <ActivityForm
+              onSubmit={handleUpdateProposal}
+              isSubmitting={isUpdating}
+              initialData={editingItem}
+              tripId={tripId}
+              trip={trip!}
+            />
+          )}
+
+          {editingItem.type === "accommodation" && (
+            <AccommodationForm
+              onSubmit={handleUpdateProposal}
+              isSubmitting={isUpdating}
+              initialData={editingItem}
+              tripId={tripId}
+              trip={trip!}
+            />
+          )}
+
+          {editingItem.type === "transport" && (
+            <TransportForm
+              onSubmit={handleUpdateProposal}
+              isSubmitting={isUpdating}
+              initialData={editingItem}
+              tripId={tripId}
+              trip={trip!}
+            />
+          )}
         </Modal>
       )}
     </div>

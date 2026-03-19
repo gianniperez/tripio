@@ -142,9 +142,7 @@ export const confirmProposal = async ({
       const costData = {
         description: finalTitle,
         amount: proposal.estimatedCost,
-        category: (proposal.type === "logistics"
-          ? proposal.subType
-          : proposal.type) as any,
+        category: proposal.type as any,
         linkedEventId: newEventId,
         linkedProposalId: proposalId,
         entityLink: {

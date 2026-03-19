@@ -17,7 +17,6 @@ import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { SettingsModal } from "@/features/trips/components/SettingsModal/SettingsModal";
 import { ConfirmDialog } from "@/components/ui/dialog/ConfirmDialog/ConfirmDialog";
 import { useDeleteTrip, useCreateTrip } from "@/features/trips/hooks";
-import { PageHeader } from "@/components/ui/PageHeader";
 
 function TripCardInfo({ trip }: { trip: Trip }) {
   const hasDates = !!trip.startDate && !!trip.endDate;
@@ -66,9 +65,7 @@ export default function TripsList() {
     <div className="flex flex-col min-h-screen bg-background">
       <TopBar />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 space-y-8 pb-24">
-        <PageHeader title="Mis Viajes" />
-
+      <main className="flex-1 w-full max-w-7xl mx-auto p-6 md:p-8 space-y-10 pb-24">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-60 gap-4">
             <Icon
@@ -76,70 +73,93 @@ export default function TripsList() {
               size={62}
               className="text-primary animate-spin"
             />
-            <p className="text-secondary-deep font-bold">
+            <p className="text-secondary-deep font-bold italic opacity-60">
               Cargando tus aventuras...
             </p>
           </div>
         ) : trips && trips.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {trips.map((trip) => (
-              <div key={trip.id} className="relative group">
-                <Link href={`/trips/${trip.id}`} className="block">
-                  <NeumorphicCard className="p-0 overflow-hidden relative h-64 group-hover:shadow-2xl transition-all border-none rounded-3xl">
-                    <MissingFieldsBadge trip={trip} />
-
-                    {/* Cover Image */}
-                    <div className="absolute inset-0">
-                      <Image
-                        src={
-                          trip.coverImage ||
-                          "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=800&auto=format&fit=crop"
-                        }
-                        alt={trip.name}
-                        fill
-                        priority
-                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-secondary-deep/90 via-black/20 to-transparent" />
-                    </div>
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end transform transition-transform group-hover:-translate-y-1">
-                      <h2 className="text-2xl font-black text-white mb-2 drop-shadow-md font-display tracking-tight leading-tight">
-                        {trip.name}
-                      </h2>
-                      <TripCardInfo trip={trip} />
-                    </div>
-                  </NeumorphicCard>
-                </Link>
-
-                {/* Action Buttons */}
-                <div className="absolute bottom-4 right-4 flex gap-2 group-hover:opacity-100 z-10 transform transition-transform group-hover:-translate-y-1">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setEditingTripId(trip.id);
-                    }}
-                    className="cursor-pointer w-10 h-10 rounded-xl text-white flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-lg active:scale-95"
-                    title="Editar viaje"
-                  >
-                    <Icon name="edit" size={24} />
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDeletingTripId(trip.id);
-                    }}
-                    className="cursor-pointer w-10 h-10 rounded-xl  text-white flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95"
-                    title="Eliminar viaje"
-                  >
-                    <Icon name="delete" size={24} />
-                  </button>
-                </div>
+          <div className="space-y-10">
+            <div className="glass-card bg-linear-to-r from-accent to-accent-dark px-4 py-3 rounded-2xl flex items-center gap-3">
+              <div className="rounded-xl flex items-center justify-center text-primary-light">
+                <Icon name="explore" size={42} />
               </div>
-            ))}
+              <div>
+                <p className="text-xs font-bold text-white/80 uppercase tracking-wide">
+                  Viajes Activos
+                </p>
+                <p className="text-xl font-black text-white">
+                  {
+                    trips.filter(
+                      (t) => !t.endDate || t.endDate.toDate() > new Date(),
+                    ).length
+                  }
+                </p>
+              </div>
+            </div>
+
+            {/* Next Trip Highlight (Optional if soon) */}
+            {trips.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {trips.map((trip) => (
+                  <div key={trip.id} className="relative group">
+                    <Link href={`/trips/${trip.id}`} className="block">
+                      <NeumorphicCard className="p-0 overflow-hidden relative h-72 group-hover:shadow-2xl transition-all border-none rounded-3xl">
+                        <MissingFieldsBadge trip={trip} />
+
+                        {/* Cover Image */}
+                        <div className="absolute inset-0">
+                          <Image
+                            src={
+                              trip.coverImage ||
+                              "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=800&auto=format&fit=crop"
+                            }
+                            alt={trip.name}
+                            fill
+                            priority
+                            className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                          />
+                          <div className="absolute inset-0 bg-linear-to-t from-secondary-deep/90 via-black/10 to-transparent" />
+                        </div>
+
+                        {/* Content Overlay */}
+                        <div className="absolute inset-0 p-8 flex flex-col justify-end transform transition-transform group-hover:-translate-y-1">
+                          <h2 className="text-3xl font-black text-white mb-2 drop-shadow-md font-display tracking-tight leading-tight">
+                            {trip.name}
+                          </h2>
+                          <TripCardInfo trip={trip} />
+                        </div>
+                      </NeumorphicCard>
+                    </Link>
+
+                    {/* Action Buttons */}
+                    <div className="absolute bottom-6 right-6 flex gap-3 opacity-0 group-hover:opacity-100 z-10 transform transition-all translate-y-2 group-hover:translate-y-0">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setEditingTripId(trip.id);
+                        }}
+                        className="cursor-pointer w-11 h-11 rounded-xl glass-card bg-white/20 border-white/20 text-white flex items-center justify-center hover:bg-white hover:text-primary transition-all shadow-xl active:scale-95"
+                        title="Editar viaje"
+                      >
+                        <Icon name="edit" size={24} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDeletingTripId(trip.id);
+                        }}
+                        className="cursor-pointer w-11 h-11 rounded-xl glass-card bg-red-500/20 border-red-500/20 text-white flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-xl active:scale-95"
+                        title="Eliminar viaje"
+                      >
+                        <Icon name="delete" size={24} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-24 text-center space-y-8 glass-card rounded-tripio p-12">

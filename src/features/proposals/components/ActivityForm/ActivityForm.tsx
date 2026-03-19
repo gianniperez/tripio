@@ -2,7 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createProposalSchema, CreateProposalFormValues } from "../../types";
+import {
+  createActivitySchema,
+  CreateActivityFormValues,
+} from "@/features/activities/types";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { Icon } from "@/components/ui/Icon";
@@ -14,6 +17,7 @@ export const ActivityForm = ({
   isSubmitting = false,
   initialData,
   trip,
+  isProposalMode = false,
 }: ActivityFormProps) => {
   const {
     register,
@@ -22,18 +26,17 @@ export const ActivityForm = ({
     watch,
     setError,
     formState: { errors },
-  } = useForm<CreateProposalFormValues>({
-    resolver: zodResolver(createProposalSchema),
+  } = useForm<CreateActivityFormValues>({
+    resolver: zodResolver(createActivitySchema),
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
-      type: "activity",
       estimatedCost: initialData?.estimatedCost,
       location: initialData?.location || "",
       startDate: initialData?.startDate?.toDate() || null,
       endDate: null,
       responseType: initialData?.responseType || "rsvp",
-      requiresVoting: initialData?.requiresVoting ?? true,
+      requiresVoting: initialData?.requiresVoting ?? isProposalMode,
       options: initialData?.options?.map((opt) => ({ value: opt })) || [],
     },
   });
@@ -54,7 +57,7 @@ export const ActivityForm = ({
 
   const floorDateISO = getFloorDate();
 
-  const handleFormSubmit = (data: CreateProposalFormValues) => {
+  const handleFormSubmit = (data: CreateActivityFormValues) => {
     // Validaciones de fechas específicas para actividades
     if (data.startDate) {
       const tripStart = trip.startDate?.toDate();
@@ -116,10 +119,11 @@ export const ActivityForm = ({
       </div>
 
       <VotingSection
-        register={register}
-        control={control}
-        watch={watch}
-        errors={errors}
+        register={register as any}
+        control={control as any}
+        watch={watch as any}
+        errors={errors as any}
+        isProposalMode={isProposalMode}
       />
 
       <NeumorphicButton type="submit" variant="primary" disabled={isSubmitting}>

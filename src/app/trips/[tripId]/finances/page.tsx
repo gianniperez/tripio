@@ -14,7 +14,6 @@ import { useCosts } from "@/features/finances/hooks/useCosts";
 import { BudgetProgressBar } from "@/features/finances/components/BudgetProgressBar";
 import { SetBudgetCard } from "@/features/finances/components/SetBudgetCard";
 import { ExpenseList } from "@/features/finances/components/ExpenseList";
-import { DailyBudgetCard } from "@/features/finances/components/DailyBudgetCard";
 import {
   calculateMyCosts,
   filterMyRelatedCosts,
@@ -118,54 +117,46 @@ export default function TripFinances() {
   );
 
   return (
-    <div className="space-y-6 pb-24">
+    <div className="space-y-8 pb-24">
       <PageHeader
         title="Finanzas"
         description="Proyección de tus gastos personales para este viaje."
       />
 
-      {!participant.budgetLimit || isEditingBudget ? (
-        <SetBudgetCard
-          onSetBudget={(amount) => {
-            handleSetBudget(amount);
-            setIsEditingBudget(false);
-          }}
-          currency={trip.currency}
-          initialBudget={participant.budgetLimit || undefined}
-          onCancel={
-            participant.budgetLimit
-              ? () => setIsEditingBudget(false)
-              : undefined
-          }
-        />
-      ) : (
-        <BudgetProgressBar
-          budgetLimit={participant.budgetLimit}
-          currentCost={myTotalCosts}
-          currency={trip.currency}
-          onEdit={() => setIsEditingBudget(true)}
-        />
-      )}
-
-      {participant.budgetLimit && !isEditingBudget && (
-        <DailyBudgetCard
-          budgetLimit={participant.budgetLimit}
-          currentCost={myTotalCosts}
-          currency={trip.currency}
-          startDate={trip.startDate}
-          endDate={trip.endDate}
-        />
-      )}
-
-      <div className="mt-8">
-        <ExpenseList
-          tripId={tripId}
-          currentUserId={user.uid}
-          costs={myFilteredCosts}
-          proposals={proposals}
-          currency={trip.currency}
-        />
+      <div className="h-60 rounded-tripio">
+        {!participant.budgetLimit || isEditingBudget ? (
+          <SetBudgetCard
+            onSetBudget={(amount) => {
+              handleSetBudget(amount);
+              setIsEditingBudget(false);
+            }}
+            currency={trip.currency}
+            initialBudget={participant.budgetLimit || undefined}
+            onCancel={
+              participant.budgetLimit
+                ? () => setIsEditingBudget(false)
+                : undefined
+            }
+          />
+        ) : (
+          <BudgetProgressBar
+            budgetLimit={participant.budgetLimit}
+            currentCost={myTotalCosts}
+            currency={trip.currency}
+            startDate={trip.startDate}
+            endDate={trip.endDate}
+            onEdit={() => setIsEditingBudget(true)}
+          />
+        )}
       </div>
+
+      <ExpenseList
+        tripId={tripId}
+        currentUserId={user.uid}
+        costs={myFilteredCosts}
+        proposals={proposals}
+        currency={trip.currency}
+      />
     </div>
   );
 }

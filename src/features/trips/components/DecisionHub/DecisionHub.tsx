@@ -1,14 +1,10 @@
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { Icon } from "@/components/ui/Icon";
 import type { DecisionHubProps } from "./DecisionHub.types";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 export function DecisionHub({ tripId, count, categories }: DecisionHubProps) {
   const hasDecisions = count > 0;
 
   const CategoryPill = ({
-    icon,
     label,
     count,
   }: {
@@ -41,36 +37,21 @@ export function DecisionHub({ tripId, count, categories }: DecisionHubProps) {
 
       {/* Sub-cards by category */}
       <div className="grid grid-cols-3 gap-4 relative z-10 w-full">
-        <Link
-          href={`/trips/${tripId}/activities`}
-          className="hover:scale-[1.08] transition-all"
-        >
-          <CategoryPill
-            icon="attractions"
-            label="Actividades"
-            count={categories.activity}
-          />
-        </Link>
-        <Link
-          href={`/trips/${tripId}/logistics`}
-          className="hover:scale-[1.08] transition-all"
-        >
-          <CategoryPill
-            icon="business_center"
-            label="Logística"
-            count={categories.logistics}
-          />
-        </Link>
-        <Link
-          href={`/trips/${tripId}/inventory`}
-          className="hover:scale-[1.08] transition-all"
-        >
-          <CategoryPill
-            icon="backpack"
-            label="Inventario"
-            count={categories.inventory}
-          />
-        </Link>
+        <CategoryPill
+          icon="attractions"
+          label="Actividades"
+          count={categories.activity}
+        />
+        <CategoryPill
+          icon="business_center"
+          label="Logística"
+          count={categories.logistics}
+        />
+        <CategoryPill
+          icon="backpack"
+          label="Inventario"
+          count={categories.inventory}
+        />
       </div>
     </NeumorphicCard>
   );

@@ -58,8 +58,10 @@ export const ProposalCard = ({
   totalParticipants,
   userProfiles,
 }: ProposalCardProps) => {
+  const effectiveType =
+    proposal.type === ("logistics" as any) ? proposal.subType : proposal.type;
   const config =
-    typeConfig[proposal.type as keyof typeof typeConfig] || typeConfig.other;
+    typeConfig[effectiveType as keyof typeof typeConfig] || typeConfig.other;
   const isConfirmed = proposal.status === "confirmed";
   const isRejected = proposal.status === "rejected";
   const isClosed = isConfirmed || isRejected;
@@ -182,7 +184,7 @@ export const ProposalCard = ({
       )}
 
       {/* Specific fields based on type */}
-      {proposal.type === "transport" &&
+      {effectiveType === "transport" &&
         proposal.isPersonalTransport != null && (
           <div className="mb-4">
             <span
@@ -203,7 +205,7 @@ export const ProposalCard = ({
           </div>
         )}
 
-      {proposal.type === "inventory" && proposal.assignedTo && (
+      {effectiveType === "inventory" && proposal.assignedTo && (
         <div className="mb-4">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-widest border border-amber-100">
             👤 {userProfiles[proposal.assignedTo] || proposal.assignedTo}
@@ -211,7 +213,7 @@ export const ProposalCard = ({
         </div>
       )}
 
-      {proposal.type === "inventory" && proposal.quantity && (
+      {effectiveType === "inventory" && proposal.quantity && (
         <div className="mb-4">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-widest border border-amber-100">
             Cantidad: {proposal.quantity}
@@ -253,14 +255,14 @@ export const ProposalCard = ({
             />
             <span>
               ${proposal.estimatedCost}{" "}
-              {proposal.type === "accommodation" ? "total" : "est."}
+              {effectiveType === "accommodation" ? "total" : "est."}
             </span>
           </div>
         )}
       </div>
 
       {/* Decision Section */}
-      {(proposal.type !== "inventory" || !proposal.requiresVoting) &&
+      {(effectiveType !== "inventory" || !proposal.requiresVoting) &&
         (!proposal.responseType ||
         proposal.responseType === "rsvp" ||
         !proposal.options ||
@@ -284,7 +286,7 @@ export const ProposalCard = ({
                   proposal.votes || {},
                 ).filter((v) => v === "si").length;
                 const isPersonalTransport =
-                  proposal.type === "transport" && proposal.isPersonalTransport;
+                  effectiveType === "transport" && proposal.isPersonalTransport;
                 const capacityReached = Boolean(
                   isPersonalTransport &&
                   proposal.capacity &&
@@ -415,7 +417,7 @@ export const ProposalCard = ({
       {isAdmin &&
         !isClosed &&
         (() => {
-          if (proposal.type === "inventory") {
+          if (effectiveType === "inventory") {
             return (
               <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col items-end gap-2">
                 <div className="flex gap-2">

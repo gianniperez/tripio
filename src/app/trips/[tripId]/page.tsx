@@ -8,11 +8,9 @@ import {
   LogisticsHealth,
   CountdownWeather,
   SettingsModal,
-  ItineraryManager,
 } from "@/features/trips/components";
 import { FinancePulse } from "@/features/finances/components";
 import { InfoCard } from "@/components/ui/InfoCard";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { Icon } from "@/components/ui/Icon";
 import Link from "next/link";
 
@@ -53,17 +51,7 @@ export default function TripHome() {
   const hasMissingFields = missingDates;
 
   return (
-    <div className="space-y-6 pb-10">
-      {/* Trip Header */}
-      <PageHeader
-        title={trip.name}
-        actionButton={{
-          icon: <Icon name="settings" className="w-6 h-6 text-white" />,
-          onClick: () => setIsSettingsOpen(true),
-          ariaLabel: "Configuración del viaje",
-        }}
-      />
-
+    <div className="space-y-8 pb-10">
       {/* Missing Info Alert Section */}
       {hasMissingFields && (
         <div className="pl-4 space-y-2">
@@ -85,15 +73,17 @@ export default function TripHome() {
         <CountdownWeather startDate={trip.startDate} endDate={trip.endDate} />
 
         <div className="hover:scale-105 transition-all">
-          <DecisionHub
-            tripId={params.tripId}
-            count={trip.summary?.activeProposalsCount || 0}
-            categories={{
-              activity: trip.summary?.proposalsByCategory?.activity || 0,
-              logistics: trip.summary?.proposalsByCategory?.logistics || 0,
-              inventory: trip.summary?.proposalsByCategory?.inventory || 0,
-            }}
-          />
+          <Link href={`/trips/${params.tripId}/proposals`}>
+            <DecisionHub
+              tripId={params.tripId}
+              count={trip.summary?.activeProposalsCount || 0}
+              categories={{
+                activity: trip.summary?.proposalsByCategory?.activity || 0,
+                logistics: trip.summary?.proposalsByCategory?.logistics || 0,
+                inventory: trip.summary?.proposalsByCategory?.inventory || 0,
+              }}
+            />
+          </Link>
         </div>
 
         <div className="hover:scale-105 transition-all">
@@ -127,7 +117,7 @@ export default function TripHome() {
         </div>
 
         <div className="hover:scale-105 transition-all">
-          <Link href={`/trips/${params.tripId}/inventory`}>
+          <Link href={`/trips/${params.tripId}/finances`}>
             <FinancePulse
               totalBudget={trip.summary?.finances?.totalBudget || 0}
               totalCollected={trip.summary?.finances?.totalCollected || 0}
@@ -137,14 +127,6 @@ export default function TripHome() {
             />
           </Link>
         </div>
-      </div>
-
-      {/* Itinerary Manager (Widget) */}
-      <div className="pt-4 border-t border-slate-100">
-        <ItineraryManager
-          tripId={params.tripId}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-        />
       </div>
 
       {/* Settings Modal */}

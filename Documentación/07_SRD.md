@@ -18,7 +18,7 @@ Este documento sintetiza el plan para **Tripio**, un organizador integral de via
 - **Base de Datos:** Firebase Firestore (subcolecciones por viaje).
 - **Gestión Económica:** Manejo de gastos, presupuestos y deudas (personales y grupales).
 - **Logística:** Gestión de Medios de Transporte, Alojamientos, Actividades e ítems de Inventario.
-- **Propuestas Distribuidas:** Cada módulo (Actividades, Alojamiento, Transporte, Inventario) gestiona sus propias ideas y decisiones.
+- **Decision Hub (Centralizado):** Todas las decisiones, votaciones y propuestas se unifican en un centro de control dedicado (`/proposals`), manteniendo los módulos de Actividades y Logística limpios y enfocados en el plan confirmado.
 
 ---
 
@@ -46,8 +46,8 @@ Tanto en estado `Planning` como `Active`, el Dashboard principal ofrece un resum
 
 ### 2.2 Actividades
 
-- **Propuestas:** Vista de Propuestas pendientes.
 - **TabBar:** Vista Timeline y Vista Calendario para actividades confirmadas.
+- **Backlog:** Sección visual para **Actividades Confirmadas SIN Fecha**, que esperan ser ubicadas en el Timeline.
 
 #### Vista Timeline Secuencial (Narrativo)
 
@@ -143,30 +143,32 @@ El Home actúa como el centro de control del viaje. Contiene:
 - **Presupuesto:** Gasto acumulado vs. límite personal, con la moneda del viaje.
 - **Botón ⚙️ Editar Viaje:** Abre un modal para editar nombre, fechas, moneda, presupuesto y eliminar el viaje.
 
+#### Vista: 🗳️ Propuestas (Decision Hub)
+
+Centro de toma de decisiones del viaje.
+
+- **Concepto:** Actúa como la "Bandeja de Entrada" de ideas grupales.
+- **Elementos:** Carrousel o lista de tarjetas de propuestas (Actividades, Alojamientos, etc.) en estado "Pending".
+- **Interacción:** Aquí los usuarios votan o hacen RSVP. Los Admins pueden "Confirmar" una idea para moverla al itinerario.
+
 #### Vista: 💡 Actividades (Timeline/Calendario)
 
-Repositorio de Actividades.
+El Itinerario real. Solo contiene información confirmada.
 
-- **FAB (Floating Action Button):** El botón "+" para proponer una nueva idea vive fijado en la esquina inferior derecha.
-- **Tarjetas de Propuestas:** Muestran tipo, título, gasto, fecha, y estado con un botón de voto a la derecha.
-- **Toggle Pill:** Timeline/Calendario.
+- **Toggle Pill:** Alterna entre Timeline (Lista ordenada) y Calendario (Grilla).
+- **Backlog Integrado:** Área (panel o bandeja) para alojar "Actividades Confirmadas pero Sin Fecha".
+- **FAB:** Permite "Sugerir Nueva Actividad" (la idea viaja al Hub) o "Añadir Directo" (si se es Admin).
 
 #### Vista: ✅ Logística
 
-Repositorio de alojamientos, transporte e ítems de inventario confirmados o en discusión.
+Repositorio de áreas operativas (solo información confirmada).
 
 - **Sección Alojamientos:**
-- **FAB (Floating Action Button):** El botón "+" para proponer una nueva idea vive fijado en la esquina inferior derecha.
-- **Tarjetas de Propuestas:** Muestran tipo, título, gasto, fecha, y estado con un botón de voto a la derecha.
-- **Información Confirmada:** Muestra la lista de alojamientos confirmados.
+  - Lista de alojamientos confirmados y reservados.
 - **Sección Transportes:**
-- **FAB (Floating Action Button):** El botón "+" para proponer una nueva idea vive fijado en la esquina inferior derecha.
-- **Tarjetas de Propuestas:** Muestran tipo, título, gasto, fecha, y estado con un botón de voto a la derecha.
-- **Información Confirmada:** Muestra la lista de transportes confirmados, en donde cada usuario puede sumarse a un transporte si le interesa y si tiene capacidad disponible.
+  - Lista de vehículos oficiales. Cada usuario puede sumar pasajeros si hay capacidad disponible.
 - **Sección Inventario:**
-- **FAB (Floating Action Button):** El botón "+" para proponer una nueva idea vive fijado en la esquina inferior derecha.
-- **Tarjetas de Propuestas:** Muestran tipo, título, gasto, fecha, y estado con un botón de voto a la derecha.
-- **Información Confirmada:** Muestra la lista de ítems, en donde cada usuario puede sumarse a un ítem si le interesa utilizarlo. Además, cada ítem puede estar asignado a un usuario para que se encargue de llevarlo/comprarlo.
+  - Checklist de ítems necesarios. Los usuarios pueden auto-asignarse para ser responsables de llevarlos o comprarlos.
 
 #### Vista: 💰 Finanzas (Gastos/Totales)
 
@@ -709,7 +711,7 @@ service cloud.firestore {
 5. **Prioridad de Alerta:** El exceso de `Budget Limit` es una notificación crítica de alta visibilidad.
 6. **Interactividad de Tareas:** Una tarea marcada como "Done" en el Módulo de Tareas debe actualizar automáticamente el status del Ítem o Evento vinculado.
 7. **Inmutabilidad de Archivo:** Un viaje archivado es de solo lectura. Ningún participante puede modificar datos.
-8. **Propuestas Distribuidas:** Cada módulo (Actividades, Alojamiento, Transporte, Inventario) gestiona sus propias propuestas con estados `Pending` y `Confirmed`.
+8. **Centralización de Decisiones:** La creación de propuestas es contextual (desde cualquier módulo), pero la votación y seguimiento se centraliza siempre en `/proposals` (Decision Hub).
 
 ---
 

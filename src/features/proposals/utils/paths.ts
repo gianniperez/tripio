@@ -8,9 +8,11 @@ export const getProposalCollectionPath = (
     case "activity":
       return `trips/${tripId}/activities`;
     case "accommodation":
+      return `trips/${tripId}/accommodations`;
     case "transport":
+      return `trips/${tripId}/transports`;
     case "inventory":
-      return `trips/${tripId}/logistics`;
+      return `trips/${tripId}/inventory`;
     default:
       return `trips/${tripId}/proposals`; // Fallback to legacy
   }

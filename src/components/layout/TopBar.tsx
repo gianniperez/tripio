@@ -6,81 +6,120 @@ import { useAuthStore } from "@/features/auth/stores";
 import { auth } from "@/lib/firebase";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
+import { useTrip } from "@/features/trips/hooks";
 
 export const TopBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuthStore();
+  const pathname = usePathname();
+  const params = useParams<{ tripId?: string }>();
+  const { data: trip } = useTrip(params.tripId || "");
+
+  const isTripPage = !!params.tripId && pathname.startsWith("/trips/");
 
   return (
     <>
-      <header className="bg-background  h-16 glass-header flex items-center justify-between px-6 sticky top-0 z-40 border-b-2 border-gray-200">
-        {/* Desktop & Mobile Identity */}
-        <div className="flex items-center gap-3">
-          <Link href="/trips" className="flex items-center gap-3">
-            <Image
-              src="/isologo/orange.png"
-              alt="Tripio Logo"
-              width={32}
-              height={32}
-              className="rounded-md w-auto h-auto"
-            />
-            <h1 className="text-2xl font-black text-primary tracking-tight">
-              tripio
-            </h1>
-          </Link>
-
-          {/* Back button context only for mobile detail pages */}
-          <div className="md:hidden ml-2">
-            {usePathname() !== "/trips" && (
+      <header className="bg-white/80 h-16 backdrop-blur-md flex items-center justify-between px-6 sticky top-0 z-40 border-b border-gray-100 shadow-sm">
+        {/* MOBILE VIEW (Back Arrow | Trip Name | Menu) */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          {isTripPage ? (
+            <>
               <Link
                 href="/trips"
-                className="flex items-center gap-1 text-sm font-bold text-secondary"
+                className="p-2 -ml-2 text-secondary-deep hover:bg-gray-100 rounded-full transition-colors"
               >
-                <Icon name="arrow_back" size={16} />
-                <span>Mis viajes</span>
+                <Icon name="arrow_back" size={24} />
               </Link>
-            )}
-          </div>
-        </div>
-
-        {/* Desktop User Actions */}
-        <div className="hidden md:flex items-center gap-6">
-          <div className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-secondary/10 border border-secondary/20">
-            {user?.photoURL ? (
+              <h2 className="text-sm font-black text-secondary-deep truncate px-4">
+                {trip?.name || "Cargando..."}
+              </h2>
+            </>
+          ) : (
+            <Link href="/trips" className="flex items-center gap-2">
               <Image
-                src={user.photoURL}
-                alt={user.displayName || "Usuario"}
+                src="/isologo/orange.png"
+                alt="Tripio Logo"
                 width={28}
                 height={28}
-                className="rounded-full shadow-sm ring-2 ring-white"
+                className="w-auto h-auto"
               />
-            ) : (
-              <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white text-[10px] font-bold">
-                {user?.displayName?.charAt(0) || "U"}
-              </div>
-            )}
-            <span className="text-sm font-bold text-secondary-deep">
-              {user?.displayName || "Usuario"}
-            </span>
-          </div>
+              <h1 className="text-xl font-black text-primary tracking-tight">
+                tripio
+              </h1>
+            </Link>
+          )}
 
           <button
-            onClick={() => auth.signOut()}
-            className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
-            title="Cerrar Sesión"
+            onClick={() => setIsOpen(true)}
+            className="p-2 -mr-2 text-secondary-deep hover:bg-gray-100 rounded-full transition-colors"
           >
-            <Icon name="logout" size={18} />
+            <Icon name="menu" size={28} />
           </button>
         </div>
 
-        {/* Mobile Menu Trigger */}
-        <button
-          onClick={() => setIsOpen(true)}
-          className="md:hidden p-2 text-secondary-deep hover:text-primary rounded-full transition-colors"
-        >
-          <Icon name="menu" size={32} />
-        </button>
+        {/* DESKTOP VIEW (Logo + Identity | User Actions) */}
+        <div className="hidden md:flex items-center justify-between w-full">
+          <div className="flex items-center gap-6">
+            <Link href="/trips" className="flex items-center gap-3">
+              <Image
+                src="/isologo/orange.png"
+                alt="Tripio Logo"
+                width={32}
+                height={32}
+                className="rounded-md w-auto h-auto"
+              />
+              <h1 className="text-2xl font-black text-primary tracking-tight">
+                tripio
+              </h1>
+            </Link>
+
+            {isTripPage && (
+              <div className="flex items-center gap-2 text-gray-300">
+                <span className="text-xl font-light">/</span>
+                <Link
+                  href="/trips"
+                  className="text-sm font-bold text-secondary hover:text-primary transition-colors hover:underline underline-offset-4"
+                >
+                  Mis viajes
+                </Link>
+                <span className="text-xl font-light">/</span>
+                <span className="text-sm font-bold text-secondary-deep bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+                  {trip?.name}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3 px-4 py-1.5 rounded-full bg-gray-50 border border-gray-100">
+              {user?.photoURL ? (
+                <Image
+                  src={user.photoURL}
+                  alt={user.displayName || "Usuario"}
+                  width={28}
+                  height={28}
+                  className="rounded-full shadow-sm"
+                />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-white text-[10px] font-bold">
+                  {user?.displayName?.charAt(0) || "U"}
+                </div>
+              )}
+              <span className="text-sm font-bold text-secondary-deep">
+                {user?.displayName || "Usuario"}
+              </span>
+            </div>
+
+            <button
+              onClick={() => auth.signOut()}
+              className="flex items-center gap-2 text-sm font-bold text-gray-400 hover:text-danger transition-colors cursor-pointer"
+              title="Cerrar Sesión"
+            >
+              <Icon name="logout" size={24} />
+            </button>
+          </div>
+        </div>
       </header>
 
       {/* Mobile Drawer Overlay */}
@@ -107,9 +146,9 @@ export const TopBar = () => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
           {/* User Info */}
-          <div className="flex items-center rounded-full gap-3 mb-6 p-3 bg-gray-50 border border-gray-100">
+          <div className="flex items-center rounded-full gap-3 p-3 bg-gray-50 border border-gray-100">
             {user?.photoURL ? (
               <Image
                 src={user?.photoURL || ""}
@@ -135,7 +174,65 @@ export const TopBar = () => {
               </p>
             </div>
           </div>
-          <div className="pt-4 border-t border-gray-100">
+
+          {/* Navigation Links */}
+          <div className="space-y-2">
+            {isTripPage && (
+              <>
+                {[
+                  {
+                    name: "Inicio",
+                    href: `/trips/${params.tripId}`,
+                    icon: "dashboard",
+                  },
+                  {
+                    name: "Propuestas",
+                    href: `/trips/${params.tripId}/proposals`,
+                    icon: "lightbulb",
+                  },
+                  {
+                    name: "Actividades",
+                    href: `/trips/${params.tripId}/activities`,
+                    icon: "calendar_month",
+                  },
+                  {
+                    name: "Logística",
+                    href: `/trips/${params.tripId}/logistics`,
+                    icon: "luggage",
+                  },
+                  {
+                    name: "Finanzas",
+                    href: `/trips/${params.tripId}/finances`,
+                    icon: "payments",
+                  },
+                  {
+                    name: "Configuración",
+                    href: `/trips/${params.tripId}/settings`,
+                    icon: "settings",
+                  },
+                ].map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all ${
+                        isActive
+                          ? "bg-primary text-white shadow-lg shadow-primary/30"
+                          : "text-gray-500 hover:bg-secondary/10 hover:text-secondary"
+                      }`}
+                    >
+                      <Icon name={item.icon} size={22} fill={isActive} />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </>
+            )}
+          </div>
+
+          <div className="mt-auto pt-4 border-t border-gray-100">
             <button
               onClick={() => {
                 setIsOpen(false);

@@ -5,7 +5,6 @@ import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { EventCard } from "./EventCard";
 import { Icon } from "@/components/ui/Icon";
-import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/ui/EmptyState";
 

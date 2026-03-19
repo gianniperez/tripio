@@ -41,7 +41,7 @@ export function Modal(props: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-100 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
+    <div className="fixed inset-0 z-110 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
       <div
         ref={overlayRef}
         className="absolute inset-0"
@@ -55,7 +55,7 @@ export function Modal(props: ModalProps) {
         aria-labelledby={title ? "modal-title" : undefined}
         aria-describedby={description ? "modal-description" : undefined}
         className={cn(
-          "relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] p-2",
+          "relative z-120 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] p-2",
           className,
         )}
       >

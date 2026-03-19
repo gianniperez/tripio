@@ -25,6 +25,8 @@ export const syncTripSummary = async (tripId: string): Promise<void> => {
   try {
     const tripRef = doc(db, "trips", tripId);
     const activitiesRef = collection(db, "trips", tripId, "activities");
+    const accommodationsRef = collection(db, "trips", tripId, "accommodations");
+    const transportsRef = collection(db, "trips", tripId, "transports");
     const logisticsRef = collection(db, "trips", tripId, "logistics");
     const inventoryRef = collection(db, "trips", tripId, "inventory");
     const costsRef = collection(db, "trips", tripId, "costs");
@@ -33,6 +35,8 @@ export const syncTripSummary = async (tripId: string): Promise<void> => {
     const [
       tripSnap,
       activitiesSnap,
+      accommodationsSnap,
+      transportsSnap,
       logisticsSnap,
       inventorySnap,
       costsSnap,
@@ -40,6 +44,8 @@ export const syncTripSummary = async (tripId: string): Promise<void> => {
     ] = await Promise.all([
       getDoc(tripRef),
       getDocs(activitiesRef),
+      getDocs(accommodationsRef),
+      getDocs(transportsRef),
       getDocs(logisticsRef),
       getDocs(inventoryRef),
       getDocs(costsRef),
@@ -50,10 +56,19 @@ export const syncTripSummary = async (tripId: string): Promise<void> => {
     const activities = activitiesSnap.docs.map(
       (d: any) => ({ id: d.id, type: "activity", ...d.data() }) as Proposal,
     );
+    const accommodations = accommodationsSnap.docs.map(
+      (d: any) => ({ id: d.id, type: "accommodation", ...d.data() }) as Proposal,
+    );
+    const transports = transportsSnap.docs.map(
+      (d: any) => ({ id: d.id, type: "transport", ...d.data() }) as Proposal,
+    );
     const logistics = logisticsSnap.docs.map(
       (d: any) => ({ id: d.id, ...d.data() }) as Proposal,
     );
-    const proposals = [...activities, ...logistics];
+    const inventoryAsProposals = inventorySnap.docs.map(
+      (d: any) => ({ id: d.id, type: "inventory", ...d.data() }) as Proposal,
+    );
+    const proposals = [...activities, ...accommodations, ...transports, ...logistics, ...inventoryAsProposals];
     const inventory = inventorySnap.docs.map(
       (d: any) => ({ id: d.id, ...d.data() }) as InventoryItem,
     );

@@ -15,15 +15,16 @@ export const subscribeToProposals = (
   onError: (error: Error) => void,
   type?: ProposalType | "all",
 ) => {
-  const types: ProposalType[] =
-    !type || type === "all"
-      ? ["activity", "accommodation"] // accommodation here represents the logistics group in paths.ts
-      : [type as ProposalType];
-
-  // If "all", we need to subscribe to both activities and logistics
+  // If "all", we need to subscribe to all discrete collections
   const paths =
     !type || type === "all"
-      ? [`trips/${tripId}/activities`, `trips/${tripId}/logistics`]
+      ? [
+          `trips/${tripId}/activities`,
+          `trips/${tripId}/accommodations`,
+          `trips/${tripId}/transports`,
+          `trips/${tripId}/inventory`,
+          `trips/${tripId}/logistics`, // Mantener por retrocompatibilidad temporal
+        ]
       : [getProposalCollectionPath(tripId, type)];
 
   const unsubscribes: Unsubscribe[] = [];

@@ -1,11 +1,13 @@
-import { Proposal, CreateProposalFormValues } from "../../types";
+import { Proposal } from "../../types";
+import { CreateActivityFormValues } from "@/features/activities/types";
 import { Trip } from "@/types/tripio";
 
 export interface ActivityFormProps {
-  onSubmit: (data: CreateProposalFormValues) => void;
+  onSubmit: (data: CreateActivityFormValues) => void;
   isSubmitting?: boolean;
   initialData?: Proposal;
   tripId: string;
   trip: Trip;
   onClose?: () => void;
+  isProposalMode?: boolean;
 }

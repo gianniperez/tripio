@@ -116,3 +116,15 @@ Este documento registra cronológicamente las modificaciones técnicas, arquitec
 - **Modelo de Datos (Firestore):**
   - Las propuestas ahora viven en subcolecciones específicas por módulo (`/activities/proposals`, etc.).
   - El esquema de `/costs` se actualizó para soportar el mapa de participantes con sus respectivos montos y el flag de simplificación.
+
+## 📅 18 de Marzo, 2026
+
+### 🎨 Arquitectura UX y Navegación (Pivot)
+
+- **[PIVOT]** **Centralización de Propuestas (Decision Hub):**
+  - **Problema:** Mostrar propuestas mezcladas con elementos confirmados en `/activities` y `/logistics` generaba fricción visual y mezclaba los modelos mentales de "votar/planear" con "ejecutar/leer el itinerario".
+  - **Solución:** Se aprobó separar por completo las propuestas. Todas las encuestas, ideas y votaciones vivirán en una vista dedicada: el **Decision Hub (`/proposals`)**.
+  - **Impacto UI:**
+    - `/activities` se "limpia" para ser exclusivamente un Timeline / Calendario de actividades **confirmadas** (incluyendo un Backlog de actividades confirmadas sin fecha).
+    - `/logistics` se convierte en un tablero puro de reservas e ítems cerrados.
+  - **Flow:** La creación ("sugerir una actividad") sigue siendo contextual vía el FAB en `/activities`, pero la tarjeta viaja al Decision Hub para ser discutida y votada. Al aprobarse, aterriza en el Itinerario.

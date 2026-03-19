@@ -3,31 +3,49 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Icon } from "@/components/ui/Icon";
-import { type ProposalType, type Proposal } from "@/features/proposals/types";
+import {
+  type ProposalType,
+  type Proposal,
+  type CreateProposalFormValues,
+} from "@/features/proposals/types";
 import { useTrip } from "@/features/trips/hooks";
 import { useAuth } from "@/features/auth/hooks";
 import {
-  useCreateProposal,
-  useUpdateProposal,
-} from "@/features/proposals/hooks";
+  useCreateAccommodation,
+  useUpdateAccommodation,
+} from "@/features/accommodation/hooks";
+import {
+  useCreateTransport,
+  useUpdateTransport,
+} from "@/features/transport/hooks";
+import {
+  useCreateInventory,
+  useUpdateInventory,
+} from "@/features/inventory/hooks";
 import { Modal } from "@/components/ui/dialog/Modal/Modal";
-import { LogisticsForm } from "@/features/proposals/components";
-import { getLogisticsFormConfig } from "@/features/proposals/data/logisticsForms";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
-import { ProposalsList } from "@/features/proposals/components/ProposalsList/ProposalsList";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton";
+import { LogisticsManager } from "@/features/logistics/components/LogisticsManager";
+import {
+  AccommodationForm,
+  TransportForm,
+  InventoryForm,
+} from "@/features/proposals/components";
+import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 
 export default function LogisticsPage() {
   const { tripId } = useParams<{ tripId: string }>();
   const { user } = useAuth();
   const { data: trip, isLoading: loadingTrip } = useTrip(tripId);
-  const { mutate: createProposal, isPending: isCreating } =
-    useCreateProposal(tripId);
-  const { mutate: updateProposal, isPending: isUpdating } =
-    useUpdateProposal(tripId);
+  const { mutate: createAccommodation, isPending: isCreatingAcc } = useCreateAccommodation(tripId);
+  const { mutate: updateAccommodation, isPending: isUpdatingAcc } = useUpdateAccommodation(tripId);
 
-  const [activeTab, setActiveTab] = useState("confirmados");
+  const { mutate: createTransport, isPending: isCreatingTransport } = useCreateTransport(tripId);
+  const { mutate: updateTransport, isPending: isUpdatingTransport } = useUpdateTransport(tripId);
+
+  const { mutate: createInventory, isPending: isCreatingInv } = useCreateInventory(tripId);
+  const { mutate: updateInventory, isPending: isUpdatingInv } = useUpdateInventory(tripId);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formType, setFormType] = useState<ProposalType | null>(null);
   const [editingProposal, setEditingProposal] = useState<Proposal | null>(null);
@@ -59,85 +77,116 @@ export default function LogisticsPage() {
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setEditingProposal(null);
+    setFormType(null);
   };
 
-  const tabs: Tab[] = [
-    { id: "pendientes", label: "Pendientes" },
-    { id: "confirmados", label: "Confirmadas" },
-  ];
+  const onSubmit = (data: any) => {
+    const type = editingProposal ? editingProposal.type : formType;
+    if (editingProposal) {
+      if (type === "accommodation") updateAccommodation({ proposalId: editingProposal.id, ...data }, { onSuccess: handleCloseForm });
+      else if (type === "transport") updateTransport({ proposalId: editingProposal.id, ...data }, { onSuccess: handleCloseForm });
+      else if (type === "inventory") updateInventory({ proposalId: editingProposal.id, ...data }, { onSuccess: handleCloseForm });
+    } else {
+      if (type === "accommodation") createAccommodation({ ...data, userId: user?.uid || "" }, { onSuccess: handleCloseForm });
+      else if (type === "transport") createTransport({ ...data, userId: user?.uid || "" }, { onSuccess: handleCloseForm });
+      else if (type === "inventory") createInventory({ ...data, userId: user?.uid || "" }, { onSuccess: handleCloseForm });
+    }
+  };
 
   const isAdmin = trip.createdBy === user?.uid;
+  const isSubmitting = isCreatingAcc || isUpdatingAcc || isCreatingTransport || isUpdatingTransport || isCreatingInv || isUpdatingInv;
 
   return (
-    <div className="space-y-10 pb-24 px-4 max-w-4xl mx-auto">
+    <div className="space-y-8 pb-24 max-w-4xl mx-auto">
       <PageHeader
         title="Logística"
-        description="Destinos, alojamientos y transportes confirmados o en discusión."
+        description="Gestión de alojamientos y transportes confirmados para tu viaje."
       />
 
-      {/* Tabs Selector */}
-      <div className="max-w-md mx-auto">
-        <FilterTabBar
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-      </div>
+      <LogisticsManager
+        tripId={tripId}
+        trip={trip}
+        user={user}
+        isAdmin={isAdmin}
+        onEdit={handleEdit}
+      />
 
-      {/* Content based on Active Tab */}
-      <div className="mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <ProposalsList
-          tripId={tripId}
-          currentUserId={user?.uid || ""}
-          isAdmin={isAdmin}
-          onEdit={handleEdit}
-          typeFilter={["accommodation", "transport"]}
-          statusFilter={
-            activeTab === "confirmados" ? ["confirmed"] : ["draft", "voted"]
-          }
-        />
-      </div>
+      <FloatingActionButton
+        items={[
+        {
+          label: "Gestionar Alojamiento",
+          icon: <Icon name="bed" fill />,
+          onClick: () => handleOpenForm("accommodation"),
+          variant: "primary",
+        },
+        {
+          label: "Gestionar Transporte",
+          icon: <Icon name="directions_car" fill />,
+          onClick: () => handleOpenForm("transport"),
+          variant: "primary",
+        },
+        {
+          label: "Gestionar Inventario",
+          icon: <Icon name="inventory_2" fill />,
+          onClick: () => handleOpenForm("inventory"),
+          variant: "primary",
+        },
+      ]}
+      />
 
       <Modal
         isOpen={isFormOpen}
         onClose={handleCloseForm}
         title={
           editingProposal
-            ? `Editar ${getLogisticsFormConfig(editingProposal.type).title}`
-            : formType
-              ? `Crear Nuevo ${getLogisticsFormConfig(formType).title}`
-              : "Crear Nueva Propuesta"
-        }
-        description={
-          getLogisticsFormConfig(formType || editingProposal?.type || null)
-            .description
+            ? `Editar ${
+                editingProposal.type === "accommodation"
+                  ? "Alojamiento"
+                  : editingProposal.type === "transport"
+                    ? "Transporte"
+                    : "Inventario"
+              }`
+            : formType === "accommodation"
+              ? "Nuevo Alojamiento"
+              : formType === "transport"
+                ? "Nuevo Transporte"
+                : "Añadir al Inventario"
         }
       >
-        <LogisticsForm
-          tripId={tripId}
-          trip={trip}
-          onClose={handleCloseForm}
-          initialData={editingProposal || undefined}
-          defaultType={formType as "accommodation" | "transport" | null}
-          onTypeChange={setFormType}
-          onSubmit={(data) => {
-            if (editingProposal) {
-              updateProposal(
-                { proposalId: editingProposal.id, ...data },
-                { onSuccess: handleCloseForm },
-              );
-            } else {
-              createProposal(
-                { ...data, userId: user?.uid || "" },
-                { onSuccess: handleCloseForm },
-              );
-            }
-          }}
-          isSubmitting={isCreating || isUpdating}
-        />
+        <div className="space-y-6">
+          {formType === "accommodation" ? (
+            <AccommodationForm
+              tripId={tripId}
+              trip={trip}
+              onClose={handleCloseForm}
+              initialData={editingProposal || undefined}
+              onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
+              isProposalMode={false}
+            />
+          ) : formType === "transport" ? (
+            <TransportForm
+              tripId={tripId}
+              trip={trip}
+              onClose={handleCloseForm}
+              initialData={editingProposal || undefined}
+              onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
+              isProposalMode={false}
+            />
+          ) : formType === "inventory" ? (
+            <InventoryForm
+              tripId={tripId}
+              trip={trip}
+              onClose={handleCloseForm}
+              initialData={editingProposal || undefined}
+              onSubmit={onSubmit}
+              isSubmitting={isSubmitting}
+              isProposalMode={false}
+            />
+          ) : null}
+        </div>
       </Modal>
-
-      <FloatingActionButton onClick={() => handleOpenForm(null)} />
     </div>
   );
 }
