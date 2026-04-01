@@ -10,9 +10,8 @@ import {
 } from "@/features/participants/hooks/useParticipant";
 import { useTripCosts } from "@/features/finances/hooks/useCosts";
 import { calculateUserTotalCost } from "@/features/finances/utils/debtSimplifier";
-import { BudgetProgressBar } from "@/components/BudgetProgressBar/BudgetProgressBar";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton/FloatingActionButton";
-import { CostForm, DebtSummary } from "@/features/finances/components";
+import { CostForm, DebtSummary, BudgetProgressBar } from "@/features/finances/components";
 import { Modal } from "@/components/ui/dialog/Modal";
 
 export function FinancesView({ tripId }: { tripId: string }) {

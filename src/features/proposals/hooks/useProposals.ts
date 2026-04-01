@@ -23,9 +23,15 @@ export const useCreateProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mutationFn: ({ type, userId, data }: { type: ProposalType; userId: string; data: any }) =>
-      proposalsService.createProposal(tripId, type, userId, data),
+    mutationFn: ({
+      type,
+      userId,
+      data,
+    }: {
+      type: ProposalType;
+      userId: string;
+      data: Record<string, unknown>;
+    }) => proposalsService.createProposal(tripId, type, userId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
     },
@@ -36,7 +42,6 @@ export const useUpdateProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: ({
       type,
       proposalId,
@@ -44,7 +49,7 @@ export const useUpdateProposal = (tripId: string) => {
     }: {
       type: ProposalType;
       proposalId: string;
-      data: any;
+      data: Record<string, unknown>;
     }) => proposalsService.updateProposal(tripId, type, proposalId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
@@ -89,7 +94,6 @@ export const useConfirmProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mutationFn: ({
       type,
       proposalId,
@@ -97,7 +101,7 @@ export const useConfirmProposal = (tripId: string) => {
     }: {
       type: ProposalType;
       proposalId: string;
-      rawData: any;
+      rawData: Record<string, unknown>;
     }) => proposalsService.confirmProposal(tripId, type, proposalId, rawData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
