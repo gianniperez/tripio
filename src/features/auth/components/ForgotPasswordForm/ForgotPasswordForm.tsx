@@ -1,120 +1,116 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import Link from "next/link";
-import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
-import { sendPasswordReset } from "../../api";
+import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { Icon } from "@/components/ui/Icon";
-import { useState } from "react";
+import Image from "next/image";
 
-const forgotSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.string().email("Email inválido"),
 });
 
-type ForgotPasswordFormValues = z.infer<typeof forgotSchema>;
+type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordForm() {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSent, setIsSent] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ForgotPasswordFormValues>({
-    resolver: zodResolver(forgotSchema),
+    formState: { errors },
+  } = useForm<ForgotPasswordValues>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (data: ForgotPasswordFormValues) => {
-    setError(null);
-    setSuccess(false);
+  const onSubmit = async (data: ForgotPasswordValues) => {
+    setIsLoading(true);
     try {
-      await sendPasswordReset(data.email);
-      setSuccess(true);
-    } catch (err) {
-      const error = err as { code?: string };
-      console.error("Reset password error:", error);
-      if (error.code === "auth/user-not-found") {
-        setError("Este email no está registrado.");
-      } else {
-        setError("Ocurrió un error al enviar el correo.");
-      }
+      await sendPasswordResetEmail(auth, data.email);
+      setIsSent(true);
+    } catch (error: unknown) {
+      alert("Error al enviar el correo. Verifica tu email.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (success) {
+  if (isSent) {
     return (
-      <NeumorphicCard className="w-full flex flex-col gap-6 items-center text-center">
-        <Icon
-          name="check_circle"
-          size={64}
-          className="text-success animate-bounce"
-        />
-        <div className="space-y-2">
-          <h2 className="text-2xl font-display font-black text-primary">
-            ¡Email enviado!
+      <div className="w-full max-w-md mx-auto">
+        <NeumorphicCard className="p-8 text-center flex flex-col items-center">
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-6 text-primary shadow-inner">
+            <Icon name="mark_email_read" size={32} fill />
+          </div>
+          <h2 className="text-2xl font-display font-extrabold text-text-main mb-2">
+            ¡Correo Enviado!
           </h2>
-          <p className="text-gray-500 text-center font-sans">
-            Hemos enviado un enlace de recuperación a tu correo electrónico. Por
-            favor, revisa tu bandeja de entrada.
+          <p className="text-gray-500 font-inter mb-8">
+            Revisá tu bandeja de entrada o correo no deseado para restablecer tu contraseña.
           </p>
           <Link href="/login" className="w-full">
-            <NeumorphicButton className="w-full">
-              Volver al inicio de sesión
-            </NeumorphicButton>
+            <NeumorphicButton variant="secondary">Volver al Login</NeumorphicButton>
           </Link>
-        </div>
-      </NeumorphicCard>
+        </NeumorphicCard>
+      </div>
     );
   }
 
   return (
-    <NeumorphicCard className="w-full flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
+    <div className="w-full max-w-md mx-auto">
+      <NeumorphicCard className="p-8">
+        <div className="flex flex-col items-center gap-4 mb-4">
+          <Image
+            src="/isologo.png"
+            alt="Tripio Logo"
+            width={60}
+            height={60}
+            className="drop-shadow-sm w-auto h-auto"
+          />
+        </div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-extrabold text-primary font-display tracking-tight">
+            Recuperar Acceso
+          </h1>
+          <p className="text-gray-500 mt-2 text-sm font-inter">
+            Ingresá tu mail y te enviaremos un link
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <NeumorphicInput
+            label="Email"
+            type="email"
+            placeholder="tu@email.com"
+            icon={<Icon name="mail" size={20} />}
+            iconPosition="right"
+            error={errors.email?.message}
+            {...register("email")}
+          />
+
+          <NeumorphicButton type="submit" disabled={isLoading} variant="primary" className="mt-8">
+            {isLoading ? "Enviando..." : "Enviar link"}
+          </NeumorphicButton>
+        </form>
+
+        <div className="mt-8 text-center pt-2">
           <Link
             href="/login"
-            className="p-2 -ml-2 text-gray-400 hover:text-primary transition-colors"
+            className="text-gray-500 font-bold text-sm hover:text-gray-700 font-inter flex items-center justify-center gap-2 transition-colors"
           >
-            <Icon name="arrow_back" size={20} />
+            <Icon name="arrow_back" size={16} /> Volver al Login
           </Link>
-          <h2 className="text-2xl font-display font-black text-primary">
-            Recuperar Contraseña
-          </h2>
         </div>
-        <p className="text-gray-500 text-sm font-sans text-center">
-          Ingresa tu email y te enviaremos un link para recuperarla.
-        </p>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <NeumorphicInput
-          label="Email"
-          placeholder="tu@email.com"
-          {...register("email")}
-          error={errors.email?.message}
-          icon={<Icon name="mail" size={20} />}
-          iconPosition="right"
-        />
-
-        {error && (
-          <p className="text-red-500 text-sm font-medium text-center">
-            {error}
-          </p>
-        )}
-
-        <NeumorphicButton
-          type="submit"
-          className="mt-2"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Enviando..." : "Enviar enlace"}
-        </NeumorphicButton>
-      </form>
-    </NeumorphicCard>
+      </NeumorphicCard>
+    </div>
   );
 }

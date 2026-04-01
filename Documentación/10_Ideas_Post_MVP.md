@@ -28,7 +28,7 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 - Alertas en tiempo real para:
   - Nuevas propuestas o encuestas creadas.
   - Resultados finales de una votación.
-  - Recordatorios de tareas asignadas (deadlines).
+  - Recordatorios de responsabilidades e ítems asignados.
   - Alertas de proximidad de eventos en el Timeline.
 
 ---
@@ -41,7 +41,7 @@ Este documento centraliza las ideas, sugerencias y features propuestas para el d
 - **Google Maps:** Mejorar la UX conectando la ubicación de las propuestas con la API de Google Maps (Geocoding / Places) para ubicar rápidamente destinos y alojamientos.
 - **Service Workers (Offline Support):** Implementación de lectura cacheada para permitir acceder a los itinerarios y datos vitales del viaje sin conexión a internet.
 - **Notificaciones Push:** Transición del sistema actual de notificaciones por email estructurado a notificaciones push nativas en el dispositivo.
-- **Cola de sincronización:** Permitir cargar gastos o checks de tareas offline que se sincronicen al recuperar conexión.
+- **Cola de sincronización:** Permitir cargar gastos o checks de ítems offline que se sincronicen al recuperar conexión.
 
 ### 6. Exportación a PDF / Imprimible
 

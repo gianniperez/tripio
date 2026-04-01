@@ -14,5 +14,7 @@ Este workflow asegura que cualquier cambio de diseño sea coherente con la guía
    Buscar en el codebase componentes que puedan ser reutilizados para esta tarea.
 4. **Verificación de Coherencia**:
    Validar que los nuevos estilos no choquen con los existentes.
-5. **Confirmación en Plan**:
+5. **Uso de Generadores (Plop)**:
+   Siempre que deban crearse nuevos componentes, features o páginas, se DEBE utilizar el comando `npx plop` (o `npm run generate`) para inicializar los archivos asegurando el cumplimiento de la estructura FSD y los lineamientos de diseño.
+6. **Confirmación en Plan**:
    Incluir una sección "Diseño: Validado ✅" en el plan de implementación.

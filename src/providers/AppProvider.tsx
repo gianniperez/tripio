@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+
 import { AuthProvider } from "./AuthProvider";
 
 export function AppProvider({ children }: { children: React.ReactNode }) {

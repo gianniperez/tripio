@@ -30,16 +30,12 @@ export function ConfirmDialog({
   return (
     <Modal isOpen={isOpen} onClose={onClose} hideCloseButton>
       <div className="flex flex-col items-center text-center gap-6">
-        <div
-          className={`${
-            variant === "danger" ? " text-danger" : " text-primary"
-          }`}
-        >
+        <div className={`${variant === "danger" ? " text-danger" : " text-primary"}`}>
           <Icon name="error" fill={true} size={56} />
         </div>
 
         <div>
-          <h3 className="text-lg font-bold text-text-main mb-1">{title}</h3>
+          <h3 className="text-lg font-bold text-main mb-1">{title}</h3>
           <p className="text-sm text-gray-500">{message}</p>
         </div>
 

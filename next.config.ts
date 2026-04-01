@@ -16,16 +16,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    // @ts-expect-error - Next.js warns to add allowedDevOrigins for cross-origin local requests
-    allowedDevOrigins: [
-      /* "192.168.1.2", */
-      "192.168.1.33",
-      "localhost",
-      "127.0.0.1",
-    ],
-  },
+  allowedDevOrigins: [
+    /* "192.168.1.2", */
+    "192.168.1.33",
+    "localhost",
+    "127.0.0.1",
+  ],
   turbopack: {},
 };
 
-export default withPWA(nextConfig);
+export default nextConfig; // withPWA(nextConfig);

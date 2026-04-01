@@ -29,14 +29,14 @@ export const NeumorphicInput = forwardRef<
       required,
       ...props
     },
-    ref,
+    ref
   ) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const isPassword = type === "password";
     const isSelect = type === "select";
     const isNumber = type === "number";
-    const isDate = type === "date" || type === "datetime-local";
+    const isDate = type === "date" || type === "datetime-local" || type === "time";
     const isFile = type === "file";
 
     const [fileName, setFileName] = useState<string | null>(null);
@@ -44,7 +44,15 @@ export const NeumorphicInput = forwardRef<
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     const innerRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
-    useImperativeHandle(ref, () => innerRef.current!);
+
+    const handleRef = (el: any) => {
+      innerRef.current = el;
+      if (typeof ref === "function") {
+        ref(el);
+      } else if (ref) {
+        (ref as React.MutableRefObject<any>).current = el;
+      }
+    };
 
     const handleIconClick = () => {
       if (isDate && innerRef.current && "showPicker" in innerRef.current) {
@@ -61,7 +69,7 @@ export const NeumorphicInput = forwardRef<
     let renderedIconPosition = iconPosition;
 
     if (isDate && !icon) {
-      renderedIcon = <Icon name="calendar_month" size={20} />;
+      renderedIcon = <Icon name={type === "time" ? "schedule" : "calendar_month"} size={20} />;
       renderedIconPosition = "right";
     }
 
@@ -69,10 +77,7 @@ export const NeumorphicInput = forwardRef<
       "bg-white rounded-tripio w-full px-4 py-3 border border-gray-200 shadow-gray-inset hover:outline-none hover:ring-2 hover:ring-secondary focus:outline-none focus:ring-2 focus:ring-secondary transition-all",
       "placeholder:text-gray-400 text-text-main select-text cursor-text",
       renderedIcon && renderedIconPosition === "left" && "pl-11",
-      ((renderedIcon && renderedIconPosition === "right") ||
-        isPassword ||
-        isSelect ||
-        isDate) &&
+      ((renderedIcon && renderedIconPosition === "right") || isPassword || isSelect || isDate) &&
         "pr-11",
       error && "ring-2 ring-danger",
       isSelect && "appearance-none cursor-pointer",
@@ -81,7 +86,7 @@ export const NeumorphicInput = forwardRef<
       isDate &&
         "appearance-none [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-clear-button]:appearance-none",
       type == "textarea" && "resize-none",
-      className,
+      className
     );
 
     return (
@@ -89,7 +94,7 @@ export const NeumorphicInput = forwardRef<
         {(label || labelRightContent) && (
           <div className="flex items-center justify-between mb-1 px-2">
             {label && (
-              <label className="font-display text-sm font-semibold text-text-main">
+              <label className="font-display text-sm font-semibold text-main">
                 {label}
                 {required && (
                   <span className="text-danger ml-1" title="Campo obligatorio">
@@ -106,9 +111,8 @@ export const NeumorphicInput = forwardRef<
             <div
               className={cn(
                 "flex absolute left-4 text-gray-400 z-10 transition-colors",
-                isDate &&
-                  "group-hover:text-secondary group-focus-within:text-secondary",
-                isDate ? "cursor-pointer" : "pointer-events-none",
+                isDate && "group-hover:text-secondary group-focus-within:text-secondary",
+                isDate ? "cursor-pointer" : "pointer-events-none"
               )}
               onClick={handleIconClick}
             >
@@ -119,7 +123,7 @@ export const NeumorphicInput = forwardRef<
           {isSelect ? (
             <div className="relative w-full group">
               <select
-                ref={innerRef as React.Ref<HTMLSelectElement>}
+                ref={handleRef}
                 className={baseInputStyles}
                 {...(props as React.SelectHTMLAttributes<HTMLSelectElement>)}
               >
@@ -139,7 +143,7 @@ export const NeumorphicInput = forwardRef<
           ) : isFile ? (
             <div className="w-full">
               <input
-                ref={innerRef as React.Ref<HTMLInputElement>}
+                ref={handleRef}
                 type="file"
                 className="hidden"
                 onChange={(e) => {
@@ -155,26 +159,23 @@ export const NeumorphicInput = forwardRef<
                 className={cn(
                   "flex w-full gap-2 items-center justify-center cursor-pointer rounded-tripio px-6 py-4 font-display font-bold transition-all text-center",
                   "bg-secondary text-white hover:bg-secondary-dark active:shadow-secondary-inset shadow-secondary",
-                  className,
+                  className
                 )}
               >
-                <Icon
-                  name={fileName ? "check_circle" : "cloud_upload"}
-                  size={20}
-                />
+                <Icon name={fileName ? "check_circle" : "cloud_upload"} size={20} />
                 {fileName || props.placeholder || "Subir archivo"}
               </button>
             </div>
           ) : type === "textarea" ? (
             <textarea
-              ref={innerRef as React.Ref<HTMLTextAreaElement>}
+              ref={handleRef}
               className={cn(baseInputStyles, "min-h-[100px] rounded-3xl!")}
               {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
             />
           ) : (
             <>
               <input
-                ref={innerRef as React.Ref<HTMLInputElement>}
+                ref={handleRef}
                 type={inputType}
                 className={baseInputStyles}
                 required={required}
@@ -185,19 +186,19 @@ export const NeumorphicInput = forwardRef<
                 }}
                 {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
               />
-              {((renderedIcon && renderedIconPosition === "right") ||
-                (isDate && !renderedIcon)) &&
+              {((renderedIcon && renderedIconPosition === "right") || (isDate && !renderedIcon)) &&
                 !isPassword && (
                   <div
                     className={cn(
                       "flex absolute right-4 text-gray-400 z-10 transition-colors",
-                      isDate &&
-                        "group-hover:text-secondary group-focus-within:text-secondary",
-                      isDate ? "cursor-pointer" : "pointer-events-none",
+                      isDate && "group-hover:text-secondary group-focus-within:text-secondary",
+                      isDate ? "cursor-pointer" : "pointer-events-none"
                     )}
                     onClick={handleIconClick}
                   >
-                    {renderedIcon || <Icon name="calendar_month" size={20} />}
+                    {renderedIcon || (
+                      <Icon name={type === "time" ? "schedule" : "calendar_month"} size={20} />
+                    )}
                   </div>
                 )}
             </>
@@ -210,10 +211,7 @@ export const NeumorphicInput = forwardRef<
               className="flex absolute right-4 text-gray-400 hover:text-secondary transition-colors cursor-pointer"
               tabIndex={-1}
             >
-              <Icon
-                name={showPassword ? "visibility" : "visibility_off"}
-                size={20}
-              />
+              <Icon name={showPassword ? "visibility" : "visibility_off"} size={20} />
             </button>
           )}
         </div>
@@ -225,7 +223,7 @@ export const NeumorphicInput = forwardRef<
         )}
       </div>
     );
-  },
+  }
 );
 
 NeumorphicInput.displayName = "NeumorphicInput";

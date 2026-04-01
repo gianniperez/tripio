@@ -1,0 +1,257 @@
+﻿
+> tripio@0.1.1 lint
+> eslint
+
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\next.config.ts
+  4:7  warning  'withPWA' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\app\layout.tsx
+  48:9  warning  A font-display parameter is missing (adding `&display=optional` is recommended). See: https://nextjs.org/docs/messages/google-font-display                       @next/next/google-font-display
+  48:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+  52:9  warning  A font-display parameter is missing (adding `&display=optional` is recommended). See: https://nextjs.org/docs/messages/google-font-display                       @next/next/google-font-display
+  52:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\app\trips\[tripId]\logistics\LogisticsClient.tsx
+  58:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\app\trips\[tripId]\logistics\LogisticsClient.tsx:58:7
+  56 |     const tab = searchParams.get("tab");
+  57 |     if (tab && tab !== activeTab && (tab === "accommodation" || tab === "transport" || tab === "inventory")) {
+> 58 |       setActiveTab(tab);
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |     }
+  60 |   }, [searchParams, activeTab]);
+  61 |  react-hooks/set-state-in-effect
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\BottomBar\BottomBar.test.tsx
+  1:10  warning  'render' is defined but never used     @typescript-eslint/no-unused-vars
+  2:10  warning  'BottomBar' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\BottomBar\BottomBar.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\DesktopSidebar\DesktopSidebar.test.tsx
+  1:10  warning  'render' is defined but never used          @typescript-eslint/no-unused-vars
+  2:10  warning  'DesktopSidebar' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\DesktopSidebar\DesktopSidebar.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\TopBar\TopBar.test.tsx
+  1:10  warning  'render' is defined but never used  @typescript-eslint/no-unused-vars
+  2:10  warning  'TopBar' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\layout\TopBar\TopBar.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\neumorphic\NeumorphicInput\NeumorphicInput.tsx
+    3:40  warning  'useImperativeHandle' is defined but never used  @typescript-eslint/no-unused-vars
+   48:28  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+   53:40  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  152:41  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  185:40  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\EmptyState\EmptyState.test.tsx
+  1:10  warning  'render' is defined but never used      @typescript-eslint/no-unused-vars
+  2:10  warning  'EmptyState' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\EmptyState\EmptyState.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\FilterTabBar\FilterTabBar.test.tsx
+  1:10  warning  'render' is defined but never used        @typescript-eslint/no-unused-vars
+  2:10  warning  'FilterTabBar' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\FilterTabBar\FilterTabBar.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\FloatingActionButton\FloatingActionButton.test.tsx
+  1:10  warning  'render' is defined but never used                @typescript-eslint/no-unused-vars
+  2:10  warning  'FloatingActionButton' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\FloatingActionButton\FloatingActionButton.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\InfoCard\InfoCard.test.tsx
+  1:10  warning  'render' is defined but never used    @typescript-eslint/no-unused-vars
+  2:10  warning  'InfoCard' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\InfoCard\InfoCard.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\ListItemCard\ListItemCard.test.tsx
+  1:10  warning  'render' is defined but never used        @typescript-eslint/no-unused-vars
+  2:10  warning  'ListItemCard' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\PageHeader\PageHeader.test.tsx
+  1:10  warning  'render' is defined but never used      @typescript-eslint/no-unused-vars
+  2:10  warning  'PageHeader' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\components\ui\PageHeader\PageHeader.types.ts
+  1:18  error  An empty interface declaration allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowInterfaces' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\ForgotPasswordForm\ForgotPasswordForm.types.ts
+  1:39  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\LoginForm\LoginForm.tsx
+   94:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:82  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:76  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  136:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\LoginForm\LoginForm.types.ts
+  1:30  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\RegisterForm\RegisterForm.types.ts
+  1:33  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\ResetPasswordForm\ResetPasswordForm.types.ts
+  1:38  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\auth\components\VerifyEmailForm\VerifyEmailForm.types.ts
+  1:36  error  The `{}` ("empty object") type allows any non-nullish value, including literals like `0` and `""`.
+- If that's what you want, disable this lint rule with an inline comment or configure the 'allowObjectTypes' rule option.
+- If you want a type meaning "any object", you probably want `object` instead.
+- If you want a type meaning "any value", you probably want `unknown` instead  @typescript-eslint/no-empty-object-type
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\finances\api\costService.ts
+  43:82   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:111  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  43:127  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  50:58   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\finances\components\CostForm\CostForm.tsx
+  53:21  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\finances\components\CostForm\CostForm.tsx:53:21
+  51 |   });
+  52 |
+> 53 |   const splitType = watch("splitType");
+     |                     ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  54 |   const baseAmount = watch("amount") || 0;
+  55 |
+  56 |   // For custom split, we store { [userId]: amount }  react-hooks/incompatible-library
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\logistics\api\logisticsService.ts
+   90:31  warning  '_rv' is assigned a value but never used   @typescript-eslint/no-unused-vars
+   96:29  warning  '_rv2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  110:31  warning  '_rv' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  116:29  warning  '_rv2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  131:31  warning  '_rv' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  137:29  warning  '_rv2' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\logistics\components\AccommodationForm\AccommodationForm.tsx
+  29:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  58:92  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\logistics\components\InventoryForm\InventoryForm.tsx
+  29:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\logistics\components\TransportForm\TransportForm.tsx
+  31:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  47:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:88  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\api\proposalsService.ts
+   12:15  warning  'Role' is defined but never used                          @typescript-eslint/no-unused-vars
+   27:12  error    Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+   48:13  error    'title' is never reassigned. Use 'const' instead          prefer-const
+   76:82  error    Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+   98:86  error    Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+  104:37  warning  '_' is defined but never used                             @typescript-eslint/no-unused-vars
+  127:90  error    Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+  129:9   error    'formattedData' is never reassigned. Use 'const' instead  prefer-const
+  129:24  error    Unexpected any. Specify a different type                  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\components\AccommodationProposalForm\AccommodationProposalForm.tsx
+  22:3   warning  'onCancel' is defined but never used      @typescript-eslint/no-unused-vars
+  51:50  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\components\ActivityProposalForm\ActivityProposalForm.tsx
+   21:3   warning  'onCancel' is defined but never used      @typescript-eslint/no-unused-vars
+   53:50  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:30  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\components\InventoryProposalForm\InventoryProposalForm.tsx
+  20:3   warning  'onCancel' is defined but never used      @typescript-eslint/no-unused-vars
+  44:50  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\components\ProposalCard\ProposalCard.tsx
+  55:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\components\TransportProposalForm\TransportProposalForm.tsx
+  22:3   warning  'onCancel' is defined but never used      @typescript-eslint/no-unused-vars
+  58:50  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\proposals\hooks\useProposals.ts
+  26:86   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:94   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  75:100  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\trips\components\ActivityForm\ActivityForm.tsx
+  44:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\trips\components\CreateTripForm\CreateTripForm.tsx
+  14:45  warning  'onCancel' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\trips\components\CreateTripModal\CreateTripModal.tsx
+  3:10  warning  'NeumorphicCard' is defined but never used  @typescript-eslint/no-unused-vars
+  5:10  warning  'Icon' is defined but never used            @typescript-eslint/no-unused-vars
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\features\trips\components\EditTripForm\EditTripForm.tsx
+  91:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\giann\Documents\Gianni\Proyectos\tripio-copy\src\utils\date-utils.ts
+   9:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  37:6   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 94 problems (54 errors, 40 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

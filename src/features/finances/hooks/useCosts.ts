@@ -1,35 +1,35 @@
-import { useState, useEffect } from "react";
-import { Cost } from "@/types/tripio";
-import { getCostsByTripId } from "../api/getCosts";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { costService } from "@/features/finances/api/costService";
 
-export const useCosts = (tripId: string | undefined) => {
-  const [costs, setCosts] = useState<Cost[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+const COSTS_KEY = "trip-costs";
 
-  useEffect(() => {
-    if (!tripId) return;
+export const useTripCosts = (tripId: string) => {
+  return useQuery({
+    queryKey: [COSTS_KEY, tripId],
+    queryFn: () => costService.getTripCosts(tripId),
+    enabled: !!tripId,
+  });
+};
 
-    try {
-      const unsubscribe = getCostsByTripId(
-        tripId,
-        (data) => {
-          setCosts(data);
-          setIsLoading(false);
-        },
-        (err) => {
-          setError(err);
-          setIsLoading(false);
-        },
-      );
-      return () => unsubscribe();
-    } catch (err) {
-      setTimeout(() => {
-        setError(err as Error);
-        setIsLoading(false);
-      }, 0);
-    }
-  }, [tripId]);
+export const useAddCost = (tripId: string) => {
+  const queryClient = useQueryClient();
 
-  return { data: costs, isLoading, error };
+  return useMutation({
+    mutationFn: (data: Parameters<typeof costService.addCost>[2] & { userId: string }) => 
+      costService.addCost(tripId, data.userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [COSTS_KEY, tripId] });
+    },
+  });
+};
+
+export const useDeleteCost = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (costId: string) => costService.deleteCost(tripId, costId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [COSTS_KEY, tripId] });
+    },
+  });
 };

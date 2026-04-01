@@ -1,3 +1,3 @@
-export interface LoginFormProps {
-  className?: string;
-}
+export type LoginFormProps = {
+  // props
+};

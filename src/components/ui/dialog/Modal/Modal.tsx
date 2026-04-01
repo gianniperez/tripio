@@ -42,12 +42,7 @@ export function Modal(props: ModalProps) {
 
   return (
     <div className="fixed inset-0 z-110 bg-black/50 backdrop-blur-sm flex items-center justify-center p-6">
-      <div
-        ref={overlayRef}
-        className="absolute inset-0"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div ref={overlayRef} className="absolute inset-0" onClick={onClose} aria-hidden="true" />
 
       <div
         role="dialog"
@@ -56,7 +51,7 @@ export function Modal(props: ModalProps) {
         aria-describedby={description ? "modal-description" : undefined}
         className={cn(
           "relative z-120 w-full max-w-lg bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh] p-2",
-          className,
+          className
         )}
       >
         {/* Header */}
@@ -64,18 +59,12 @@ export function Modal(props: ModalProps) {
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div>
               {title && (
-                <h2
-                  id="modal-title"
-                  className="text-xl font-bold font-nunito text-text-main"
-                >
+                <h2 id="modal-title" className="text-xl font-bold font-nunito text-main">
                   {title}
                 </h2>
               )}
               {description && (
-                <p
-                  id="modal-description"
-                  className="text-sm text-gray-500 font-inter mt-1"
-                >
+                <p id="modal-description" className="text-sm text-gray-500 font-inter mt-1">
                   {description}
                 </p>
               )}

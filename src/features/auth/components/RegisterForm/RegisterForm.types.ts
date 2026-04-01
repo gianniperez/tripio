@@ -1,3 +1,3 @@
-export interface RegisterFormProps {
-  className?: string;
-}
+export type RegisterFormProps = {
+  // props
+};

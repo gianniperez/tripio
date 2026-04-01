@@ -1,3 +1,3 @@
-export interface ForgotPasswordFormProps {
-  className?: string;
-}
+export type ForgotPasswordFormProps = {
+  // props
+};

@@ -25,7 +25,7 @@ export const NeumorphicCard = ({
       className={cn(
         "bg-white rounded-tripio p-6",
         variant === "cream" ? "shadow-cream" : "shadow-gray",
-        className,
+        className
       )}
     >
       {children}

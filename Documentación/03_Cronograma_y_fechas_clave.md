@@ -6,12 +6,10 @@
 ## Hitos Importantes (Milestones)
 
 - **Hito 1: Setup & Infra:** 4 de Marzo, 2026 - Configuración de Next.js, Firebase y FSD.
-- **Hito 2: Core Viajes & Auth:** 8-9 de Marzo, 2026 - Persistencia de viajes y sistema de permisos RBAC.
-- **Hito 3: Workflows & Tooling:** 11 de Marzo, 2026 - Automatización de procesos y política de documentación.
 
 ## Deadlines Estipulados
 
-- **Fase 1 (Core):** 10 de Marzo, 2026 (Completado)
-- **Fase 2 (Economía Avanzada):** 17 de Marzo, 2026 (Completado)
-- **Fase 3 (Propuestas & Logística):** 19 de Marzo, 2026 (En desarrollo)
+- **Fase 1 (Core):** 10 de Marzo, 2026
+- **Fase 2 (Economía Avanzada):** 17 de Marzo, 2026
+- **Fase 3 (Propuestas & Logística):** 19 de Marzo, 2026
 - **Entrega Final MVP:** 4 de Abril, 2026

@@ -1,36 +1,85 @@
-import { useEffect, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { subscribeToProposals } from "../api";
-import { Proposal, ProposalType } from "../types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { proposalsService, ProposalType } from "../api/proposalsService";
 
-export function useProposals(tripId: string, type?: ProposalType | "all") {
-  const queryClient = useQueryClient();
-  const queryKey = useMemo(
-    () => ["proposals", tripId, type || "all"],
-    [tripId, type],
-  );
+const PROPOSALS_KEY = "trip-proposals";
 
-  useEffect(() => {
-    if (!tripId) return;
-
-    const unsubscribe = subscribeToProposals(
-      tripId,
-      (proposals) => {
-        queryClient.setQueryData(queryKey, proposals);
-      },
-      (error) => {
-        console.error("Error subscribing to proposals:", error);
-      },
-      type,
-    );
-
-    return () => unsubscribe();
-  }, [tripId, queryClient, queryKey, type]);
-
-  return useQuery<Proposal[]>({
-    queryKey,
-    queryFn: () => queryClient.getQueryData(queryKey) ?? [],
+export const useAllProposals = (tripId: string) => {
+  return useQuery({
+    queryKey: [PROPOSALS_KEY, tripId],
+    queryFn: async () => {
+      try {
+        const data = await proposalsService.getAllProposals(tripId);
+        return data;
+      } catch (err) {
+        console.error("Error fetching proposals in React Query:", err);
+        throw err;
+      }
+    },
     enabled: !!tripId,
-    staleTime: Infinity,
   });
-}
+};
+
+export const useCreateProposal = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ type, userId, data }: { type: ProposalType, userId: string, data: any }) => 
+      proposalsService.createProposal(tripId, type, userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
+    },
+  });
+};
+
+export const useUpdateProposal = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ type, proposalId, data }: { type: ProposalType, proposalId: string, data: any }) => 
+      proposalsService.updateProposal(tripId, type, proposalId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
+    },
+  });
+};
+
+
+export const useVoteProposal = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ type, proposalId, userId, vote }: { type: ProposalType, proposalId: string, userId: string, vote: string }) => 
+      proposalsService.voteProposal(tripId, type, proposalId, userId, vote),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
+    },
+  });
+};
+
+export const useDeleteProposal = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ type, proposalId }: { type: ProposalType, proposalId: string }) => 
+      proposalsService.deleteProposal(tripId, type, proposalId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
+    },
+  });
+};
+
+export const useConfirmProposal = (tripId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ type, proposalId, rawData }: { type: ProposalType, proposalId: string, rawData: any }) => 
+      proposalsService.confirmProposal(tripId, type, proposalId, rawData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
+      // We also invalidate itinerary items because confirming shifts items to timeline or logistics
+      queryClient.invalidateQueries({ queryKey: ["itinerary-items", tripId] });
+      queryClient.invalidateQueries({ queryKey: ["backlog-activities", tripId] });
+    },
+  });
+};
+

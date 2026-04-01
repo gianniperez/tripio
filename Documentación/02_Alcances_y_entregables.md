@@ -11,30 +11,13 @@ En su Primera Etapa (MVP), el proyecto abarcará el desarrollo de una Aplicació
    - Sistema de invitación de participantes mediante Magic Links.
    - Roles: Admin (creador, extensible a otros) y Member.
 
-2. **Propuestas Distribuidas (Actividades, Alojamiento, Transporte, Inventario)**
-   - Cada módulo gestiona sus propias ideas y decisiones con pestañas "Pendientes" y "Confirmadas".
-   - Centralización vía **Decision Hub** en el Dashboard para seguimiento grupal.
-   - Ciclo de vida: `Pending` → `Confirmed` / `Rejected`.
-   - Las propuestas confirmadas se integran automáticamente al Timeline o sección logística.
+2. **Propuestas (Actividades, Alojamiento, Transporte, Inventario)**
 
 3. **Gestión Económica Avanzada**
-   - **Gastos Directos:** Pagados por un usuario (ej: un souvenir personal).
-   - **Gastos Compartidos (Shared):** Tickets grupales con **Split Variable** (montos distintos por persona).
-   - **Presupuesto Diario Sugerido:** Cálculo dinámico basado en el remanente del Límite Personal y los días restantes.
-   - **Simplificación de Deudas:** Algoritmo opcional (Splitwise-style) para consolidar pagos entre participantes.
-   - Vínculo bidireccional entre Gastos y Entidades (Actividades, Logística, etc).
-   - Budget Limit personal con alertas de exceso de presupuesto.
 
 4. **Logística y Transporte**
-   - Registro de medios de transporte disponibles (quién lleva auto).
-   - Asignación de pasajeros a cada vehículo (con validación de capacidad).
-   - Inventario grupal de objetos/equipaje y asignación de responsables.
-   - Vínculo automático Inventario → Tareas al asignar responsable.
 
 5. **Timeline e Itinerario**
-   - Vista Timeline secuencial (narrativa visual).
-   - Vista Calendario clásico (grilla mensual/semanal).
-   - Eventos con RSVP y tarjetas dinámicas.
 
 ## Entregables Principales
 

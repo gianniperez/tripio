@@ -72,7 +72,7 @@ Tanto en estado `Planning` como `Active`, el Dashboard principal ofrece un resum
 
 - Definición de lugares donde pernoctar, requiriendo **Fecha de Inicio** y **Fecha de Fin**.
 - Los alojamientos no se pisan, sino que se complementan (ej. 5 días en Logia A, 5 días en Logia B).
-- **Entrada Directa:** Solo los **Admins** pueden crear una entrada directa de alojamiento. Los Members deben proponerlo primero.
+- **Entrada Directa:** Solo los **Admins** o el **Owner** pueden crear una entrada directa de alojamiento. Los Collaborators y Viewers deben proponerlo primero.
 
 #### Medios de Transporte
 
@@ -80,12 +80,14 @@ En lugar de gestionar activos físicos complejos, el sistema registra:
 
 - **Medio:** (Auto Pedro, Avión, Micro).
 - **Capacidad y Auto-Asignación:** Los usuarios deben poder **asignarse a sí mismos** a un transporte libre (ej: "Sumarme a este Auto") hasta llenar la capacidad.
+- **Entrada Directa:** Solo los **Admins** o el **Owner** pueden crear una entrada directa de transporte. Los Collaborators y Viewers deben proponerlo primero.
 
 #### Inventario Grupal (Shared Items)
 
 Repositorio de ítems necesarios (Carpa, Parlante).
 
 - **Opcionalidad:** Siempre debe estar la opción de indicar quién lo lleva, pero no es obligatorio que todos los ítems tengan dueño.
+- **Entrada Directa:** Solo los **Admins** o el **Owner** pueden crear una entrada directa de inventario. Los Collaborators y Viewers deben proponerlo primero.
 
 ### 2.4 Gestión Económica - Finanzas (Total Cost)
 
@@ -127,9 +129,10 @@ No necesariamente tiene que pasar por todos los estados.
 ```text
 Login (Firebase Auth) -> Mis Viajes (/trips)
 │
-└── Viaje [ID] (Sticky Bottom NavBar — 4 botones)
-    ├── 🏠 Inicio (Dashboard)
+└── Viaje [ID] (Sticky Bottom NavBar — 5 botones)
+    ├── 💡 Propuestas
     ├── 💡 Actividades (Timeline/Calendario)
+    ├── 🏠 Inicio (Dashboard)
     ├── ✅ Logística (Alojamiento, Transporte, Inventario)
     └── 💰 Finanzas (Gastos/Totales)
 ```
@@ -139,9 +142,8 @@ Login (Firebase Auth) -> Mis Viajes (/trips)
 El Home actúa como el centro de control del viaje. Contiene:
 
 - **Resumen del Viaje:** Nombre y rango de fechas.
-- **Dashboard Cards:** Conteo de Alojamientos, Vehículos e Ideas Pendientes (clickeables para navegar a la vista correspondiente).
+- **Widgets:** Conteo de Alojamientos, Vehículos e Ideas Pendientes (clickeables para navegar a la vista correspondiente).
 - **Presupuesto:** Gasto acumulado vs. límite personal, con la moneda del viaje.
-- **Botón ⚙️ Editar Viaje:** Abre un modal para editar nombre, fechas, moneda, presupuesto y eliminar el viaje.
 
 #### Vista: 🗳️ Propuestas (Decision Hub)
 
@@ -202,7 +204,7 @@ Repositorio de áreas operativas (solo información confirmada).
 - **Backend/DB:** Firebase (Firestore, Auth).
 - **State Management:** Zustand (UI local) + TanStack Query (server state).
 - **Forms & Validation:** React Hook Form + Zod.
-- **Utilities:** `date-fns` (manejo de fechas), `lucide-react` (iconografía).
+- **Utilities:** `date-fns` (manejo de fechas), `material-icons` (iconografía).
 - **UI:** Tailwind CSS v4.
 - **Deployment:** Vercel o Firebase Hosting.
 - **Offline (Post-MVP):** Service Workers para lectura cacheada.
@@ -233,7 +235,7 @@ El proyecto hereda las estrictas normativas del boilerplate fundacional (`next-s
 - **Mobile-First PWA:** Diseñado para pulgar, botones grandes, feedback táctil. Responsive para Desktop.
 - **Gamificación Proactiva:**
   - **Hitos de Grupo:** Barras de progreso por categorías (Logística completa, Finanzas cerradas).
-  - **Badges:** Iconos lúdicos por completar tareas o ser el primero en hacer RSVP.
+  - **Badges:** Iconos lúdicos por llevar ítems o ser el primero en hacer RSVP.
   - **Mascota (Future Scope):** Un guía lúdico que celebra hitos (no incluido en MVP).
 
 ### 4.2 Sistema de Diseño (Design Tokens - Neumorfismo Lúdico)
@@ -249,10 +251,10 @@ Las variables globales de diseño (Tokens) se definirán en la configuración de
 
 Tripio debe transmitir emoción por viajar, organización y calma.
 
-- **Primary (Brand):** Tono vibrantes: Naranja (`#F46A1F`), Turquesa (`#1A8C8C`), Azul oscuro (`#075056`).
+- **Primary (Brand):** Tono vibrantes: Naranja (`#F46A1F`), Verde, Gris.
 - **Secondary (Accents):** Colores complementarios para destacar estados (ej: verde para "Decidido", rojo para "Alertas de Budget").
 - **Backgrounds (Surface):** Fondo limpio (`#FFFAF5`) para evitar fatiga visual ante tanto contenido.
-- **Text & Borders:** Escala de grises semánticos (`slate` o `gray` de Tailwind) y/o azules oscuros (`#001523`).
+- **Text & Borders:** Escala de grises semánticos (`gray` de Tailwind).
 
 #### 3. Forma y Profundidad (Neumorfismo Lúdico)
 
@@ -284,7 +286,7 @@ El diseño abandona las tarjetas planas tradicionales a favor de un **Neumorfism
 | :----------------------- | :--------------------------------- | :---------------------------------------------------------------- |
 | **Nuevo Participante**   | Unión vía link.                    | Mail al Admin / Toast en App.                                     |
 | **Gasto/Update**         | Cambio en gastos.                  | Recálculo de "Total Cost" y alerta si supera el **Budget Limit**. |
-| **Tarea Asignada**       | Creación o asignación.             | Mail al responsable.                                              |
+| **Ítem Asignado**        | Asignación de responsable.         | Mail al responsable.                                              |
 | **Propuesta Confirmada** | Propuesta pasa a `Confirmed`.      | Se crea Event en Timeline + notificación al grupo.                |
 | **Deadline de Encuesta** | Se cumple el deadline de votación. | Notificación recordatorio a quienes no votaron.                   |
 
@@ -321,7 +323,6 @@ Los datos se organizan usando **subcolecciones anidadas dentro de cada viaje**. 
   └── /transport_confirmed/{id}          ← Transportes confirmados
   └── /inventory_proposals/{id}          ← Propuestas de inventario
   └── /inventory_confirmed/{id}          ← Items confirmados
-  └── /tasks/{taskId}                    ← Subcolección
 ```
 
 ### 8.2 Colección: `users`
@@ -330,7 +331,7 @@ Perfil básico sincronizado con Firebase Auth.
 
 | Campo         | Tipo             | Requerido | Descripción                       |
 | ------------- | ---------------- | --------- | --------------------------------- |
-| `uid`         | `string`         | ✅        | Firebase Auth UID (= document ID) |
+| `id`          | `string`         | ✅        | Firebase Auth UID (= document ID) |
 | `displayName` | `string`         | ✅        | Nombre visible                    |
 | `email`       | `string`         | ✅        | Email del usuario                 |
 | `photoURL`    | `string \| null` | ❌        | Avatar                            |
@@ -343,7 +344,6 @@ El contenedor raíz de cada viaje.
 | Campo         | Tipo             | Requerido | Default      | Descripción                                |
 | ------------- | ---------------- | --------- | ------------ | ------------------------------------------ |
 | `name`        | `string`         | ✅        | —            | Nombre del viaje                           |
-| `destination` | `string`         | ✅        | —            | Destino principal                          |
 | `description` | `string \| null` | ❌        | `null`       | Descripción opcional                       |
 | `startDate`   | `timestamp`      | ✅        | —            | Fecha de inicio                            |
 | `endDate`     | `timestamp`      | ✅        | —            | Fecha de fin                               |
@@ -371,66 +371,105 @@ Membresía del viaje. El `participantId` (Document ID) equivale al UID del usuar
 
 Actividades del timeline vinculadas a un día específico.
 
-| Campo              | Tipo                   | Requerido | Default   | Descripción                                                                 |
-| ------------------ | ---------------------- | --------- | --------- | --------------------------------------------------------------------------- |
-| `title`            | `string`               | ✅        | —         | Nombre del evento                                                           |
-| `description`      | `string \| null`       | ❌        | `null`    | Detalles                                                                    |
-| `date`             | `timestamp`            | ✅        | —         | Día del evento                                                              |
-| `startTime`        | `timestamp \| null`    | ❌        | `null`    | Hora inicio (opcional)                                                      |
-| `endTime`          | `timestamp \| null`    | ❌        | `null`    | Hora fin (opcional)                                                         |
-| `location`         | `string \| null`       | ❌        | `null`    | Ubicación (texto)                                                           |
-| `locationUrl`      | `string \| null`       | ❌        | `null`    | Google Maps o link                                                          |
-| `category`         | `string`               | ✅        | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \| `'other'` |
-| `costImpact`       | `number \| null`       | ❌        | `null`    | gasto estimado del evento                                                   |
-| `rsvp`             | `map<userId, boolean>` | ✅        | `{}`      | Confirmaciones de asistencia                                                |
-| `linkedProposalId` | `string \| null`       | ❌        | `null`    | Propuesta de origen                                                         |
-| `createdBy`        | `string`               | ✅        | —         | UID del creador                                                             |
-| `createdAt`        | `timestamp`            | ✅        | —         | Fecha de creación                                                           |
+| Campo              | Tipo                   | Requerido | Default   | Descripción                                                       |
+| ------------------ | ---------------------- | --------- | --------- | ----------------------------------------------------------------- |
+| `title`            | `string`               | ✅        | —         | Nombre del evento                                                 |
+| `description`      | `string \| null`       | ❌        | `null`    | Detalles                                                          |
+| `date`             | `timestamp`            | ✅        | —         | Día del evento                                                    |
+| `startTime`        | `timestamp \| null`    | ❌        | `null`    | Hora inicio (opcional)                                            |
+| `endTime`          | `timestamp \| null`    | ❌        | `null`    | Hora fin (opcional)                                               |
+| `location`         | `string \| null`       | ❌        | `null`    | Ubicación (texto)                                                 |
+| `locationUrl`      | `string \| null`       | ❌        | `null`    | Google Maps o link                                                |
+| `category`         | `string`               | ✅        | `'other'` | `'accommodation'` \| `'transport'` \| `'food'` \| `'activity'` \  |
+| `costImpact`       | `number \| null`       | ❌        | `null`    | gasto estimado del evento                                         |
+| `rsvp`             | `map<userId, boolean>` | ✅        | `{}`      | Confirmaciones de asistencia                                      |
+| `linkedProposalId` | `string \| null`       | ❌        | `null`    | Propuesta de origen                                               |
+| `createdBy`        | `string`               | ✅        | —         | UID del creador                                                   |
+| `createdAt`        | `timestamp`            | ✅        | —         | Fecha de creación                                                 |
 
-### 8.6 Estructura de Módulos (Subcolecciones Unificadas)
+### 8.6 Estructura de Módulos (Subcolecciones Espejo)
 
-Para simplificar la gestión de estados "Pendiente" y "Confirmado", cada módulo utiliza una única subcolección donde los documentos transicionan de estado.
+Para gestionar el ciclo de vida de las propuestas, cada módulo utiliza un sistema de **colecciones espejo**: una para las ideas en debate (`_proposals`) y otra para los elementos ya aprobados (`_confirmed`). Al confirmar una propuesta, el documento se mueve de la colección de propuestas a la colección de confirmados, o se genera un evento en el Timeline.
 
-#### 8.6.1 Subcolección: `activities`
+#### 8.6.1 Subcolección: `activities_proposals`
 
-Contiene tanto las propuestas de actividades como las actividades confirmadas (itinerario).
+_(Las actividades confirmadas residen en la subcolección `events` documentada en 8.5)._
 
-- **Path:** `trips/{tripId}/activities`
-- **Estados:** `pending` (propuesta), `confirmed` (en timeline), `rejected`.
+| Campo         | Tipo                | Requerido | Default | Descripción                        |
+| ------------- | ------------------- | --------- | ------- | ---------------------------------- |
+| `title`       | `string`            | ✅        | —       | Nombre de la actividad sugerida    |
+| `description` | `string \| null`    | ❌        | `null`  | Detalles                           |
+| `date`        | `timestamp \| null` | ❌        | `null`  | Día sugerido (opcional)            |
+| `costImpact`  | `number \| null`    | ❌        | `null`  | Gasto estimado                     |
+| `locationUrl` | `string \| null`    | ❌        | `null`  | Link de Google Maps o web          |
+| `votes`       | `map<uid, string>`  | ✅        | `{}`    | Votos para decidir si se hace o no |
+| `createdBy`   | `string`            | ✅        | —       | UID del creador                    |
+| `createdAt`   | `timestamp`         | ✅        | —       | Fecha de creación                  |
 
-#### 8.6.2 Subcolección: `logistics`
+- **Estados Operativos:** Una propuesta existe para ser votada. Una vez confirmada, sus datos migran a la colección `events` del Timeline.
 
-Unifica Alojamiento, Transporte e Inventario.
+#### 8.6.2 Subcolección: `accommodation_proposals` y `accommodation_confirmed`
 
-- **Path:** `trips/{tripId}/logistics`
-- **Campo `subType`:** `'accommodation' | 'transport' | 'inventory'`
-- **Estados:** `pending` | `confirmed` | `rejected`
+| Campo           | Tipo               | Requerido | Default | Descripción                                  |
+| --------------- | ------------------ | --------- | ------- | -------------------------------------------- |
+| `title`         | `string`           | ✅        | —       | Nombre del alojamiento                       |
+| `description`   | `string \| null`   | ❌        | `null`  | Detalles / notas                             |
+| `locationUrl`   | `string \| null`   | ❌        | `null`  | Link de Google Maps o Booking                |
+| `checkIn`       | `timestamp`        | ✅        | —       | Fecha y hora de entrada                      |
+| `checkOut`      | `timestamp`        | ✅        | —       | Fecha y hora de salida                       |
+| `priceEstimate` | `number \| null`   | ❌        | `null`  | Costo estimado total                         |
+| `votes`         | `map<uid, string>` | ✅\*      | `{}`    | Solo en proposals. Votos positivos/negativos |
+| `createdBy`     | `string`           | ✅        | —       | UID del creador                              |
+| `createdAt`     | `timestamp`        | ✅        | —       | Fecha de creación                            |
 
-| Campo           | Tipo                  | Requerido |   Default   | Descripción                                         |
-| :-------------- | :-------------------- | :-------: | :---------: | :-------------------------------------------------- |
-| `type`          | `string`              |    ✅     |      —      | `'activity' \| 'logistics'`                         |
-| `subType`       | `string \| null`      |    ❌     |   `null`    | `'accommodation' \| 'transport' \| 'inventory'`     |
-| `title`         | `string`              |    ✅     |      —      | Título del ítem                                     |
-| `status`        | `string`              |    ✅     | `'pending'` | `'pending' \| 'confirmed' \| 'rejected'`            |
-| `estimatedCost` | `number \| null`      |    ❌     |   `null`    | Costo estimado para el Decision Hub y presupuestos. |
-| `votes`         | `map<userId, string>` |    ✅     |    `{}`     | Votos/RSVP                                          |
-| `createdBy`     | `string`              |    ✅     |      —      | UID del creador                                     |
+#### 8.6.3 Subcolección: `transport_proposals` y `transport_confirmed`
 
-> [!NOTE]
-> Al confirmar un ítem en `logistics`, simplemente se cambia su `status`. No es necesario mover el documento entre colecciones.
+| Campo           | Tipo               | Requerido | Default | Descripción                                        |
+| --------------- | ------------------ | --------- | ------- | -------------------------------------------------- |
+| `type`          | `string`           | ✅        | —       | `'car'`, `'flight'`, `'bus'`, `'train'`, `'other'` |
+| `title`         | `string`           | ✅        | —       | Título / Identificador (ej: "Auto de Maza")        |
+| `departure`     | `timestamp`        | ✅        | —       | Fecha/hora de partida                              |
+| `arrival`       | `timestamp`        | ✅        | —       | Fecha/hora de llegada                              |
+| `priceEstimate` | `number \| null`   | ❌        | `null`  | Costo estimado                                     |
+| `votes`         | `map<uid, string>` | ✅\*      | `{}`    | Solo en proposals. Votos de aprobación             |
+| `capacity`      | `number`           | ✅\*      | —       | Solo en confirmed. Cantidad máxima de asientos     |
+| `passengers`    | `array<uid>`       | ✅\*      | `[]`    | Solo en confirmed. Lista de UIDs asignados         |
+| `createdBy`     | `string`           | ✅        | —       | UID del creador                                    |
+| `createdAt`     | `timestamp`        | ✅        | —       | Fecha de creación                                  |
+
+#### 8.6.4 Subcolección: `inventory_proposals` y `inventory_confirmed`
+
+_(Nota: No existe una colección "Tasks" separada. Las responsabilidades se manejan cambiando el `status` y `assignedTo` directamente en el ítem de inventario)._
+
+| Campo         | Tipo               | Requerido | Default    | Descripción                                           |
+| ------------- | ------------------ | --------- | ---------- | ----------------------------------------------------- |
+| `name`        | `string`           | ✅        | —          | Nombre del ítem (ej: "Carpa para 4")                  |
+| `description` | `string \| null`   | ❌        | `null`     | Detalles o especificaciones                           |
+| `category`    | `string`           | ✅        | `'other'`  | `'food'`, `'equipment'`, `'health'`, `'other'`        |
+| `votes`       | `map<uid, string>` | ✅\*      | `{}`       | Solo en proposals. Votos para definir si hace falta   |
+| `status`      | `string`           | ✅\*      | `'needed'` | Solo en confirmed. `'needed'`, `'assigned'`, `'done'` |
+| `assignedTo`  | `string \| null`   | ❌        | `null`     | UID del responsable de llevarlo/comprarlo             |
+| `createdBy`   | `string`           | ✅        | —          | UID del creador                                       |
+| `createdAt`   | `timestamp`        | ✅        | —          | Fecha de creación                                     |
 
 ### 8.7 Subcolección: `costs`
 
-... (sin cambios)
-... (sin cambios)
-pType`|`string`| ✅        |`'ida'`|`'ida'`\|`'vuelta'`\|`'interno'`|
-|`capacity`|`number`| ✅        | —       | Capacidad máxima de pasajeros                |
-|`passengers`|`string[]`| ✅        |`[]`| UIDs de pasajeros asignados                  |
-|`owner`|`string \| null`| ❌        |`null`| UID del dueño (si aplica)                    |
-|`createdBy`|`string`| ✅        | —       | UID del creador                              |
-|`createdAt`|`timestamp` | ✅ | — | Fecha de creación |
+Maneja los gastos del viaje y deudas entre usuarios ("Splitwise style"), soportando montos variables y divisiones asimétricas.
 
----
+- **Path:** `trips/{tripId}/costs`
+
+| Campo       | Tipo             | Requerido | Default     | Descripción                                                  |
+| ----------- | ---------------- | --------- | ----------- | ------------------------------------------------------------ |
+| `title`     | `string`         | ✅        | —           | Concepto del gasto                                           |
+| `amount`    | `number`         | ✅        | —           | Monto total                                                  |
+| `currency`  | `string`         | ✅        | —           | Moneda (ej: 'USD')                                           |
+| `date`      | `timestamp`      | ✅        | `now`       | Fecha del gasto                                              |
+| `category`  | `string`         | ✅        | `'general'` | `'accommodation'` \| `'transport'` \| `'food'` \| etc.       |
+| `paidBy`    | `map<uid, num>`  | ✅        | —           | Cuánto pagó cada usuario (Suma debe ser igual a `amount`)    |
+| `splitTo`   | `map<uid, num>`  | ✅        | —           | Cuánto le corresponde pagar a cada usuario (Suma = `amount`) |
+| `linkedTo`  | `string \| null` | ❌        | `null`      | ID de la entidad relacionada (Alojamiento, Transporte, etc)  |
+| `createdBy` | `string`         | ✅        | —           | UID del creador                                              |
+| `createdAt` | `timestamp`      | ✅        | —           | Fecha de registro                                            |
 
 ## 9. Roles y Permisos (RBAC)
 
@@ -443,11 +482,8 @@ Tripio utiliza un sistema de **Roles Base** con capacidad de **Overrides Granula
 - **`owner` (Creador):** Control absoluto, irrevocable. Único con permiso para transferir propiedad o archivar el viaje.
   - **Permisos Base:** Todos los disponibles (`*`).
 - **`admin` (Administrador):** Gestión total de contenido y personas. Puede elevar otros miembros y confirmar propuestas.
-  - **Permisos Base:** `edit_itinerary`, `create_proposal`, `vote_proposal`, `manage_logistics`, `view_finances`, `manage_participants`.
-- **`collaborator` (Colaborador - Default):** Participación activa: crea propuestas, vota, suma gastos y se asigna transporte/ítems.
-  - **Permisos Base:** `create_proposal`, `vote_proposal`, `manage_logistics`, `view_finances`.
-- **`viewer` (Observador):** Solo lectura. Puede ver el itinerario, logística y finanzas, pero no puede interactuar.
-  - **Permisos Base:** `view_finances`.
+- **`collaborator` (Colaborador - Default):** Participación activa: crea propuestas, vota, suma gastos y se asigna ítems.
+- **`viewer` (Observador):** Solo lectura. Puede ver todo, pero no puede interactuar.
 
 #### Permisos Granulares (Flags)
 
@@ -457,7 +493,6 @@ Cualquier rol (excepto `owner`) puede ser modificado mediante los siguientes fla
 - `create_proposal`: Publicar nuevas ideas o encuestas.
 - `vote_proposal`: Participar en votaciones de ideas.
 - `manage_logistics`: Crear transportes o cambiar asignaciones.
-- `view_finances`: Acceder al desglose de gastos grupales.
 - `manage_participants`: Invitar o remover personas (reservado para Admin/Owner por defecto).
 
 ### 9.2 Matriz de Capacidades por Defecto
@@ -473,7 +508,7 @@ Cualquier rol (excepto `owner`) puede ser modificado mediante los siguientes fla
 | Cambiar Roles / Overrides                 |  ✅   |  ✅   |      ❌      |   ❌   |
 | Remover Miembros                          |  ✅   |  ✅   |      ❌      |   ❌   |
 | **Itinerario & Propuestas**               |       |       |              |        |
-| Crear/Editar Eventos Directos             |  ✅   |  ✅   |      ✅      |   ❌   |
+| Crear/Editar Eventos Directos             |  ✅   |  ✅   |      ❌      |   ❌   |
 | Crear Propuestas / Ideas                  |  ✅   |  ✅   |      ✅      |   ❌   |
 | Votar Propuestas                          |  ✅   |  ✅   |      ✅      |   ❌   |
 | Confirmar Propuesta (Mover a Confirmadas) |  ✅   |  ✅   |      ❌      |   ❌   |
@@ -481,7 +516,7 @@ Cualquier rol (excepto `owner`) puede ser modificado mediante los siguientes fla
 | Ver gastos Grupales                       |  ✅   |  ✅   |      ✅      |   ✅   |
 | Crear/Editar Gastos                       |  ✅   |  ✅   |      ✅      |   ❌   |
 | Añadir Alojamiento Directo                |  ✅   |  ✅   |      ❌      |   ❌   |
-| Gestionar Transporte (Crear/Asignar)      |  ✅   |  ✅   |      ✅      |   ❌   |
+| Gestionar Transporte (Crear/Asignar)      |  ✅   |  ✅   |      ❌      |   ❌   |
 
 ### 9.3 Lógica de Resolución de Permisos
 
@@ -506,30 +541,30 @@ Un usuario puede realizar una acción si:
 
 ### 10.2 Módulo: Participantes
 
-| Operación            | Input               | Output                    | Quién          | Side Effects                                         |
-| :------------------- | :------------------ | :------------------------ | :------------- | :--------------------------------------------------- |
-| Invitar (Magic Link) | tripId, email, role | URL `/invite/[token]`     | Admin          | Se genera JWT o token en DB con caducidad (72hs).    |
-| Unirse al viaje      | `token` param       | Participant creado        | Usuario (Auth) | Si no auth, URL redirige a Login y conserva token.   |
-| Remover participante | tripId, userId      | —                         | Admin          | Recálculo gastos, desasignar tareas/ítems/transporte |
-| Elevar a Admin       | tripId, userId      | Participant(role='admin') | Admin          | —                                                    |
+| Operación            | Input               | Output                    | Quién          | Side Effects                                       |
+| :------------------- | :------------------ | :------------------------ | :------------- | :------------------------------------------------- |
+| Invitar (Magic Link) | tripId, email, role | URL `/invite/[token]`     | Admin          | Se genera JWT o token en DB con caducidad (72hs).  |
+| Unirse al viaje      | `token` param       | Participant creado        | Usuario (Auth) | Si no auth, URL redirige a Login y conserva token. |
+| Remover participante | tripId, userId      | —                         | Admin          | Recálculo gastos, desasignar ítems/transporte      |
+| Elevar a Admin       | tripId, userId      | Participant(role='admin') | Admin          | —                                                  |
 
 ### 10.3 Módulo: Timeline & Eventos
 
-| Operación       | Input              | Output            | Quién         | Side Effects                                    |
-| :-------------- | :----------------- | :---------------- | :------------ | :---------------------------------------------- |
-| Crear evento    | tripId, event data | Event creado      | Admin, Member | Aparece en Timeline                             |
-| Editar evento   | eventId, campos    | Event actualizado | Admin, Member | —                                               |
-| Eliminar evento | eventId            | —                 | Admin, Member | Tareas vinculadas se desvinculan (no se borran) |
-| RSVP            | eventId, attending | RSVP actualizado  | Admin, Member | —                                               |
+| Operación       | Input              | Output            | Quién         | Side Effects                                          |
+| :-------------- | :----------------- | :---------------- | :------------ | :---------------------------------------------------- |
+| Crear evento    | tripId, event data | Event creado      | Admin, Member | Aparece en Timeline                                   |
+| Editar evento   | eventId, campos    | Event actualizado | Admin, Member | —                                                     |
+| Eliminar evento | eventId            | —                 | Admin, Member | Ítems vinculados pierden la referencia (no se borran) |
+| RSVP            | eventId, attending | RSVP actualizado  | Admin, Member | —                                                     |
 
 ### 10.4 Módulo: Propuestas
 
-| Operación                | Input                 | Output              | Quién         | Side Effects                    |
-| :----------------------- | :-------------------- | :------------------ | :------------ | :------------------------------ |
-| Crear propuesta/encuesta | tripId, proposal data | Proposal(draft)     | Admin, Member | —                               |
-| Votar                    | proposalId, vote      | Votes actualizados  | Admin, Member | Status permanece en `pending`.  |
-| Confirmar propuesta      | proposalId            | Proposal(confirmed) | Admin, Member | Se crea un Event en el Timeline |
-| Rechazar propuesta       | proposalId            | Proposal(rejected)  | Admin, Member | —                               |
+| Operación                | Input                 | Output             | Quién         | Side Effects                                                                         |
+| :----------------------- | :-------------------- | :----------------- | :------------ | :----------------------------------------------------------------------------------- |
+| Crear propuesta/encuesta | tripId, proposal data | Proposal(draft)    | Admin, Member | —                                                                                    |
+| Votar                    | proposalId, vote      | Votes actualizados | Admin, Member | Status permanece en `pending`.                                                       |
+| Confirmar propuesta      | proposalId            | Entidad Confirmada | Admin, Member | El documento se mueve a la colección de confirmados o genera el Event en el Timeline |
+| Rechazar propuesta       | proposalId            | Proposal(rejected) | Admin, Member | —                                                                                    |
 
 ### 10.5 Módulo: Economía
 
@@ -543,14 +578,14 @@ Un usuario puede realizar una acción si:
 
 ### 10.6 Módulo: Logística
 
-| Operación               | Input                  | Output                 | Quién         | Side Effects                        |
-| :---------------------- | :--------------------- | :--------------------- | :------------ | :---------------------------------- |
-| Agregar ítem inventario | tripId, item data      | Item(needed)           | Admin, Member | —                                   |
-| Asignar ítem            | itemId, userId         | Item(assigned)         | Admin, Member | Auto-crea Task vinculada            |
-| Desasignar ítem         | itemId                 | Item(needed)           | Admin, Member | Elimina Task vinculada              |
-| Agregar transporte      | tripId, transport data | Transport creado       | Admin, Member | —                                   |
-| Asignar pasajero        | transportId, userId    | Passengers actualizado | Admin, Member | **Error 409 si capacity alcanzada** |
-| Desasignar pasajero     | transportId, userId    | Passengers actualizado | Admin, Member | —                                   |
+| Operación               | Input                  | Output                 | Quién         | Side Effects                                                    |
+| :---------------------- | :--------------------- | :--------------------- | :------------ | :-------------------------------------------------------------- |
+| Agregar ítem inventario | tripId, item data      | Item(needed)           | Admin, Member | —                                                               |
+| Asignar ítem            | itemId, userId         | Item(assigned)         | Admin, Member | Actualiza `assignedTo` en el ítem                               |
+| Desasignar ítem         | itemId                 | Item(needed)           | Admin, Member | —                                                               |
+| Agregar transporte      | tripId, transport data | Transport confirmado   | Admin, Member | —                                                               |
+| Asignar pasajero        | transportId, userId    | Passengers actualizado | Admin, Member | **Error 409 si capacity alcanzada en el transporte confirmado** |
+| Desasignar pasajero     | transportId, userId    | Passengers actualizado | Admin, Member | —                                                               |
 
 ---
 
@@ -588,35 +623,21 @@ Un usuario puede realizar una acción si:
 - `Pending`: Interacción grupal activa (RSVP y/o Votación de opciones).
 - `Pending → Confirmed`: Decisión manual de Admin o Creador. La entidad se mueve a la colección `_confirmed` del módulo.
 - `Pending → Rejected`: Decisión manual.
-- `Confirmed`: Activa automáticamente su impacto en Timeline (si es actividad) o Logística.
+- `Confirmed`: Activa automáticamente su impacto en Timeline (si es actividad) o en su colección de Logística.
 
-### 11.3 Tarea (Task)
-
-```text
-┌─────────┐         ┌─────────────┐         ┌──────┐
-│ Pending │ ──────→ │ In-Progress │ ──────→ │ Done │
-└─────────┘         └─────────────┘         └──────┘
-     ▲                                         │
-     └─────────────────────────────────────────┘
-                    (Reapertura)
-```
-
-- Bidireccional: una tarea puede volver a `Pending` si se reabre.
-- `Done`: Si está vinculada a un Ítem de inventario, el ítem pasa a `confirmed`.
-
-### 11.4 Ítem de Inventario (Inventory)
+### 11.3 Ítem de Inventario (Inventory)
 
 ```text
-┌────────┐  asignar   ┌──────────┐  tarea done   ┌───────────┐
-│ Needed │ ─────────→ │ Assigned │ ────────────→ │ Confirmed │
-└────────┘            └──────────┘               └───────────┘
+┌────────┐  asignar   ┌──────────┐   marcar listo  ┌──────┐
+│ Needed │ ─────────→ │ Assigned │ ──────────────→ │ Done │
+└────────┘            └──────────┘                 └──────┘
      ▲                     │
      └─────────────────────┘
          (Desasignar)
 ```
 
-- `Needed → Assigned`: Cuando se asigna un responsable (auto-crea Task).
-- `Assigned → Confirmed`: Cuando la Task vinculada se marca `Done`.
+- `Needed → Assigned`: Cuando un participante se auto-asigna para llevar el ítem (`assignedTo = userId`).
+- `Assigned → Done`: Cuando el ítem ya fue comprado/empacado y está asegurado.
 - `Assigned → Needed`: Si se desasigna al responsable.
 
 ---
@@ -672,7 +693,7 @@ service cloud.firestore {
         allow delete: if isAdmin() && !isArchived();
       }
 
-      // --- Content Subcollections (events, costs, proposals, inventory, tasks, transport) ---
+      // --- Content Subcollections (events, costs, *_proposals, *_confirmed) ---
       match /{subcollection}/{docId} {
         allow read: if isParticipant();
         allow create: if isParticipant() && !isArchived();
@@ -688,28 +709,28 @@ service cloud.firestore {
 
 ## 13. Edge Cases y Manejo de Errores
 
-| Escenario                                  | Comportamiento                                                                               |
-| :----------------------------------------- | :------------------------------------------------------------------------------------------- |
-| **Admin creador intenta abandonar**        | ❌ No permitido. Debe archivar el viaje.                                                     |
-| **Último Admin elevado abandona**          | ✅ Permitido. El creador siempre permanece como Admin.                                       |
-| **Evento eliminado con tareas vinculadas** | Las tareas se preservan y se desvinculan (`linkedToId` = `null`).                            |
-| **Participante removido**                  | Recálculo automático de Total Cost. Desasignación de tareas, ítems y asientos de transporte. |
-| **Budget Limit excedido**                  | Notificación de alta visibilidad (banner + mail). No se bloquea la carga de gastos.          |
-| **Transporte sobre-asignado**              | Error 409. La operación no se ejecuta si `passengers.length >= capacity`.                    |
-| **Escritura en viaje archivado**           | Error 403. Firestore Rules impiden cualquier mutación en viajes `archived`.                  |
-| **Propuesta confirmada dos veces**         | No-op. Si `status = confirmed`, la operación se ignora.                                      |
-| **Voto después de deadline**               | Error 400. No se registran votos si `now > deadline`.                                        |
+| Escenario                                 | Comportamiento                                                                                    |
+| :---------------------------------------- | :------------------------------------------------------------------------------------------------ |
+| **Admin creador intenta abandonar**       | ❌ No permitido. Debe archivar el viaje.                                                          |
+| **Último Admin elevado abandona**         | ✅ Permitido. El creador siempre permanece como Admin.                                            |
+| **Evento eliminado con ítems vinculados** | Los ítems se preservan pero pierden la referencia en el Timeline.                                 |
+| **Participante removido**                 | Recálculo automático de Total Cost. Desasignación de ítems e inventario y asientos de transporte. |
+| **Budget Limit excedido**                 | Notificación de alta visibilidad (banner + mail). No se bloquea la carga de gastos.               |
+| **Transporte sobre-asignado**             | Error 409. La operación no se ejecuta si `passengers.length >= capacity`.                         |
+| **Escritura en viaje archivado**          | Error 403. Firestore Rules impiden cualquier mutación en viajes `archived`.                       |
+| **Propuesta confirmada dos veces**        | No-op. Si `status = confirmed`, la operación se ignora.                                           |
+| **Voto después de deadline**              | Error 400. No se registran votos si `now > deadline`.                                             |
 
 ---
 
 ## 14. Reglas Canónicas (Single Source of Truth)
 
-1. **Centralización Temporal:** Todo elemento (Tarea, Gasto, Ítem) debe poder vincularse a un punto en el tiempo (Día/Evento) o al contenedor general del viaje.
+1. **Centralización Temporal:** Todo elemento (Gasto, Ítem) debe poder vincularse a un punto en el tiempo (Día/Evento) o al contenedor general del viaje.
 2. **Cálculo de Costo Personal:** Total = Directos (pagado por mí) + Shared (mi parte de gastos grupales) + Presupuesto Diario proyectado.
 3. **No-Goal (Gastos Diarios):** Prohibida la carga de gastos hormiga/tickets. Se asumen cubiertos por el "Presupuesto Diario".
 4. **Validación de Capacidad:** El transporte no puede ser sobre-asignado (Error 409).
 5. **Prioridad de Alerta:** El exceso de `Budget Limit` es una notificación crítica de alta visibilidad.
-6. **Interactividad de Tareas:** Una tarea marcada como "Done" en el Módulo de Tareas debe actualizar automáticamente el status del Ítem o Evento vinculado.
+6. **Transición de Propuestas:** Una propuesta confirmada implica el movimiento del documento (o registro de sus datos) desde la colección `_proposals` hacia la respectiva `_confirmed` (o generador de Event en el Timeline), manteniendo limpio el "Decision Hub".
 7. **Inmutabilidad de Archivo:** Un viaje archivado es de solo lectura. Ningún participante puede modificar datos.
 8. **Centralización de Decisiones:** La creación de propuestas es contextual (desde cualquier módulo), pero la votación y seguimiento se centraliza siempre en `/proposals` (Decision Hub).
 
@@ -730,7 +751,7 @@ service cloud.firestore {
 
 - **RSVP/Votación:** Mecánica para confirmar interés y pasar una propuesta a estado "Confirmado" (Logística/Timeline).
 - **Vista Dual:** Capacidad de alternar entre una grilla de Calendario y una lista de Timeline.
-- **Ítem Grupal:** Recurso compartido que puede disparar Tareas de transporte/compra.
+- **Ítem Grupal:** Recurso compartido que puede requerir asignación de transporte/compra.
 - **Magic Link:** URL dinámica para invitar participantes a un viaje.
 - **Admin (Creator):** Rol permanente e irrevocable del creador del viaje. Posee permisos exclusivos como la adición directa de Alojamientos.
 - **Admin (Elevated):** Rol Admin otorgado a un miembro existente por un Admin.

@@ -4,9 +4,7 @@ import { CreateTripModal } from "./CreateTripModal";
 
 describe("CreateTripModal Component", () => {
   it("renders correctly", () => {
-    const { container } = render(
-      <CreateTripModal isOpen={true} onClose={() => {}} userId="test-user" />,
-    );
+    const { container } = render(<CreateTripModal />);
     expect(container).toBeInTheDocument();
   });
 });

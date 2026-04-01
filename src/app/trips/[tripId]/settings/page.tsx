@@ -1,27 +1,22 @@
-import React from "react";
-import { SettingsView } from "@/features/trips/components/SettingsView/SettingsView";
+import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { SettingsClient } from "./SettingsClient";
 
-export default function SettingsPage({
-  params,
-}: {
-  params: Promise<{ tripId: string }>;
-}) {
-  const resolvedParams = React.use(params);
+export const metadata: Metadata = {
+  title: "Configuración | Tripio",
+  description: "Configuración del viaje",
+};
 
+export default async function TripsTripIdSettingsPage({ params }: { params: { tripId: string } }) {
+  const { tripId } = await params;
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div>
       <PageHeader
         title="Configuración"
         description="Administra los detalles, participantes y características de tu viaje."
       />
 
-      <div className="bg-white backdrop-blur-md rounded-[2.5rem] p-6 border border-white/40 shadow-lg relative overflow-hidden">
-        {/* Subtle decorative gradient */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none" />
-
-        <SettingsView tripId={resolvedParams.tripId} />
-      </div>
+      <SettingsClient tripId={tripId} />
     </div>
   );
 }

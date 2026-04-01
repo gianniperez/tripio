@@ -23,7 +23,7 @@ export function Icon({
       className={cn(
         rounded ? "material-symbols-rounded" : "material-symbols-outlined",
         "select-none inline-block",
-        className,
+        className
       )}
       style={{
         fontVariationSettings: variationSettings,

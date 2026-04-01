@@ -4,28 +4,24 @@ Este documento centraliza el paso a paso técnico para llevar Tripio de un boile
 
 ---
 
-## 🚀 Fase 0: Setup & Branding (Sprint 0)
+## Fase 0: Setup & Branding (Sprint 0)
 
-_Objetivo: Preparar el terreno y conectar la infraestructura base._
+1. **Alineación de Identidad**
+   - [x] Actualizar Metadata en `src/app/layout.tsx` (título, descripción, OG tags).
+   - [x] Actualizar `README.md` (eliminar referencias innecesarias, destacar "Tripio", mantener FSD/Husky rules).
 
-- [ ] **Alineación de Identidad:**
-  - [✅] Renombrar proyecto en `package.json` ("next-app-template" → "tripio").
-  - [✅] Actualizar Metadata en `src/app/layout.tsx` (título, descripción, OG tags).
-  - [✅] Limpiar referencias a otros proyectos en comments (ej. `onCloseEvents.ts`).
-  - [✅] Actualizar `README.md` con la descripción real de Tripio.
+2. **Infraestructura Firebase**
+   - [x] Instalar SDK (`firebase`).
+   - [x] Crear `src/lib/firebase.ts` con config base (Firestore, Auth).
+   - [x] Crear `.env.example` con keys.
 
-- [✅] **Infraestructura Firebase:**
-  - [✅] Instalar SDK de Firebase (`npm install firebase`).
-  - [✅] Crear archivo de configuración `src/lib/firebase.ts`.
-  - [✅] Crear `.env.example` con las keys necesarias (ApiKey, AuthDomain, etc.).
+3. **Configuración PWA**
+   - [x] Generar `manifest.json`.
+   - [x] Soporte básico next-pwa (iconos).
 
-- [✅] **Configuración PWA:**
-  - [✅] Generar e incluir `manifest.json`.
-  - [✅] Configurar soporte básico para instalación en mobile.
-
-- [✅] **Setup de Tooling Adicional:**
-  - [✅] Instalar dependencias clave: forms (`react-hook-form`, `@hookform/resolvers`, `zod`), fechas (`date-fns`) e iconos (`lucide-react`).
-  - [✅] Implementar un manejador de modales/dialogs base (o instalar UI primitives lib si se desea).
+4. **Setup de Tooling**
+   - [x] Instalar dependencias clave: `react-hook-form`, `@hookform/resolvers`, `zod`, `date-fns`.
+   - [x] Configurar manejador de modales base (`Dialog`/`Sheet`). (o instalar UI primitives lib si se desea).
 
 ---
 
@@ -33,38 +29,39 @@ _Objetivo: Preparar el terreno y conectar la infraestructura base._
 
 _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
 
-- [✅] **Seguridad y Modelado:**
-  - [✅] Implementar Firestore Security Rules detalladas en el SRD v3.0.
-  - [✅] Crear tipos TypeScript para todas las colecciones anidadas.
+- [x] **Seguridad y Modelado:**
+  - [x] Implementar Firestore Security Rules detalladas en el SRD v3.0.
+  - [x] Crear tipos TypeScript para todas las colecciones anidadas.
 
-- [✅] **Sistema de Roles y Permisos (RBAC):**
-  - [✅] Definir tipos de roles (`owner`, `admin`, `collaborator`, `viewer`) y permisos granulares.
-  - [✅] Implementar lógica de validación de permisos (Helper functions).
-  - [✅] Actualizar Firestore Rules con validación híbrida (Rol + Overrides).
-  - [✅] Crear Panel de Gestión de Participantes (UI).
+- [x] **Sistema de Roles y Permisos (RBAC):**
+  - [x] Definir tipos de roles (`owner`, `admin`, `collaborator`, `viewer`) y permisos granulares.
+  - [x] Implementar lógica de validación de permisos (Helper functions).
+  - [x] Actualizar Firestore Rules con validación híbrida (Rol + Overrides).
+  - [x] Crear Panel de Gestión de Participantes (UI).
 
-- [✅] **Autenticación:**
-  - [✅] Configurar Firebase Auth (Google + Email/Password).
-  - [✅] Crear Pantalla de Login (`/login`) con Auth Providers.
-  - [✅] Guardar perfil de usuario en colección `users` al primer login.
+- [x] **Autenticación:**
+  - [x] Configurar Firebase Auth (Google + Email/Password).
+  - [x] Crear Pantalla de Login (`/login`) con Auth Providers.
+  - [x] Guardar perfil de usuario en colección `users` al primer login.
 
-- [✅] **Gestor de Viajes (Mis Viajes):**
-  - [✅] Crear la pantalla "Mis Viajes" (`/trips`) para listar los trips del usuario.
-  - [✅] Modal/Pantalla para "Crear Nuevo Viaje" (Formulario usando `zod`).
-  - [✅] Generación de "Magic Links" de invitación.
-  - [✅] Lógica para unirse a viaje vía link (`/invite/[token]`).
+- [x] **Gestor de Viajes (Mis Viajes):**
+  - [x] Crear la pantalla "Mis Viajes" (`/trips`) para listar los trips del usuario.
+  - [x] Modal/Pantalla para "Crear Nuevo Viaje" (Formulario usando `zod`).
+  - [x] Generación de "Magic Links" de invitación.
+  - [x] Lógica para unirse a viaje vía link (`/invite/[token]`).
 
-- [✅] **Layout & Navegación:**
-  - [✅] Header con contexto de viaje (Nombre + Fecha).
-  - [✅] Sticky Bottom NavBar (Inicio, Propuestas, Itinerario, Participantes).
-  - [✅] Sidebar Desktop persistente para navegación fluida.
+- [x] **Layout & Navegación:**
+  - [x] Header con contexto de viaje (Nombre + Fecha).
+  - [x] Sticky Bottom NavBar (Propuestas, Actividades, Inicio, Logística, Finanzas).
+  - [x] Sidebar Desktop persistente para navegación fluida.
 
-- [✅] **Visualización del Itinerario:**
-  - [✅] Gestión de fechas del viaje (Ajustes).
-  - [✅] Vista Timeline (lista vertical secuencial).
-  - [✅] Vista Calendario (grid mensual/semanal).
-  - [✅] Switch de alternancia entre vistas.
-  - [✅] Manejo de estados vacíos (CTAs cuando no hay fechas).
+- [x] **Visualización del Itinerario:**
+  - [x] Gestión de fechas del viaje (Ajustes).
+  - [x] Vista Timeline (lista vertical secuencial).
+  - [x] Vista Calendario (grid mensual/semanal).
+  - [x] Switch de alternancia entre vistas.
+  - [x] Manejo de estados vacíos (CTAs cuando no hay fechas).
+  - [x] Backlog: actividades confirmadas sin fecha.
 
 ---
 
@@ -72,16 +69,16 @@ _Objetivo: La "unidad atómica" de la app funcionando con persistencia real._
 
 _Objetivo: Control financiero proyectado según duración del viaje._
 
-- [✅] **Motor Económico Avanzado:**
-  - [✅] Configuración de Presupuesto Diario Disponible en el viaje.
-  - [✅] Configuración de Budget Limit personal.
-  - [✅] **Split Variable:** Implementar lógica para cargar montos específicos por persona en un gasto.
-  - [✅] **Simplificación de Deudas (Splitwise style):** Lógica para consolidar pagos entre participantes.
-  - [✅] **Vínculo Bidireccional:** Asociación de gastos con Actividades, Alojamientos, Transportes o Ítems.
-  - [✅] Lógica de cálculo del "Total Cost" (incluyendo participación en gastos compartidos).
+- [x] **Motor Económico Avanzado:**
+  - [x] Configuración de Presupuesto Diario Disponible en el viaje.
+  - [x] Configuración de Budget Limit personal.
+  - [x] **Split Variable:** Implementar lógica para cargar montos específicos por persona en un gasto.
+  - [x] **Simplificación de Deudas (Splitwise style):** Lógica para consolidar pagos entre participantes.
+  - [ ] **Vínculo Bidireccional:** Asociación de gastos con Actividades, Alojamientos, Transportes o Ítems. _(Pospuesto temporalmente hasta finalizar el onboarding logístico)._
+  - [x] Lógica de cálculo del "Total Cost" (incluyendo participación en gastos compartidos).
 
-- [✅] **Alertas de Presupuesto:**
-  - [✅] Watcher visual (BudgetProgressBar) que confronta `Gastos + Presupuesto Diario` vs `Budget Limit`.
+- [x] **Alertas de Presupuesto:**
+  - [x] Watcher visual (BudgetProgressBar) que confronta `Gastos + Presupuesto Diario` vs `Budget Limit`.
 
 ---
 
@@ -89,19 +86,19 @@ _Objetivo: Control financiero proyectado según duración del viaje._
 
 _Objetivo: Toma de decisiones en contexto y organización de recursos._
 
-- [ ] **Centralización de Propuestas (Decision Hub):**
-  - [✅] Estructura de subcolecciones espejo (`_proposals` / `_confirmed`) en DB.
-  - [ ] Nueva vista dedicada `/proposals` que agrupa y lista todas las propuestas pendientes (Actividades, Alojamientos, Transportes, etc.).
-  - [ ] Limpieza de las vistas `/activities` y `/logistics` para transformarlas en repositorios de "Solo Información Confirmada" con sus respectivos FABs de creación.
-  - [✅] Lógica de "Confirmar Propuesta" → Transición de datos a la colección `_confirmed` y aterrizaje automático en el Timeline/Itinerario.
+- [x] **Centralización de Propuestas (Decision Hub):**
+  - [x] Estructura de subcolecciones espejo (`_proposals` / `_confirmed`) en DB.
+  - [x] Nueva vista dedicada `/proposals` que agrupa y lista todas las propuestas pendientes (Actividades, Alojamientos, Transportes, etc.).
+  - [x] Limpieza de las vistas `/activities` y `/logistics` para transformarlas en repositorios de "Solo Información Confirmada" con sus respectivos FABs de creación.
+  - [x] Lógica de "Confirmar Propuesta" → Transición de datos a la colección `_confirmed` y aterrizaje automático en el Timeline/Itinerario.
 
-- [✅] **Logística de Transporte:**
-  - [✅] Registro de vehículos y capacidad máxima.
-  - [✅] Sistema de Auto-Asignación de pasajeros con validación de límite (Error 409).
+- [x] **Logística de Transporte:**
+  - [x] Registro de vehículos y capacidad máxima.
+  - [x] Sistema de Auto-Asignación de pasajeros con validación de límite (Error 409).
 
-- [✅] **Inventario e ítems:**
-  - [✅] Checklist de ítems grupales compartidos.
-  - [✅] Vínculo Ítem → Tarea automática al asignar responsable.
+- [x] **Inventario e ítems:**
+  - [x] Checklist de ítems grupales compartidos.
+  - [x] Módulo de inventario: Gestión de `status` y `assignedTo` en ítems grupales.
 
 ---
 
@@ -111,7 +108,7 @@ _Objetivo: Comunicación y calidad final._
 
 - [ ] **Módulo de Mails:**
   - [ ] Notificación por nueva invitación.
-  - [ ] Notificación por tarea asignada o deadline de encuesta.
+  - [ ] Notificación por responsable de ítem asignado o deadline de encuesta.
 - [ ] **Branding Final:**
   - [ ] Sistema de diseño (colores y tipografía definitiva).
   - [ ] Logo y Favicon oficial.
@@ -123,7 +120,7 @@ _Objetivo: Comunicación y calidad final._
 _Sección detectada tras la auditoría de Arquitectura e UI del 10/03/2026. Refactors requeridos para evitar deuda técnica antes del lanzamiento V1. Para más detalle técnico sobre el hallazgo, referirse al documento **[Informe de Cierre 2026-03-10](file:///c:/Users/Maza/Documents/Programacion%20IA/Proyectos/Tripio/Documentaci%C3%B3n/Informe_Cierre_2026-03-10.md)**._
 
 - [ ] **Refactor `NeumorphicSelect`:** Abstraer los selectores HTML nativos utilizados en App/Features (6 instancias) para que adopten las sombras y padding del Design System de forma estructurada.
-- [ ] **Refactor `FormGroup`:** Abstraer los layouts de labels y validaciones (27+ instancias) para inyectar iconos de Lucide-React y estandarizar los textos de label/error de los formularios dinámicos.
+- [ ] **Refactor `FormGroup`:** Abstraer los layouts de labels y validaciones (27+ instancias) para inyectar iconos y estandarizar los textos de label/error de los formularios dinámicos.
 - [ ] **Refactor `Badge/Chip`:** Unificar las píldoras de colores crudas ubicadas en tarjetas de participantes y encabezados de propuestas en un componente tipado `<Badge variant="prop" />`.
 
 ---

@@ -1,7 +1,6 @@
 module.exports = function (plop) {
   plop.setGenerator("component", {
-    description:
-      "Generar un React Component transversal / compartido (`src/components`)",
+    description: "Generar un React Component transversal / compartido (`src/components`)",
     prompts: [
       {
         type: "input",
@@ -78,8 +77,7 @@ module.exports = function (plop) {
   });
 
   plop.setGenerator("page", {
-    description:
-      "Generar una nueva ruta/página en Next.js App Router (`src/app/`)",
+    description: "Generar una nueva ruta/página en Next.js App Router (`src/app/`)",
     prompts: [
       {
         type: "input",
@@ -97,8 +95,7 @@ module.exports = function (plop) {
   });
 
   plop.setGenerator("feature", {
-    description:
-      "Generar la base de una nueva Feature (Feature-Sliced Design) (`src/features`)",
+    description: "Generar la base de una nueva Feature (Feature-Sliced Design) (`src/features`)",
     prompts: [
       {
         type: "input",
@@ -125,14 +122,12 @@ module.exports = function (plop) {
       {
         type: "add",
         path: "src/features/{{kebabCase name}}/types/index.ts",
-        template:
-          "// Tipos e interfaces globales para la feature {{kebabCase name}}\n",
+        template: "// Tipos e interfaces globales para la feature {{kebabCase name}}\n",
       },
       {
         type: "add",
         path: "src/features/{{kebabCase name}}/stores/index.ts",
-        template:
-          "// Zustand stores / Manejo de estado para la feature {{kebabCase name}}\n",
+        template: "// Zustand stores / Manejo de estado para la feature {{kebabCase name}}\n",
       },
       {
         type: "add",

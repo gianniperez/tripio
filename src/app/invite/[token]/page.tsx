@@ -1,205 +1,106 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "@/features/auth/hooks";
-import { getInvitation, acceptInvitation } from "@/features/participants/api";
-import { Invitation } from "@/types/tripio";
+import { tripService } from "@/features/trips/api";
+import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+import { TopBar } from "@/components/layout/TopBar";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { Icon } from "@/components/ui/Icon";
-import Link from "next/link";
 
-export default function InvitationPage() {
+export default function InvitePage() {
   const { token } = useParams<{ token: string }>();
+  const { currentUser, isInitialized } = useAuthStore();
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
 
-  const [invitation, setInvitation] = useState<Invitation | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isJoining, setIsJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [joining, setJoining] = useState(false);
-  const [joined, setJoined] = useState(false);
-
-  useEffect(() => {
-    const fetchInvitation = async () => {
-      try {
-        if (!token) return;
-        const data = await getInvitation(token);
-        if (!data) {
-          setError("Esta invitación no existe o ha caducado.");
-        } else if (data.status !== "pending") {
-          setError("Esta invitación ya ha sido utilizada.");
-        } else {
-          setInvitation(data);
-        }
-      } catch (err) {
-        console.error("Error fetching invitation:", err);
-        setError("Ocurrió un error al cargar la invitación.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInvitation();
-  }, [token]);
+  const [success, setSuccess] = useState(false);
 
   const handleJoin = async () => {
-    if (!user || !invitation || !token) return;
+    if (!currentUser) {
+      router.push(`/login?returnUrl=/invite/${token}`);
+      return;
+    }
 
-    setJoining(true);
+    setIsJoining(true);
+    setError(null);
+
     try {
-      await acceptInvitation(token, user.uid, invitation);
-      setJoined(true);
-      // Pequeño delay para mostrar éxito antes de redirigir
+      const tripId = await tripService.joinTrip(currentUser.uid, token);
+      setSuccess(true);
       setTimeout(() => {
-        router.push(`/trips/${invitation.tripId}`);
+        router.push(`/trips/${tripId}`);
       }, 2000);
     } catch (err: unknown) {
       console.error("Error joining trip:", err);
-      const errorMessage =
-        err instanceof Error ? err.message : "No se pudo unir al viaje.";
-      setError(errorMessage);
-      setJoining(false);
+      const message = err instanceof Error ? err.message : "Hubo un error al unirte al viaje.";
+      setError(message);
+    } finally {
+      setIsJoining(false);
     }
   };
 
-  if (loading || authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-        <Icon
-          name="progress_activity"
-          className="w-10 h-10 text-[--primary-color] animate-spin"
-        />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-        <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
-          <div className="flex justify-center">
-            <Icon name="error" className="w-16 h-16 text-red-500" />
-          </div>
-          <h1 className="text-2xl font-bold text-[--text-color]">
-            ¡Ups! Algo salió mal
-          </h1>
-          <p className="text-gray-500">{error}</p>
-          <Link href="/trips" className="block">
-            <NeumorphicButton className="w-full">
-              Ir a mis viajes
-            </NeumorphicButton>
-          </Link>
-        </NeumorphicCard>
-      </div>
-    );
-  }
-
-  if (joined) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-        <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
-          <div className="flex justify-center">
-            <Icon
-              name="check_circle"
-              className="w-16 h-16 text-green-500 animate-bounce"
-            />
-          </div>
-          <h1 className="text-2xl font-bold text-[--text-color]">
-            ¡Ya eres parte del equipo!
-          </h1>
-          <p className="text-gray-500">
-            Redirigiéndote al viaje &quot;{invitation?.tripName}&quot;...
-          </p>
-        </NeumorphicCard>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-        <NeumorphicCard className="max-w-md w-full p-8 text-center space-y-6">
-          <Icon
-            name="person_add"
-            className="w-16 h-16 text-[--primary-color] mx-auto"
-          />
-          <h1 className="text-2xl font-bold text-[--text-color]">
-            Invitación a viajar
-          </h1>
-          <p className="text-gray-500">
-            Has sido invitado por <strong>{invitation?.invitedByName}</strong> a
-            unirte al viaje <strong>&quot;{invitation?.tripName}&quot;</strong>.
-          </p>
-          <div className="p-4 bg-orange-50 rounded-xl border border-orange-100 text-sm text-orange-800">
-            Debes iniciar sesión para aceptar la invitación.
-          </div>
-          <Link href={`/login?redirect=/invite/${token}`} className="block">
-            <NeumorphicButton variant="primary" className="w-full">
-              Iniciar Sesión
-            </NeumorphicButton>
-          </Link>
-        </NeumorphicCard>
-      </div>
-    );
-  }
+  if (!isInitialized) return null;
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-[--bg-color]">
-      <NeumorphicCard className="max-w-md w-full p-8 space-y-8">
-        <div className="text-center space-y-2">
-          <div className="w-20 h-20 bg-[--primary-color] rounded-3xl rotate-12 mx-auto flex items-center justify-center shadow-lg mb-6">
-            <Icon name="map" className="w-10 h-10 text-white -rotate-12" />
-          </div>
-          <h1 className="text-3xl font-bold text-[--text-color]">
-            ¡Te invitaron!
-          </h1>
-          <p className="text-gray-500">
-            <strong>{invitation?.invitedByName}</strong> te invitó a unirte como{" "}
-            <strong>
-              {invitation?.role === "admin"
-                ? "Administrador"
-                : invitation?.role === "collaborator"
-                  ? "Colaborador"
-                  : "Lector"}
-            </strong>{" "}
-            en:
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <TopBar />
 
-        <div className="bg-[--bg-color] p-6 rounded-2xl shadow-[inset_4px_4px_8px_var(--shadow-dark),inset_-4px_-4px_8px_var(--shadow-light)] text-center">
-          <h2 className="text-2xl font-black text-[--primary-color] tracking-tight">
-            {invitation?.tripName}
-          </h2>
-        </div>
+      <main className="max-w-xl mx-auto px-4 py-16 md:py-24">
+        <NeumorphicCard className="text-center p-8 md:p-12">
+          {!success ? (
+            <>
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary animate-bounce">
+                <Icon name="mail" size={40} />
+              </div>
 
-        <div className="space-y-4">
-          <NeumorphicButton
-            variant="primary"
-            className="w-full h-14 text-lg font-bold"
-            onClick={handleJoin}
-            disabled={joining}
-          >
-            {joining ? (
-              <Icon
-                name="progress_activity"
-                className="w-6 h-6 animate-spin mr-2"
-              />
-            ) : (
-              <Icon name="person_add" className="w-6 h-6 mr-2" />
-            )}
-            {joining ? "Uniéndome..." : "Aceptar Invitación"}
-          </NeumorphicButton>
+              <h1 className="text-3xl font-display font-bold text-text-main mb-4">
+                ¡Te han invitado a un viaje! ✈️
+              </h1>
 
-          <Link
-            href="/trips"
-            className="block text-center text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            Ignorar esta invitación
-          </Link>
-        </div>
-      </NeumorphicCard>
+              <p className="text-gray-500 mb-8 leading-relaxed">
+                Únete a la aventura y comienza a planificar junto a tus amigos.
+              </p>
+
+              {error && (
+                <div className="mb-6 p-4 bg-danger/10 border border-danger/20 rounded-xl text-danger text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex flex-col gap-4">
+                <NeumorphicButton variant="primary" onClick={handleJoin} disabled={isJoining}>
+                  {isJoining
+                    ? "Uniéndote..."
+                    : currentUser
+                      ? "Aceptar Invitación"
+                      : "Inicia sesión para unirte"}
+                </NeumorphicButton>
+
+                <NeumorphicButton
+                  variant="secondary"
+                  onClick={() => router.push("/trips")}
+                  disabled={isJoining}
+                >
+                  Ir a mis viajes
+                </NeumorphicButton>
+              </div>
+            </>
+          ) : (
+            <div className="animate-in zoom-in duration-300">
+              <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success">
+                <Icon name="check_circle" size={40} />
+              </div>
+              <h1 className="text-3xl font-display font-bold text-text-main mb-4">
+                ¡Ya eres parte del equipo!
+              </h1>
+              <p className="text-gray-500">Redirigiéndote al viaje...</p>
+            </div>
+          )}
+        </NeumorphicCard>
+      </main>
     </div>
   );
 }

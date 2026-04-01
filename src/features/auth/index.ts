@@ -1,4 +1,2 @@
-export * from "./stores";
-export * from "./api";
+// Public API para la feature auth
 export * from "./components";
-export { AuthProvider } from "../../providers/AuthProvider";

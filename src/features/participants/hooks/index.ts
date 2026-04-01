@@ -1,2 +1,1 @@
-export * from "./useParticipants";
-export * from "./useParticipantMutations";
+// Custom hooks para la feature participants

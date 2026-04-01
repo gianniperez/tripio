@@ -1,31 +1,34 @@
 @import "tailwindcss";
+@source "../src";
+
+/* Desactivar modo oscuro automático (prefers-color-scheme). Ahora solo funcionará si agregas la clase 'dark' manual al HTML */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* Vibrant Palette */
   --color-primary: #f46a1f; /* Orange Vibrant */
-  --color-primary-light: #f78104;
   --color-primary-extralight: #faab36;
+  --color-primary-light: #f78104;
   --color-primary-dark: #c84f23;
   --color-primary-deep: #b93100;
 
   --color-secondary: #008b8b;
   --color-secondary-light: #00c4c4;
   --color-secondary-dark: #005959;
-  --color-secondary-deep: #454545;
 
   --color-accent: #7b61ff;
   --color-accent-dark: #5e2390;
 
   --color-background: #fffaf5;
-  --color-text-main: #001523;
+  --color-main: #454545;
 
   /* Accent Colors */
   --color-success: #10b981;
   --color-danger: #ef4444;
 
-  /* Typography */
-  --font-nunito: var(--font-nunito), sans-serif;
-  --font-inter: var(--font-inter), sans-serif;
+  /* Typography - Corregido para evitar circularidad */
+  --font-nunito: "Nunito", sans-serif;
+  --font-inter: "Inter", sans-serif;
 
   /* Default Font Assignments */
   --font-sans: var(--font-inter);
@@ -36,6 +39,10 @@
   --shadow-gray: 6px 6px 12px #d1d5dc;
   --shadow-cream-inset: inset 4px 4px 8px #e4ddd6;
   --shadow-gray-inset: inset 4px 4px 8px #d1d5dc;
+  --shadow-neumorphic: 6px 6px 12px #d1d5dc, -6px -6px 12px rgba(255, 255, 255, 0.8);
+  --shadow-neumorphic-sm: 4px 4px 8px #d1d5dc, -4px -4px 8px rgba(255, 255, 255, 0.8);
+  --shadow-neumorphic-inset:
+    inset 4px 4px 8px #d1d5dc, inset -4px -4px 8px rgba(255, 255, 255, 0.8);
 }
 
 body {
@@ -89,18 +96,34 @@ input::-webkit-inner-spin-button {
 
 /* Speed Dial Animations */
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-in-from-bottom {
-  from { transform: translateY(1rem); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slide-in-from-right {
-  from { transform: translateX(1rem); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .animate-in {

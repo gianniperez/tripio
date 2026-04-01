@@ -1,552 +1,332 @@
-import { Proposal } from "../../types";
+import React from "react";
+import { Icon } from "@/components/ui/Icon";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import { formatFirebaseDate, toDate } from "@/utils/date-utils";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { Icon } from "@/components/ui/Icon";
-import { useState } from "react";
-import { VoteType } from "../../api/voteProposal";
-import { ConfirmDialog } from "@/components/ui/dialog/ConfirmDialog/ConfirmDialog";
-
-interface ProposalCardProps {
-  proposal: Proposal;
-  currentUserId: string;
-  onVote: (type: VoteType, value: string) => void;
-  onConfirm: (winningOption?: string) => void;
-  onReject: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  onAddStay?: (destinationId: string) => void;
-  isAdmin: boolean;
-  totalParticipants: number;
-  userProfiles: Record<string, string>;
-}
+import type { ProposalCardProps } from "./ProposalCard.types";
 
 const typeConfig = {
-  accommodation: {
-    color: "text-blue-500",
-    label: "Alojamiento",
-    icon: "location_on",
-  },
-  transport: {
-    color: "text-emerald-500",
-    label: "Transporte",
-    icon: "location_on",
-  },
   activity: {
-    color: "text-purple-500",
+    icon: "local_activity",
+    color: "text-orange-500",
+    bg: "bg-orange-100",
     label: "Actividad",
-    icon: "location_on",
+  },
+  accommodation: { icon: "hotel", color: "text-blue-500", bg: "bg-blue-100", label: "Alojamiento" },
+  transport: {
+    icon: "directions_car",
+    color: "text-green-500",
+    bg: "bg-green-100",
+    label: "Transporte",
   },
   inventory: {
-    color: "text-amber-500",
-    label: "Item para llevar",
-    icon: "info",
+    icon: "inventory_2",
+    color: "text-purple-500",
+    bg: "bg-purple-100",
+    label: "Inventario",
   },
-  other: { color: "text-slate-500", label: "Otro", icon: "info" },
 };
 
 export const ProposalCard = ({
   proposal,
-  currentUserId,
-  onVote,
-  onConfirm,
-  onReject,
+  currentUserUid,
+  canEdit,
+  canConfirm,
+  canVote,
   onEdit,
   onDelete,
-  isAdmin,
-  totalParticipants,
-  userProfiles,
+  onConfirm,
+  onVote,
 }: ProposalCardProps) => {
-  const effectiveType =
-    proposal.type === ("logistics" as any) ? proposal.subType : proposal.type;
-  const config =
-    typeConfig[effectiveType as keyof typeof typeConfig] || typeConfig.other;
-  const isConfirmed = proposal.status === "confirmed";
-  const isRejected = proposal.status === "rejected";
-  const isClosed = isConfirmed || isRejected;
-  const [showActions, setShowActions] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isExpanded, setIsExpanded] = React.useState(false);
+  const config = typeConfig[proposal.type];
+  const isCreator = proposal.createdBy === currentUserUid;
+  const hasEditRights = canEdit || isCreator;
+  const wasEdited = proposal.updatedAt && proposal.updatedAt > proposal.createdAt;
 
-  const canManage = isAdmin || proposal.createdBy === currentUserId;
+  // Render variables for voting progress
+  const yesVotesCount = Object.values(proposal.votes).filter((v) => v === "yes").length;
+  const noVotesCount = Object.values(proposal.votes).filter((v) => v === "no").length;
+  const totalVotes = yesVotesCount + noVotesCount;
+  const yesPercentage = totalVotes === 0 ? 0 : Math.round((yesVotesCount / totalVotes) * 100);
+  const userVote = proposal.votes[currentUserUid];
 
-  const userRsvp = proposal.votes?.[currentUserId];
-
-  const rsvpOptions = [
-    {
-      value: "si",
-      label: proposal.requiresVoting ? "Sí" : "Me sumo",
-      icon: "thumb_up",
-      color: "text-green-500",
-      bg: "bg-green-500/10",
-      border: "border-green-500",
-    },
-    {
-      value: "no",
-      label: proposal.requiresVoting ? "No" : "No me sumo",
-      icon: "thumb_down",
-      color: "text-red-500",
-      bg: "bg-red-500/10",
-      border: "border-red-500",
-    },
-    ...(proposal.requiresVoting
-      ? [
-          {
-            value: "maybe",
-            label: "Tal vez",
-            icon: "person_remove",
-            color: "text-slate-500",
-            bg: "bg-slate-500/10",
-            border: "border-slate-500",
-          },
-        ]
-      : []),
-  ];
+  const formatFirebaseTime = (d: any) => {
+    const date = toDate(d);
+    return date ? format(date, "HH:mm") : "--:--";
+  };
 
   return (
-    <NeumorphicCard className="mb-4 relative overflow-hidden transition-all duration-300 hover:scale-[1.01] border-l-4 border-l-primary/30">
-      <div className="absolute top-2 right-2 flex items-center gap-2 z-20">
-        {isConfirmed && (
-          <div className="bg-success text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center">
-            <Icon name="check" className="w-2.5 h-2.5 mr-1" /> Confirmado
-          </div>
-        )}
-        {isRejected && (
-          <div className="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center">
-            <Icon name="thumb_down" className="w-2.5 h-2.5 mr-1" /> Descartada
-          </div>
-        )}
-
-        {canManage && (
-          <div className="relative">
-            <button
-              onClick={() => setShowActions(!showActions)}
-              className="p-1.5 text-slate-400 hover:text-primary hover:bg-slate-100 rounded-full transition-all cursor-pointer"
-            >
-              <Icon name="more_vert" className="w-4 h-4" />
-            </button>
-
-            {showActions && (
-              <div className="absolute right-0 mt-1 w-32 bg-white rounded-xl shadow-xl border border-slate-100 py-1 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-                {!isConfirmed && (
-                  <button
-                    onClick={() => {
-                      onEdit();
-                      setShowActions(false);
-                    }}
-                    className="w-full flex items-center px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
-                  >
-                    <Icon name="edit" className="w-3.5 h-3.5 mr-2" /> Editar
-                  </button>
-                )}
-                <button
-                  onClick={() => {
-                    setShowActions(false);
-                    setShowDeleteConfirm(true);
-                  }}
-                  className="w-full flex items-center px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
-                >
-                  <Icon name="delete" className="w-3.5 h-3.5 mr-2" /> Eliminar
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <span
-            className={`text-[10px] font-bold uppercase tracking-widest ${config.color} mb-1 block opacity-80`}
+    <NeumorphicCard className="p-4 flex flex-col gap-3 relative animate-in fade-in zoom-in-95 group transition-all duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-start">
+        <div className="flex gap-3">
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center ${config.bg} ${config.color} shadow-sm shrink-0`}
           >
-            {config.label}
-          </span>
-          <h3 className="text-xl font-bold font-nunito text-text-main leading-tight">
-            {proposal.title}
-          </h3>
+            <Icon name={config.icon} size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className={`text-[10px] font-bold uppercase tracking-wider ${config.color}`}>
+                {config.label}
+              </span>
+              {wasEdited && (
+                <span
+                  className="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded-full"
+                  title="Propuesta editada"
+                >
+                  Editado
+                </span>
+              )}
+            </div>
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 leading-tight line-clamp-1">
+              {proposal.title}
+            </h3>
+            <span className="text-[10px] text-slate-400">
+              Sugerido {format(proposal.createdAt, "d MMM", { locale: es })}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex gap-1">
+          {hasEditRights && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(proposal);
+                }}
+                className="p-1.5 text-slate-400 hover:text-blue-500 transition-colors cursor-pointer rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                title="Editar"
+              >
+                <Icon name="edit" size={16} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(proposal);
+                }}
+                className="p-1.5 text-slate-400 hover:text-red-500 transition-colors cursor-pointer rounded-full hover:bg-red-50 dark:hover:bg-red-900/20"
+                title="Eliminar"
+              >
+                <Icon name="delete" size={16} />
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {proposal.description && (
-        <p className="text-sm text-slate-600 mb-4 font-inter leading-relaxed">
-          {proposal.description}
+      {/* Quick Info Line */}
+      {(proposal.rawData?.location || proposal.rawData?.priceEstimate) && (
+        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-xs text-slate-600 dark:text-slate-400">
+          {proposal.rawData?.location && (
+            <div className="flex items-center gap-1">
+              <Icon name="location_on" size={14} className="text-slate-400" />
+              <span className="line-clamp-1">{proposal.rawData.location}</span>
+            </div>
+          )}
+          {proposal.rawData?.priceEstimate && (
+            <div className="flex items-center gap-1 font-bold text-accent">
+              <Icon name="payments" size={14} />
+              <span>${proposal.rawData.priceEstimate}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Description Preview (if not expanded) */}
+      {!isExpanded && proposal.description && (
+        <p className="text-xs text-slate-500 line-clamp-2 mt-1 italic">
+          &quot;{proposal.description}&quot;
         </p>
       )}
 
-      {/* Segment Badge (if available) */}
-      {proposal.segmentId && (
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-widest border border-indigo-100">
-            <Icon name="location_on" className="w-3 h-3" />
-            Tramo asignado
-          </span>
-        </div>
-      )}
+      {/* Expand Button */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center justify-center gap-1 w-full py-1 text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors bg-slate-50 dark:bg-slate-800/30 rounded-lg mt-1"
+      >
+        <Icon name={isExpanded ? "expand_less" : "expand_more"} size={16} />
+        {isExpanded ? "VER MENOS" : "VER DETALLES"}
+      </button>
 
-      {/* Specific fields based on type */}
-      {effectiveType === "transport" &&
-        proposal.isPersonalTransport != null && (
-          <div className="mb-4">
-            <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border ${proposal.isPersonalTransport ? "bg-indigo-50 text-indigo-600 border-indigo-100" : "bg-slate-50 text-slate-600 border-slate-200"}`}
-            >
-              {proposal.isPersonalTransport ? (
-                <Icon name="directions_car" className="w-3 h-3" />
-              ) : (
-                <Icon name="directions_bus" className="w-3 h-3" />
-              )}
-              {proposal.isPersonalTransport
-                ? "Transporte Personal"
-                : "Transporte Público"}
-              {proposal.isPersonalTransport &&
-                proposal.capacity &&
-                ` (Capacidad: ${proposal.capacity})`}
-            </span>
-          </div>
-        )}
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="flex flex-col gap-3 pt-2 animate-in slide-in-from-top-2 duration-300">
+          {proposal.description && (
+            <div className="bg-white dark:bg-slate-800/40 p-2.5 rounded-lg border border-slate-100 dark:border-slate-700">
+              <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+                Notas:
+              </span>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                {proposal.description}
+              </p>
+            </div>
+          )}
 
-      {effectiveType === "inventory" && proposal.assignedTo && (
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-widest border border-amber-100">
-            👤 {userProfiles[proposal.assignedTo] || proposal.assignedTo}
-          </span>
-        </div>
-      )}
-
-      {effectiveType === "inventory" && proposal.quantity && (
-        <div className="mb-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 text-[10px] font-bold uppercase tracking-widest border border-amber-100">
-            Cantidad: {proposal.quantity}
-          </span>
-        </div>
-      )}
-
-      {/* Details Grid */}
-      <div className="grid grid-cols-2 gap-3 mb-5 text-xs text-slate-500 font-medium">
-        {proposal.startDate && (
-          <div className="flex items-center">
-            <Icon
-              name="calendar_month"
-              className="w-3.5 h-3.5 mr-2 text-primary/50"
-            />
-            <span className="truncate">
-              {format(proposal.startDate.toDate(), "d MMM", { locale: es })}
-              {proposal.endDate &&
-                ` - ${format(proposal.endDate.toDate(), "d MMM", { locale: es })}`}
-            </span>
-          </div>
-        )}
-        {proposal.location && (
-          <div className="flex items-center">
-            <Icon
-              name="location_on"
-              className="w-3.5 h-3.5 mr-2 text-primary/50"
-            />
-            <span className="truncate" title={proposal.location}>
-              {proposal.location}
-            </span>
-          </div>
-        )}
-        {proposal.estimatedCost && (
-          <div className="flex items-center">
-            <Icon
-              name="attach_money"
-              className="w-3.5 h-3.5 mr-2 text-green-500/50"
-            />
-            <span>
-              ${proposal.estimatedCost}{" "}
-              {effectiveType === "accommodation" ? "total" : "est."}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Decision Section */}
-      {(effectiveType !== "inventory" || !proposal.requiresVoting) &&
-        (!proposal.responseType ||
-        proposal.responseType === "rsvp" ||
-        !proposal.options ||
-        proposal.options.length === 0 ? (
-          <div className="mb-6">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block ml-1">
-              ¿Te sumas?
-            </label>
-            <div className="flex bg-slate-100/50 p-1 rounded-2xl border border-slate-200/50">
-              {rsvpOptions.map((opt) => {
-                const isActive = userRsvp === opt.value;
-                const iconName = opt.icon;
-
-                // Count RSVP votes
-                const count = Object.values(proposal.votes || {}).filter(
-                  (v) => v === opt.value,
-                ).length;
-
-                const isYesOption = opt.value === "si";
-                const currentYesVotes = Object.values(
-                  proposal.votes || {},
-                ).filter((v) => v === "si").length;
-                const isPersonalTransport =
-                  effectiveType === "transport" && proposal.isPersonalTransport;
-                const capacityReached = Boolean(
-                  isPersonalTransport &&
-                  proposal.capacity &&
-                  currentYesVotes >= proposal.capacity,
-                );
-
-                const isOptionDisabled = Boolean(
-                  (proposal.requiresVoting && isConfirmed) ||
-                  (isYesOption && capacityReached && !isActive),
-                );
-
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() =>
-                      !isOptionDisabled && onVote("rsvp", opt.value)
-                    }
-                    disabled={isOptionDisabled}
-                    className={`flex-1 flex flex-col items-center justify-center py-2 rounded-xl transition-all duration-300 relative
-                  ${
-                    isActive
-                      ? `bg-white shadow-soft ${opt.color}`
-                      : isOptionDisabled && !isConfirmed
-                        ? "text-slate-300 cursor-not-allowed bg-slate-100"
-                        : "text-slate-400 hover:text-slate-600 cursor-pointer"
-                  }
-                  ${isConfirmed && !isActive ? "opacity-50" : ""}
-                `}
-                  >
-                    <Icon
-                      name={iconName as string}
-                      className={`w-4 h-4 mb-0.5 ${isActive ? opt.color : "text-slate-300"}`}
-                    />
-                    <span className="text-[10px] font-bold">
-                      {isYesOption && capacityReached && !isActive
-                        ? "Lleno"
-                        : opt.label}
+          {/* Type Specific Details */}
+          <div className="grid grid-cols-2 gap-2">
+            {proposal.type === "activity" && (
+              <>
+                {proposal.rawData?.date && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">Fecha:</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseDate(proposal.rawData.date)}
                     </span>
-                    {count > 0 && (
-                      <span
-                        className={`absolute -top-1 -right-1 text-[8px] px-1.5 py-0.5 rounded-full font-black shadow-sm
-                    ${isActive ? `${opt.bg} ${opt.color}` : "bg-slate-200 text-slate-500"}
-                  `}
-                      >
-                        {count}
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-2 mb-4 pt-2">
-            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block ml-1">
-              Opciones a elegir
-            </label>
-            <div className="grid grid-cols-1 gap-2">
-              {proposal.options.map((opt) => {
-                const voters = proposal.optionVotes?.[opt] || [];
-                const votes = voters.length;
-                const iVotedThis = voters.includes(currentUserId);
+                  </div>
+                )}
+                {proposal.rawData?.startTime && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">
+                      Hora de inicio:
+                    </span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseTime(proposal.rawData.startTime)}hs
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
 
-                // Find total voters in ALL options for the bar
-                const totalOptionVotes = Object.values(
-                  proposal.optionVotes || {},
-                ).reduce((acc, v) => acc + v.length, 0);
+            {proposal.type === "accommodation" && (
+              <>
+                {proposal.rawData?.checkIn && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">Check-in:</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseDate(proposal.rawData.checkIn)}
+                    </span>
+                  </div>
+                )}
+                {proposal.rawData?.checkOut && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">
+                      Check-out:
+                    </span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseDate(proposal.rawData.checkOut)}
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
 
-                return (
-                  <button
-                    key={opt}
-                    onClick={() => !isConfirmed && onVote("option", opt)}
-                    disabled={isConfirmed}
-                    className={`group relative text-left px-4 py-3 rounded-2xl text-sm transition-all duration-300 border
-                    ${
-                      iVotedThis
-                        ? "border-primary bg-primary/5 shadow-soft ring-1 ring-primary/10"
-                        : "border-slate-100 bg-slate-50/20 hover:bg-white hover:border-primary/20 hover:shadow-sm cursor-pointer"
-                    }
-                    ${isConfirmed ? "opacity-75" : ""}
-                  `}
-                  >
-                    <div className="flex justify-between items-center w-full relative z-10">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all
-                        ${iVotedThis ? "border-primary bg-primary" : "border-slate-200"}
-                      `}
-                        >
-                          {iVotedThis && (
-                            <Icon
-                              name="check"
-                              className="w-2.5 h-2.5 text-white"
-                            />
-                          )}
-                        </div>
-                        <span
-                          className={`font-medium ${iVotedThis ? "text-primary" : "text-slate-700"}`}
-                        >
-                          {opt}
-                        </span>
-                      </div>
-                      {votes > 0 && (
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${iVotedThis ? "bg-primary text-white" : "bg-slate-200 text-slate-500"}`}
-                        >
-                          {votes}
-                        </span>
-                      )}
-                    </div>
-                    {/* Progress bar background */}
-                    {totalOptionVotes > 0 && (
-                      <div
-                        className="absolute inset-y-0 left-0 bg-primary/5 transition-all duration-1000 rounded-2xl"
-                        style={{
-                          width: `${(votes / totalOptionVotes) * 100}%`,
-                        }}
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+            {proposal.type === "transport" && (
+              <>
+                {proposal.rawData?.departure && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">Salida:</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseDate(proposal.rawData.departure)}
+                    </span>
+                  </div>
+                )}
+                {proposal.rawData?.arrival && (
+                  <div className="flex flex-col p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                    <span className="text-[9px] font-bold text-slate-400 uppercase">Llegada:</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                      {formatFirebaseDate(proposal.rawData.arrival)}
+                    </span>
+                  </div>
+                )}
+                {proposal.rawData?.isPersonal && (
+                  <div className="col-span-2 flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/10 rounded-lg border border-blue-100 dark:border-blue-900/30">
+                    <Icon name="person" size={14} className="text-blue-500" />
+                    <span className="text-xs font-semibold text-blue-700 dark:text-blue-300">
+                      Transporte personal - Capacidad: {proposal.rawData.capacity} personas
+                    </span>
+                  </div>
+                )}
+              </>
+            )}
 
-      {/* Confirmation/Rejection section for Admins */}
-      {isAdmin &&
-        !isClosed &&
-        (() => {
-          if (effectiveType === "inventory") {
-            return (
-              <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col items-end gap-2">
-                <div className="flex gap-2">
-                  <button
-                    onClick={onReject}
-                    className="cursor-pointer text-[10px] py-2 px-6 font-bold uppercase tracking-widest rounded-tripio bg-red-500 text-white hover:bg-red-600 transition-colors"
-                  >
-                    Descartar
-                  </button>
-                  <NeumorphicButton
-                    variant="primary"
-                    onClick={() => onConfirm()}
-                    className="text-[10px] py-2 px-6 font-bold uppercase tracking-widest"
-                  >
-                    Confirmar
-                  </NeumorphicButton>
+            {proposal.type === "inventory" && (
+              <div className="col-span-2 flex justify-between p-2 bg-slate-50 dark:bg-slate-800/20 rounded-lg">
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Categoría:</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 capitalize">
+                    {proposal.rawData?.category}
+                  </span>
+                </div>
+                <div className="flex flex-col text-right">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Cantidad:</span>
+                  <span className="text-xs font-bold text-accent">
+                    {proposal.rawData?.quantity} unidades
+                  </span>
                 </div>
               </div>
-            );
-          }
+            )}
+          </div>
+        </div>
+      )}
 
-          // Count positive and negative RSVP votes
-          const votes = proposal.votes || {};
-          const positiveVotes = Object.values(votes).filter(
-            (v) => v === "si",
-          ).length;
-          const negativeVotes = Object.values(votes).filter(
-            (v) => v === "no" || v === "maybe",
-          ).length;
-          const totalVotes = Object.keys(votes).length;
+      {/* Voting Section */}
+      <div className="bg-slate-50/50 dark:bg-slate-800/30 p-3 rounded-xl border border-white/50 dark:border-slate-700/50 shadow-inner mt-1">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+            Decisión Grupal ({totalVotes} votos)
+          </span>
+          {canConfirm && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onConfirm(proposal);
+              }}
+              className="text-[10px] font-bold bg-green-500 hover:bg-green-600 text-white px-2.5 py-1 rounded-full transition shadow-sm cursor-pointer flex items-center gap-1 active:scale-95"
+            >
+              <Icon name="check_circle" size={12} />
+              CONFIRMAR
+            </button>
+          )}
+        </div>
 
-          // For option-based proposals, count unique voters
-          const optionVoterCount = new Set(
-            Object.values(proposal.optionVotes || {}).flat(),
-          ).size;
+        <div className="flex flex-col gap-2">
+          {/* Progress Bar */}
+          <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex relative">
+            <div
+              className={`h-full transition-all duration-700 ease-out ${yesPercentage > 50 ? "bg-green-500" : "bg-orange-400"}`}
+              style={{ width: `${yesPercentage}%` }}
+            />
+          </div>
 
-          const voterCount = Math.max(totalVotes, optionVoterCount);
-          const requiredVotes = Math.floor(totalParticipants / 2) + 1;
-          const hasEnoughVotes =
-            totalParticipants > 0 && voterCount >= requiredVotes;
-
-          // Determine outcome: positive majority = confirm, negative majority = discard
-          const isPositiveMajority = positiveVotes > negativeVotes;
-          // For option-based proposals (no RSVP votes), always confirm
-          const isOptionBased = optionVoterCount > 0 && totalVotes === 0;
-
-          // Logic to determine winning option for polls
-          const getWinningOption = () => {
-            if (proposal.responseType !== "poll" || !proposal.options)
-              return undefined;
-
-            let winner = "";
-            let maxVotes = -1;
-
-            proposal.options.forEach((opt) => {
-              const count = proposal.optionVotes?.[opt]?.length || 0;
-              if (count > maxVotes) {
-                maxVotes = count;
-                winner = opt;
-              }
-            });
-
-            return winner || undefined;
-          };
-
-          const handleConfirmClick = () => {
-            const winner = getWinningOption();
-            onConfirm(winner);
-          };
-
-          return (
-            <div className="pt-4 mt-2 border-t border-slate-100 flex flex-col items-end gap-2">
-              <div className="flex items-center gap-3 text-[10px] text-slate-400">
-                <span>
-                  {voterCount}/{requiredVotes} votos necesarios
-                </span>
-                {totalVotes > 0 && (
-                  <span className="flex items-center gap-1.5">
-                    <span className="text-green-500 font-bold">
-                      {positiveVotes} sí
-                    </span>
-                    <span className="text-red-500 font-bold">
-                      {negativeVotes} no
-                    </span>
-                  </span>
-                )}
-              </div>
-              {hasEnoughVotes && (isPositiveMajority || isOptionBased) ? (
-                <NeumorphicButton
-                  variant="primary"
-                  onClick={handleConfirmClick}
-                  className="text-[10px] py-2 px-6 font-bold uppercase tracking-widest"
-                >
-                  Confirmar
-                </NeumorphicButton>
-              ) : hasEnoughVotes && !isPositiveMajority ? (
-                <button
-                  onClick={onReject}
-                  className="cursor-pointer text-[10px] py-2 px-6 font-bold uppercase tracking-widest rounded-tripio bg-red-500 text-white hover:bg-red-600 transition-colors"
-                >
-                  Descartar
-                </button>
-              ) : (
-                <NeumorphicButton
-                  variant="primary"
-                  disabled
-                  className="text-[10px] py-2 px-6 font-bold uppercase tracking-widest"
-                >
-                  Esperando votos
-                </NeumorphicButton>
-              )}
-            </div>
-          );
-        })()}
-
-      {/* Delete Confirm Dialog */}
-      <ConfirmDialog
-        isOpen={showDeleteConfirm}
-        onClose={() => setShowDeleteConfirm(false)}
-        onConfirm={() => {
-          onDelete();
-          setShowDeleteConfirm(false);
-        }}
-        title="Eliminar propuesta"
-        message={`¿Estás seguro de eliminar "${proposal.title}"? Esta acción no se puede deshacer.`}
-        confirmLabel="Eliminar"
-        cancelLabel="Cancelar"
-        variant="danger"
-      />
+          {/* Vote Buttons */}
+          <div className="flex justify-between mt-1 gap-2">
+            <button
+              disabled={!canVote}
+              onClick={(e) => {
+                e.stopPropagation();
+                onVote(proposal, "yes");
+              }}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                userVote === "yes"
+                  ? "bg-green-500 text-white shadow-md scale-105"
+                  : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              <Icon name="thumb_up" size={14} />
+              Sí ({yesVotesCount})
+            </button>
+            <button
+              disabled={!canVote}
+              onClick={(e) => {
+                e.stopPropagation();
+                onVote(proposal, "no");
+              }}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                userVote === "no"
+                  ? "bg-red-500 text-white shadow-md scale-105"
+                  : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+              }`}
+            >
+              <Icon name="thumb_down" size={14} />
+              No ({noVotesCount})
+            </button>
+          </div>
+        </div>
+      </div>
     </NeumorphicCard>
   );
 };
