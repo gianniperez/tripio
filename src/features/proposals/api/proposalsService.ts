@@ -9,7 +9,6 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import type { Role } from "@/types/models"; // only for types if needed
 
 const TRIPS_COLLECTION = "trips";
 
@@ -24,7 +23,7 @@ export interface UnifiedProposal {
   createdAt: Date;
   updatedAt: Date | null;
   votes: Record<string, string>;
-  rawData: any; // Entire original doc
+  rawData: Record<string, unknown>; // Entire original doc
 }
 
 export const proposalsService = {
@@ -46,7 +45,7 @@ export const proposalsService = {
       return snapshot.docs.map((doc) => {
         const data = doc.data();
         const title = data.title || data.name || "Sin Título";
-        
+
         return {
           id: doc.id,
           type: type as ProposalType,
@@ -65,7 +64,6 @@ export const proposalsService = {
     const flattened = results.flat();
     console.log(`[SERVICE_DEBUG] flattened proposals total: ${flattened.length}`);
 
-    
     // Sort desc by createdAt
     return flattened.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   },
@@ -73,7 +71,12 @@ export const proposalsService = {
   /**
    * Crea una nueva propuesta en la subcolección correspondiente
    */
-  async createProposal(tripId: string, type: ProposalType, userId: string, data: any): Promise<string> {
+  async createProposal(
+    tripId: string,
+    type: ProposalType,
+    userId: string,
+    data: Record<string, unknown>
+  ): Promise<string> {
     const collName = this.getCollectionNameForType(type);
     const ref = collection(db, `${TRIPS_COLLECTION}/${tripId}/${collName}`);
     const newDocRef = doc(ref);
@@ -95,21 +98,23 @@ export const proposalsService = {
   /**
    * Actualiza una propuesta existente en la subcolección correspondiente
    */
-  async updateProposal(tripId: string, type: ProposalType, proposalId: string, data: any): Promise<void> {
+  async updateProposal(
+    tripId: string,
+    type: ProposalType,
+    proposalId: string,
+    data: Record<string, unknown>
+  ): Promise<void> {
     const collName = this.getCollectionNameForType(type);
     const ref = doc(db, `${TRIPS_COLLECTION}/${tripId}/${collName}`, proposalId);
 
     // Filter out undefined values to avoid Firebase errors
-    const cleanData = Object.fromEntries(
-      Object.entries(data).filter(([_, v]) => v !== undefined)
-    );
+    const cleanData = Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
 
     await updateDoc(ref, {
       ...cleanData,
       updatedAt: serverTimestamp(),
     });
   },
-
 
   /**
    * Elimina una propuesta según su ID y Tipo
@@ -124,9 +129,14 @@ export const proposalsService = {
    * Confirma una propuesta, migrándola a la colección definitiva ("_confirmed" o "events")
    * y eliminándola de la bandeja de propuestas ("_proposals").
    */
-  async confirmProposal(tripId: string, type: ProposalType, proposalId: string, rawData: any): Promise<void> {
+  async confirmProposal(
+    tripId: string,
+    type: ProposalType,
+    proposalId: string,
+    rawData: Record<string, unknown>
+  ): Promise<void> {
     let targetCollection = "";
-    const formattedData: any = {
+    const formattedData: Record<string, unknown> = {
       ...rawData,
       updatedAt: serverTimestamp(),
     };
@@ -163,16 +173,22 @@ export const proposalsService = {
   },
 
   /**
-   * Modifica el voto en una propuesta. 
-   * Firebase no permite merge fácil en objetos anidados sin usar set con merge, 
+   * Modifica el voto en una propuesta.
+   * Firebase no permite merge fácil en objetos anidados sin usar set con merge,
    * o dot notation updateDoc({"votes.userId": voteValue})
    */
-  async voteProposal(tripId: string, type: ProposalType, proposalId: string, userId: string, voteValue: string): Promise<void> {
+  async voteProposal(
+    tripId: string,
+    type: ProposalType,
+    proposalId: string,
+    userId: string,
+    voteValue: string
+  ): Promise<void> {
     const collName = this.getCollectionNameForType(type);
     const ref = doc(db, `${TRIPS_COLLECTION}/${tripId}/${collName}`, proposalId);
-    
+
     await updateDoc(ref, {
-      [`votes.${userId}`]: voteValue
+      [`votes.${userId}`]: voteValue,
     });
   },
 
@@ -181,11 +197,16 @@ export const proposalsService = {
    */
   getCollectionNameForType(type: ProposalType): string {
     switch (type) {
-      case "activity": return "activities_proposals";
-      case "accommodation": return "accommodation_proposals";
-      case "transport": return "transport_proposals";
-      case "inventory": return "inventory_proposals";
-      default: throw new Error(`Unknown proposal type ${type}`);
+      case "activity":
+        return "activities_proposals";
+      case "accommodation":
+        return "accommodation_proposals";
+      case "transport":
+        return "transport_proposals";
+      case "inventory":
+        return "inventory_proposals";
+      default:
+        throw new Error(`Unknown proposal type ${type}`);
     }
-  }
+  },
 };

@@ -1,3 +1,1 @@
-export interface PageHeaderProps {
-  // Props here
-}
+export type PageHeaderProps = Record<string, unknown>;

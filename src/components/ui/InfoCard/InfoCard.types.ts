@@ -1,3 +1,1 @@
-export interface InfoCardProps {
-  // Props here
-}
+export type InfoCardProps = Record<string, unknown>;

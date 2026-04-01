@@ -18,7 +18,6 @@ interface ActivityFormProps {
 }
 
 export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFormProps) {
-
   const { currentUser } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +27,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm({
+  } = useForm<CreateActivityInput>({
     resolver: zodResolver(createActivitySchema),
     defaultValues: {
       requiresVoting: mode === "proposal",
@@ -41,8 +40,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
     },
   });
 
-  const onSubmit = async (values: any) => {
-    const data = values as CreateActivityInput;
+  const onSubmit = async (data: CreateActivityInput) => {
     if (!currentUser) {
       setError("Debes estar autenticado");
       return;
@@ -82,7 +80,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
         error={errors.location?.message}
         {...register("location")}
       />
-      
+
       <div className="grid grid-cols-2 gap-4">
         <NeumorphicInput
           label="Fecha"
@@ -103,7 +101,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
         type="number"
         placeholder="0.00"
         error={errors.costImpact?.message}
-        {...register("costImpact")}
+        {...register("costImpact", { valueAsNumber: true })}
       />
 
       <NeumorphicInput

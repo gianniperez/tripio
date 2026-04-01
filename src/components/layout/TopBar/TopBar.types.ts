@@ -1,3 +1,1 @@
-export interface TopBarProps {
-  // Props here
-}
+export type TopBarProps = Record<string, unknown>;

@@ -17,7 +17,6 @@ interface TransportFormProps {
 }
 
 export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
-
   const { currentUser } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +27,7 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
     control,
     watch,
     formState: { errors },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } = useForm<any>({
     resolver: zodResolver(transportSchema),
     defaultValues: {
@@ -44,6 +44,7 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
 
   const isPersonal = watch("isPersonal");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     if (!currentUser) {
       setError("Debes estar autenticado");
@@ -61,6 +62,7 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
         priceEstimate: data.priceEstimate ? Number(data.priceEstimate) : null,
         capacity: data.isPersonal ? Number(data.capacity) : null,
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await logisticsService.createTransport(tripId, currentUser.uid, formattedData as any);
       onSuccess();
     } catch (err) {

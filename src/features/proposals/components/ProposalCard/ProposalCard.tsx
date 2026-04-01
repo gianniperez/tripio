@@ -52,7 +52,10 @@ export const ProposalCard = ({
   const yesPercentage = totalVotes === 0 ? 0 : Math.round((yesVotesCount / totalVotes) * 100);
   const userVote = proposal.votes[currentUserUid];
 
-  const formatFirebaseTime = (d: any) => {
+  const formatFirebaseTime = (
+    d: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  ) => {
     const date = toDate(d);
     return date ? format(date, "HH:mm") : "--:--";
   };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { FilterTabBar, Tab } from "@/components/ui/FilterTabBar";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton/FloatingActionButton";
@@ -47,17 +47,13 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
   const { mutate: deleteInv } = useDeleteInventory(tripId);
 
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") || "accommodation";
+  const urlTab = searchParams.get("tab");
 
-  const [activeTab, setActiveTab] = useState(initialTab);
-
-  // Update tab if URL changes (useful for back/forward or direct links)
-  useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab && tab !== activeTab && (tab === "accommodation" || tab === "transport" || tab === "inventory")) {
-      setActiveTab(tab);
-    }
-  }, [searchParams, activeTab]);
+  const [activeTab, setActiveTab] = useState(
+    urlTab && (urlTab === "accommodation" || urlTab === "transport" || urlTab === "inventory")
+      ? urlTab
+      : "accommodation"
+  );
 
   const [activeModal, setActiveModal] = useState<
     "accommodation" | "transport" | "inventory" | null
@@ -198,9 +194,9 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
                 updateInventory({ inventoryId: itemId, updates })
               }
               onDelete={(item) => {
-                if (window.confirm(`¿Seguro que deseas eliminar ${item.title}?`)) deleteInv(item.id);
+                if (window.confirm(`¿Seguro que deseas eliminar ${item.title}?`))
+                  deleteInv(item.id);
               }}
-
             />
           </div>
         )}
@@ -215,10 +211,7 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
         title="Nuevo Alojamiento"
         description="Registra una reserva o crea una propuesta para votar."
       >
-        <AccommodationForm
-          tripId={tripId}
-          onSuccess={() => setActiveModal(null)}
-        />
+        <AccommodationForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
       </Modal>
 
       <Modal
@@ -227,10 +220,7 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
         title="Nuevo Transporte"
         description="Agrega un trayecto compartido o una propuesta."
       >
-        <TransportForm
-          tripId={tripId}
-          onSuccess={() => setActiveModal(null)}
-        />
+        <TransportForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
       </Modal>
 
       <Modal
@@ -239,12 +229,8 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
         title="Nuevo Ítem de Inventario"
         description="Agrega algo que necesiten llevar o una propuesta."
       >
-        <InventoryForm
-          tripId={tripId}
-          onSuccess={() => setActiveModal(null)}
-        />
+        <InventoryForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
       </Modal>
-
     </div>
   );
 }

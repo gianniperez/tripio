@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, forwardRef, useRef, useImperativeHandle } from "react";
+import { useState, forwardRef, useRef } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Icon } from "@/components/ui/Icon";
@@ -45,12 +45,16 @@ export const NeumorphicInput = forwardRef<
 
     const innerRef = useRef<HTMLInputElement | HTMLSelectElement>(null);
 
-    const handleRef = (el: any) => {
-      innerRef.current = el;
+    const handleRef = (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null) => {
+      innerRef.current = el as HTMLInputElement | HTMLSelectElement;
       if (typeof ref === "function") {
-        ref(el);
+        ref(el as HTMLInputElement | HTMLSelectElement);
       } else if (ref) {
-        (ref as React.MutableRefObject<any>).current = el;
+        (
+          ref as React.MutableRefObject<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null
+          >
+        ).current = el;
       }
     };
 
@@ -149,7 +153,7 @@ export const NeumorphicInput = forwardRef<
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   setFileName(file ? file.name : null);
-                  props.onChange?.(e as any);
+                  props.onChange?.(e as React.ChangeEvent<HTMLInputElement>);
                 }}
                 {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
               />
@@ -182,7 +186,7 @@ export const NeumorphicInput = forwardRef<
                 placeholder={props.placeholder ?? (isNumber ? "0" : undefined)}
                 onClick={(e) => {
                   if (isDate) handleIconClick();
-                  props.onClick?.(e as any);
+                  props.onClick?.(e as React.MouseEvent<HTMLInputElement>);
                 }}
                 {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
               />

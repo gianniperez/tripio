@@ -1,3 +1,2 @@
-export type VerifyEmailFormProps = {
-  // props
-};
+export type VerifyEmailFormProps = object; //
+// props\n

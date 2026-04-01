@@ -91,8 +91,8 @@ export function LoginForm() {
       const isStandalone =
         typeof window !== "undefined" &&
         (window.matchMedia("(display-mode: standalone)").matches ||
-          (window.navigator as any).standalone);
-      const isIOS = /iPad|iPhone|iPod/.test(navigator?.userAgent) && !(window as any).MSStream;
+          (window.navigator as Navigator & { standalone?: boolean }).standalone);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator?.userAgent) && !("MSStream" in window);
       const useRedirect = isStandalone && isIOS;
 
       if (useRedirect) {
@@ -105,13 +105,15 @@ export function LoginForm() {
     } catch (error: unknown) {
       const fbError = error as { code?: string };
       if (fbError.code === "auth/account-exists-with-different-credential") {
-        const credential = GoogleAuthProvider.credentialFromError(error as any);
+        const credential = GoogleAuthProvider.credentialFromError(
+          error as { code: string; message: string; name: string }
+        );
         if (credential) {
           setPendingGoogleCredential(credential);
           setShowLinkPrompt(true);
           alert("Tu correo ya está registrado con contraseña. Ingresala para activar Google.");
         }
-      } else if (error.code === "auth/popup-blocked") {
+      } else if (fbError.code === "auth/popup-blocked") {
         alert("El navegador bloqueó la ventana de inicio de sesión. Permití los popups.");
       } else {
         console.error("Detalle del error:", error);
@@ -133,7 +135,9 @@ export function LoginForm() {
 
     setIsLoading(true);
     try {
-      const userEmail = (pendingGoogleCredential as any)._tokenResponse?.email;
+      const userEmail =
+        (pendingGoogleCredential as unknown as { _tokenResponse?: { email?: string } })
+          ._tokenResponse?.email || "";
       const userCredential = await signInWithEmailAndPassword(auth, userEmail, linkPassword);
       await linkWithCredential(userCredential.user, pendingGoogleCredential).catch((err) =>
         console.warn(err)

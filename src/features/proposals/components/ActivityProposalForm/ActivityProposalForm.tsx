@@ -50,20 +50,16 @@ export function ActivityProposalForm({
     },
   });
 
-  const onSubmit = async (values: Record<string, any>) => {
-    console.log("[FORM_DEBUG] onSubmit started with values:", values);
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = async (values: any) => {
     if (!currentUser) {
-      console.error("[FORM_DEBUG] currentUser is NULL! Form submission aborted.");
-      setError("Usuario no autenticado, intenta recargar la página.");
+      setError("Usuario no autenticado");
       return;
     }
 
     setIsSubmitting(true);
     setError(null);
     try {
-      console.log("[FORM_DEBUG] currentUser IS ok:", currentUser.uid);
-
       let combinedDate: Date | null = values.date ? new Date(values.date + "T12:00:00") : null;
       if (combinedDate && values.startTime) {
         const [hours, minutes] = values.startTime.split(":").map(Number);
@@ -81,8 +77,6 @@ export function ActivityProposalForm({
         description: values.notes || null,
       };
 
-      console.log("[FORM_DEBUG] Dispatching...", isEdit ? "update" : "create", proposalData);
-
       if (isEdit) {
         await updateProposal({
           type: "activity",
@@ -97,26 +91,21 @@ export function ActivityProposalForm({
         });
       }
 
-      console.log("[FORM_DEBUG] Proposal processed successfully in Firebase.");
       onSuccess();
     } catch (e) {
-      console.error("[FORM_DEBUG] Error during submission:", e);
+      console.error(e);
       setError("Error al guardar propuesta");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const onInvalid = (errors: any) => {
-    console.error("[FORM_DEBUG] Validation failed:", errors);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <NeumorphicInput
         label="Título de la Actividad"
         placeholder="Ej: Cena en el puerto"
-        error={errors.title?.message as string}
+        error={errors.title?.message?.toString()}
         required
         {...register("title", { required: "El título es obligatorio" })}
       />
@@ -148,9 +137,19 @@ export function ActivityProposalForm({
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-      <NeumorphicButton type="submit" variant="primary" className="mt-6" disabled={isSubmitting}>
-        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Actividad"}
-      </NeumorphicButton>
+      <div className="flex gap-4 mt-6">
+        <NeumorphicButton type="button" variant="secondary" onClick={onCancel} className="flex-1">
+          Cancelar
+        </NeumorphicButton>
+        <NeumorphicButton
+          type="submit"
+          variant="primary"
+          className="flex-1"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Actividad"}
+        </NeumorphicButton>
+      </div>
     </form>
   );
 }

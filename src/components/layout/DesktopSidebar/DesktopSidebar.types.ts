@@ -1,3 +1,1 @@
-export interface DesktopSidebarProps {
-  // Props here
-}
+export type DesktopSidebarProps = Record<string, unknown>;

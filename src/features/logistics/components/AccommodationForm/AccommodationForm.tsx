@@ -16,7 +16,6 @@ interface AccommodationFormProps {
 }
 
 export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps) {
-
   const { currentUser } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +25,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
     handleSubmit,
     control,
     formState: { errors },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } = useForm<any>({
     resolver: zodResolver(accommodationSchema),
     defaultValues: {
@@ -39,6 +39,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
     },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     if (!currentUser) {
       setError("Debes estar autenticado");
@@ -55,6 +56,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         checkOut: data.checkOut ? new Date(data.checkOut + "T12:00:00") : null,
         priceEstimate: data.priceEstimate ? Number(data.priceEstimate) : null,
       };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await logisticsService.createAccommodation(tripId, currentUser.uid, formattedData as any);
       onSuccess();
     } catch (err) {
@@ -70,7 +72,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
       <NeumorphicInput
         label="Nombre del Alojamiento"
         placeholder="Ej: Airbnb en el centro"
-        error={errors.title?.message as string}
+        error={errors.title?.message?.toString()}
         required
         {...register("title", { required: "El título es obligatorio" })}
       />
@@ -78,7 +80,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
       <NeumorphicInput
         label="Ubicación"
         placeholder="Dirección o enlace"
-        error={errors.location?.message as string}
+        error={errors.location?.message?.toString()}
         {...register("location")}
       />
 
@@ -86,14 +88,14 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         <NeumorphicInput
           label="Check-in"
           type="date"
-          error={errors.checkIn?.message as string}
+          error={errors.checkIn?.message?.toString()}
           required
           {...register("checkIn")}
         />
         <NeumorphicInput
           label="Check-out"
           type="date"
-          error={errors.checkOut?.message as string}
+          error={errors.checkOut?.message?.toString()}
           required
           {...register("checkOut")}
         />
@@ -103,7 +105,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         label="Costo Estimado Total"
         type="number"
         placeholder="0.00"
-        error={errors.priceEstimate?.message as string}
+        error={errors.priceEstimate?.message?.toString()}
         {...register("priceEstimate")}
       />
 
@@ -111,7 +113,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         label="Notas adicionales"
         type="textarea"
         placeholder="Pros, contras, camas disponibles..."
-        error={errors.notes?.message as string}
+        error={errors.notes?.message?.toString()}
         {...register("notes")}
       />
 

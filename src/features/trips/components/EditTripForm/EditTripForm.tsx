@@ -23,8 +23,10 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
   const formatDateForInput = (dateValue: Timestamp | Date | null | undefined) => {
     if (!dateValue) return "";
     let d = dateValue;
-    if ((d as Timestamp).toDate) {
-      d = (d as Timestamp).toDate();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((d as any).toDate) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      d = (d as any).toDate();
     } else {
       d = new Date(d as string | Date);
     }
@@ -40,10 +42,13 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
   } = useForm<z.input<typeof createTripSchema>>({
     resolver: zodResolver(createTripSchema),
     defaultValues: {
-      name: trip.name,
+      name: trip.name || "",
       description: trip.description || "",
-      startDate: formatDateForInput(trip.startDate),
-      endDate: formatDateForInput(trip.endDate),
+      // We provide string YYYY-MM-DD which matches HTML input expectations
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      startDate: formatDateForInput(trip.startDate) as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      endDate: formatDateForInput(trip.endDate) as any,
       currency: trip.currency || "USD",
       coverImage: trip.coverImage || "",
       dailyBudget: trip.dailyBudget ?? undefined,
@@ -52,7 +57,8 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
 
   const coverImage = watch("coverImage");
 
-  const onSubmit = async (data: z.infer<typeof createTripSchema>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     setError(null);
 
@@ -67,32 +73,17 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
     }
   };
 
-  const handleDelete = async () => {
-    if (userRole !== "owner") return;
-    if (
-      !window.confirm("¿Seguro que deseas eliminar este viaje? Esta acción no se puede deshacer.")
-    )
-      return;
-
-    setIsDeleting(true);
-    setError(null);
-    try {
-      await tripService.deleteTrip(trip.id);
-      onDelete?.(); // Ejecuta callback usualmente redirigiendo a "/"
-    } catch (err) {
-      console.error("Error deleting trip:", err);
-      setError("Hubo un error al eliminar el viaje.");
-      setIsDeleting(false);
-    }
-  };
-
   return (
     <NeumorphicCard>
-      <form onSubmit={handleSubmit((data: any) => onSubmit(data))} className="space-y-6">
+      <form
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSubmit={handleSubmit((data: any) => onSubmit(data))}
+        className="space-y-6"
+      >
         <NeumorphicInput
           label="Nombre del Viaje"
           placeholder="Ej: Expedición Patagonia"
-          error={errors.name?.message}
+          error={errors.name?.message?.toString()}
           required
           {...register("name")}
         />
@@ -101,13 +92,13 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
           <NeumorphicInput
             label="Fecha de Inicio"
             type="date"
-            error={errors.startDate?.message}
+            error={errors.startDate?.message?.toString()}
             {...register("startDate", { valueAsDate: true })}
           />
           <NeumorphicInput
             label="Fecha de Fin"
             type="date"
-            error={errors.endDate?.message}
+            error={errors.endDate?.message?.toString()}
             {...register("endDate", { valueAsDate: true })}
           />
         </div>
@@ -123,7 +114,7 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
             { value: "CLP", label: "Peso Chileno (CLP)" },
             { value: "UYU", label: "Peso Uruguayo (UYU)" },
           ]}
-          error={errors.currency?.message}
+          error={errors.currency?.message?.toString()}
           required
           {...register("currency")}
         />
@@ -151,8 +142,8 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
                 try {
                   const url = await uploadToCloudinary(file);
                   setValue("coverImage", url);
-                } catch (error) {
-                  console.error("Error al subir la imagen:", error);
+                } catch (err) {
+                  console.error("Error al subir la imagen:", err);
                 } finally {
                   setIsSubmitting(false);
                 }
@@ -165,7 +156,7 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
           label="Descripción"
           type="textarea"
           placeholder="Cuéntanos más..."
-          error={errors.description?.message}
+          error={errors.description?.message?.toString()}
           {...register("description")}
         />
 
@@ -187,9 +178,28 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
         {userRole === "owner" && (
           <NeumorphicButton
             type="button"
-            onClick={handleDelete}
+            onClick={async () => {
+              if (userRole !== "owner") return;
+              if (
+                !window.confirm(
+                  "¿Seguro que deseas eliminar este viaje? Esta acción no se puede deshacer."
+                )
+              )
+                return;
+              setIsDeleting(true);
+              setError(null);
+              try {
+                await tripService.deleteTrip(trip.id);
+                onDelete?.();
+              } catch (err) {
+                console.error("Error deleting trip:", err);
+                setError("Hubo un error al eliminar el viaje.");
+                setIsDeleting(false);
+              }
+            }}
             disabled={isSubmitting || isDeleting}
             variant="danger"
+            className="w-full"
           >
             <span className="material-symbols-rounded text-[20px]">delete</span>
             {isDeleting ? "Eliminando..." : "Eliminar Viaje"}

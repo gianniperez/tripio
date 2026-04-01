@@ -1,3 +1,2 @@
-export type RegisterFormProps = {
-  // props
-};
+export type RegisterFormProps = object; //
+// props\n

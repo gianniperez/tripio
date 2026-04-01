@@ -1,3 +1,1 @@
-export interface FilterTabBarProps {
-  // Props here
-}
+export type FilterTabBarProps = Record<string, unknown>;

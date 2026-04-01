@@ -1,3 +1,2 @@
-export type ForgotPasswordFormProps = {
-  // props
-};
+export type ForgotPasswordFormProps = object; //
+// props\n

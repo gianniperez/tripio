@@ -1,3 +1,1 @@
-export interface FloatingActionButtonProps {
-  // Props here
-}
+export type FloatingActionButtonProps = Record<string, unknown>;

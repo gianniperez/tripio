@@ -16,7 +16,6 @@ interface InventoryFormProps {
 }
 
 export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
-
   const { currentUser } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +25,7 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
     handleSubmit,
     control,
     formState: { errors },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } = useForm<any>({
     resolver: zodResolver(inventorySchema),
     defaultValues: {
@@ -36,9 +36,9 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
       notes: "",
       requiresVoting: false,
     },
-
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     if (!currentUser) {
       setError("Debes estar autenticado");
@@ -68,7 +68,6 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
         required
         {...register("title", { required: "El título es obligatorio" })}
       />
-
 
       <NeumorphicInput
         type="select"

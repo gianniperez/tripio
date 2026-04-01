@@ -1,3 +1,2 @@
-export type LoginFormProps = {
-  // props
-};
+export type LoginFormProps = object; //
+// props\n

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
-import { NeumorphicToggle } from "@/components/neumorphic/NeumorphicToggle";
 import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks/useProposals";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Timestamp } from "firebase/firestore";
@@ -24,6 +23,7 @@ export function TransportProposalForm({
   const { currentUser } = useAuthStore();
   const { mutateAsync: createProposal } = useCreateProposal(tripId);
   const { mutateAsync: updateProposal } = useUpdateProposal(tripId);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,8 +32,6 @@ export function TransportProposalForm({
   const {
     register,
     handleSubmit,
-    watch,
-    control,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -46,16 +44,14 @@ export function TransportProposalForm({
         initialData?.rawData?.arrival instanceof Timestamp
           ? initialData.rawData.arrival.toDate().toISOString().split("T")[0]
           : "",
-      isPersonal: initialData?.rawData?.isPersonal || false,
-      capacity: initialData?.rawData?.capacity || 4,
       priceEstimate: initialData?.rawData?.priceEstimate || "",
+      capacity: initialData?.rawData?.capacity || "4",
       notes: initialData?.description || "",
     },
   });
 
-  const isPersonal = watch("isPersonal");
-
-  const onSubmit = async (values: Record<string, any>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = async (values: any) => {
     if (!currentUser) return;
     setIsSubmitting(true);
     setError(null);
@@ -66,10 +62,9 @@ export function TransportProposalForm({
           ? Timestamp.fromDate(new Date(values.departure + "T12:00:00"))
           : null,
         arrival: values.arrival ? Timestamp.fromDate(new Date(values.arrival + "T12:00:00")) : null,
-        isPersonal: values.isPersonal,
-        capacity: values.isPersonal ? Number(values.capacity) : null,
         priceEstimate: values.priceEstimate ? Number(values.priceEstimate) : null,
-        notes: values.notes || null,
+        capacity: Number(values.capacity) || 4,
+        description: values.notes || null,
       };
 
       if (isEdit) {
@@ -85,6 +80,7 @@ export function TransportProposalForm({
           data: proposalData,
         });
       }
+
       onSuccess();
     } catch (e) {
       console.error(e);
@@ -99,7 +95,7 @@ export function TransportProposalForm({
       <NeumorphicInput
         label="Medio de Transporte"
         placeholder="Ej: Auto de Juan, Vuelo LATAM, Tren..."
-        error={errors.title?.message as string}
+        error={errors.title?.message?.toString()}
         required
         {...register("title", { required: "El título es obligatorio" })}
       />
@@ -109,49 +105,38 @@ export function TransportProposalForm({
         <NeumorphicInput label="Fecha de Llegada" type="date" {...register("arrival")} />
       </div>
 
-      <Controller
-        name="isPersonal"
-        control={control}
-        render={({ field }) => (
-          <NeumorphicToggle
-            checked={field.value}
-            onChange={field.onChange}
-            label="¿Es transporte personal? (Ej. Mi auto)"
-            className="px-1"
-          />
-        )}
-      />
-
-      {isPersonal && (
-        <div className="animate-in fade-in slide-in-from-top-2">
-          <NeumorphicInput
-            label="Capacidad (Cant de Pasajeros)"
-            type="number"
-            min="1"
-            {...register("capacity", { min: 1 })}
-          />
-        </div>
-      )}
-
-      <NeumorphicInput
-        label="Costo Estimado"
-        type="number"
-        placeholder="0.00"
-        {...register("priceEstimate")}
-      />
+      <div className="grid grid-cols-2 gap-4">
+        <NeumorphicInput
+          label="Costo Estimado"
+          type="number"
+          placeholder="0.00"
+          {...register("priceEstimate")}
+        />
+        <NeumorphicInput label="Capacidad (pasajeros)" type="number" {...register("capacity")} />
+      </div>
 
       <NeumorphicInput
         label="Notas adicionales"
         type="textarea"
-        placeholder="Cualquier detalle extra..."
+        placeholder="Pros, contras, equipaje..."
         {...register("notes")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-      <NeumorphicButton type="submit" variant="primary" className="mt-6" disabled={isSubmitting}>
-        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Transporte"}
-      </NeumorphicButton>
+      <div className="flex gap-4 mt-6">
+        <NeumorphicButton type="button" variant="secondary" onClick={onCancel} className="flex-1">
+          Cancelar
+        </NeumorphicButton>
+        <NeumorphicButton
+          type="submit"
+          variant="primary"
+          className="flex-1"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Transporte"}
+        </NeumorphicButton>
+      </div>
     </form>
   );
 }

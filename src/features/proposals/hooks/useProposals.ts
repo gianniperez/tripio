@@ -23,7 +23,8 @@ export const useCreateProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, userId, data }: { type: ProposalType, userId: string, data: any }) => 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: ({ type, userId, data }: { type: ProposalType; userId: string; data: any }) =>
       proposalsService.createProposal(tripId, type, userId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
@@ -35,21 +36,37 @@ export const useUpdateProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, proposalId, data }: { type: ProposalType, proposalId: string, data: any }) => 
-      proposalsService.updateProposal(tripId, type, proposalId, data),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: ({
+      type,
+      proposalId,
+      data,
+    }: {
+      type: ProposalType;
+      proposalId: string;
+      data: any;
+    }) => proposalsService.updateProposal(tripId, type, proposalId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
     },
   });
 };
 
-
 export const useVoteProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, proposalId, userId, vote }: { type: ProposalType, proposalId: string, userId: string, vote: string }) => 
-      proposalsService.voteProposal(tripId, type, proposalId, userId, vote),
+    mutationFn: ({
+      type,
+      proposalId,
+      userId,
+      vote,
+    }: {
+      type: ProposalType;
+      proposalId: string;
+      userId: string;
+      vote: string;
+    }) => proposalsService.voteProposal(tripId, type, proposalId, userId, vote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
     },
@@ -60,7 +77,7 @@ export const useDeleteProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, proposalId }: { type: ProposalType, proposalId: string }) => 
+    mutationFn: ({ type, proposalId }: { type: ProposalType; proposalId: string }) =>
       proposalsService.deleteProposal(tripId, type, proposalId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
@@ -72,8 +89,16 @@ export const useConfirmProposal = (tripId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ type, proposalId, rawData }: { type: ProposalType, proposalId: string, rawData: any }) => 
-      proposalsService.confirmProposal(tripId, type, proposalId, rawData),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mutationFn: ({
+      type,
+      proposalId,
+      rawData,
+    }: {
+      type: ProposalType;
+      proposalId: string;
+      rawData: any;
+    }) => proposalsService.confirmProposal(tripId, type, proposalId, rawData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [PROPOSALS_KEY, tripId] });
       // We also invalidate itinerary items because confirming shifts items to timeline or logistics
@@ -82,4 +107,3 @@ export const useConfirmProposal = (tripId: string) => {
     },
   });
 };
-

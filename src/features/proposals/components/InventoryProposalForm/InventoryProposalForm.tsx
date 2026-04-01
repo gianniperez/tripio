@@ -21,7 +21,8 @@ export function InventoryProposalForm({
 }: InventoryProposalFormProps) {
   const { currentUser } = useAuthStore();
   const { mutateAsync: createProposal } = useCreateProposal(tripId);
-  const { mutateAsync: updateProposal = () => {} } = useUpdateProposal(tripId);
+  const { mutateAsync: updateProposal } = useUpdateProposal(tripId);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,23 +36,24 @@ export function InventoryProposalForm({
     defaultValues: {
       title: initialData?.title || "",
       category: initialData?.rawData?.category || "general",
-      quantity: initialData?.rawData?.quantity || 1,
+      quantity: initialData?.rawData?.quantity || "1",
       priceEstimate: initialData?.rawData?.priceEstimate || "",
       notes: initialData?.description || "",
     },
   });
 
-  const onSubmit = async (values: Record<string, any>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = async (values: any) => {
     if (!currentUser) return;
     setIsSubmitting(true);
     setError(null);
     try {
       const proposalData = {
         title: values.title,
-        category: values.category,
-        quantity: Number(values.quantity),
+        category: values.category || "general",
+        quantity: Number(values.quantity) || 1,
         priceEstimate: values.priceEstimate ? Number(values.priceEstimate) : null,
-        notes: values.notes || null,
+        description: values.notes || null,
       };
 
       if (isEdit) {
@@ -67,6 +69,7 @@ export function InventoryProposalForm({
           data: proposalData,
         });
       }
+
       onSuccess();
     } catch (e) {
       console.error(e);
@@ -80,24 +83,27 @@ export function InventoryProposalForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <NeumorphicInput
         label="Nombre del Ítem"
-        placeholder="Ej: Carbón, Botiquín, Pack de Agua"
-        error={errors.title?.message as string}
+        placeholder="Ej: Carbón, Carpa, Heladera"
+        error={errors.title?.message?.toString()}
         required
         {...register("title", { required: "El título es obligatorio" })}
       />
+
       <NeumorphicInput
-        label="Categoría"
         type="select"
+        label="Categoría"
+        required
+        {...register("category")}
         options={[
           { label: "General", value: "general" },
-          { label: "Electrónica", value: "electronica" },
           { label: "Salud / Farmacia", value: "salud" },
           { label: "Comida / Bebida", value: "comida" },
-          { label: "Documentación", value: "documentacion" },
           { label: "Ropa / Equipo", value: "equipo" },
+          { label: "Electrónica", value: "electronica" },
+          { label: "Documentación", value: "documentacion" },
         ]}
-        {...register("category")}
       />
+
       <div className="grid grid-cols-2 gap-4">
         <NeumorphicInput
           label="Cantidad"
@@ -106,24 +112,35 @@ export function InventoryProposalForm({
           {...register("quantity", { min: 1 })}
         />
         <NeumorphicInput
-          label="Costo Estimado"
+          label="Prepuesto Estimado"
           type="number"
           placeholder="0.00"
           {...register("priceEstimate")}
         />
       </div>
+
       <NeumorphicInput
         label="Notas adicionales"
         type="textarea"
-        placeholder="Ej: Traer al menos 2 bolsas"
+        placeholder="Ej: Tenemos que comprar 2 bolsas de 3kg"
         {...register("notes")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-      <NeumorphicButton type="submit" variant="primary" className="mt-6" disabled={isSubmitting}>
-        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Ítem"}
-      </NeumorphicButton>
+      <div className="flex gap-4 mt-6">
+        <NeumorphicButton type="button" variant="secondary" onClick={onCancel} className="flex-1">
+          Cancelar
+        </NeumorphicButton>
+        <NeumorphicButton
+          type="submit"
+          variant="primary"
+          className="flex-1"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Ítem"}
+        </NeumorphicButton>
+      </div>
     </form>
   );
 }

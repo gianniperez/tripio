@@ -1,8 +1,6 @@
 "use client";
 
-import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
 import { CreateTripForm } from "../CreateTripForm";
-import { Icon } from "@/components/ui/Icon";
 import type { CreateTripModalProps } from "./CreateTripModal.types";
 import { Modal } from "@/components/ui/dialog/Modal";
 
@@ -17,7 +15,8 @@ export function CreateTripModal({ isOpen, onClose }: CreateTripModalProps) {
       description="Completa los datos de tu viaje."
     >
       <CreateTripForm
-        onSuccess={() => {
+        onSuccess={(tripId?: string) => {
+          console.log("Trip created:", tripId);
           onClose();
           window.location.reload();
         }}

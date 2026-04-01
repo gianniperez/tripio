@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
@@ -39,7 +39,7 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -50,8 +50,8 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
     },
   });
 
-  const splitType = watch("splitType");
-  const baseAmount = watch("amount") || 0;
+  const splitType = useWatch({ control, name: "splitType" });
+  const baseAmount = useWatch({ control, name: "amount" }) || 0;
 
   // For custom split, we store { [userId]: amount }
   const [customSplit, setCustomSplit] = useState<Record<string, number>>({});

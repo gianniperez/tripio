@@ -25,4 +25,4 @@ const nextConfig: NextConfig = {
   turbopack: {},
 };
 
-export default nextConfig; // withPWA(nextConfig);
+export default withPWA(nextConfig);

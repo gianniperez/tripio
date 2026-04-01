@@ -1,3 +1,1 @@
-export interface EmptyStateProps {
-  // Props here
-}
+export type EmptyStateProps = Record<string, unknown>;
