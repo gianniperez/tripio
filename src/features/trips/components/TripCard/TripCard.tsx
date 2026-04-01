@@ -37,7 +37,13 @@ export function TripCard({ trip }: TripCardProps) {
         {/* Cover Image Placeholder or Real */}
         <div className="h-48 bg-secondary/25 flex items-center justify-center relative overflow-hidden">
           {trip.coverImage ? (
-            <Image src={trip.coverImage} alt={trip.name} fill className="object-cover" />
+            <Image
+              src={trip.coverImage}
+              alt={trip.name}
+              fill
+              loading="eager"
+              className="object-cover"
+            />
           ) : (
             <Icon name="landscape" size={48} className="text-secondary/60" />
           )}

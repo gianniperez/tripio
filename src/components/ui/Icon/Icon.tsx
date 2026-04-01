@@ -27,9 +27,11 @@ export function Icon({
       )}
       style={{
         fontVariationSettings: variationSettings,
+        fontFeatureSettings: "'liga' 1",
         fontSize: size,
         width: size,
         height: "auto",
+        fontFamily: rounded ? "'Material Symbols Rounded'" : "'Material Symbols Outlined'",
       }}
       aria-hidden="true"
     >

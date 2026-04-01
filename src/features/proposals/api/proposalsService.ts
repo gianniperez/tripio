@@ -41,7 +41,7 @@ export const proposalsService = {
     const promises = Object.entries(collectionsMap).map(async ([type, collName]) => {
       const collRef = collection(db, `${TRIPS_COLLECTION}/${tripId}/${collName}`);
       const snapshot = await getDocs(collRef);
-      console.log(`[SERVICE_DEBUG] fetched ${snapshot.docs.length} docs from ${collName}`);
+
       return snapshot.docs.map((doc) => {
         const data = doc.data();
         const title = data.title || data.name || "Sin Título";
@@ -62,7 +62,6 @@ export const proposalsService = {
 
     const results = await Promise.all(promises);
     const flattened = results.flat();
-    console.log(`[SERVICE_DEBUG] flattened proposals total: ${flattened.length}`);
 
     // Sort desc by createdAt
     return flattened.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());

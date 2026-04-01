@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import type { BudgetProgressBarProps } from "./BudgetProgressBar.types";
-import { Icon } from "../ui/Icon";
-import { NeumorphicButton } from "../neumorphic/NeumorphicButton";
+import { Icon } from "@/components/ui/Icon";
+import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 
 export function BudgetProgressBar({
   currentAmount,
