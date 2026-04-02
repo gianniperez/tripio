@@ -72,9 +72,10 @@ export function ForgotPasswordForm() {
           <Image
             src="/isologo.png"
             alt="Tripio Logo"
-            width={60}
-            height={60}
-            className="drop-shadow-sm w-auto h-auto"
+            width={50}
+            height={50}
+            className="drop-shadow-sm"
+            style={{ width: "auto", height: "auto" }}
           />
         </div>
         <div className="text-center mb-8">

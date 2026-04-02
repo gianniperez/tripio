@@ -10,14 +10,12 @@ interface InventoryProposalFormProps {
   tripId: string;
   initialData?: UnifiedProposal;
   onSuccess: () => void;
-  onCancel: () => void;
 }
 
 export function InventoryProposalForm({
   tripId,
   initialData,
   onSuccess,
-  onCancel,
 }: InventoryProposalFormProps) {
   const { currentUser } = useAuthStore();
   const { mutateAsync: createProposal } = useCreateProposal(tripId);
@@ -37,7 +35,7 @@ export function InventoryProposalForm({
       title: initialData?.title || "",
       category: initialData?.rawData?.category || "general",
       quantity: initialData?.rawData?.quantity || "1",
-      priceEstimate: initialData?.rawData?.priceEstimate || "",
+      estimatedCost: initialData?.estimatedCost || "",
       notes: initialData?.description || "",
     },
   });
@@ -52,7 +50,7 @@ export function InventoryProposalForm({
         title: values.title,
         category: values.category || "general",
         quantity: Number(values.quantity) || 1,
-        priceEstimate: values.priceEstimate ? Number(values.priceEstimate) : null,
+        estimatedCost: values.estimatedCost ? Number(values.estimatedCost) : null,
         description: values.notes || null,
       };
 
@@ -115,7 +113,7 @@ export function InventoryProposalForm({
           label="Prepuesto Estimado"
           type="number"
           placeholder="0.00"
-          {...register("priceEstimate")}
+          {...register("estimatedCost")}
         />
       </div>
 
@@ -128,19 +126,9 @@ export function InventoryProposalForm({
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
 
-      <div className="flex gap-4 mt-6">
-        <NeumorphicButton type="button" variant="secondary" onClick={onCancel} className="flex-1">
-          Cancelar
-        </NeumorphicButton>
-        <NeumorphicButton
-          type="submit"
-          variant="primary"
-          className="flex-1"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Ítem"}
-        </NeumorphicButton>
-      </div>
+      <NeumorphicButton type="submit" variant="primary" className="flex-1" disabled={isSubmitting}>
+        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Sugerir Ítem"}
+      </NeumorphicButton>
     </form>
   );
 }

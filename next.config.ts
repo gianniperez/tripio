@@ -23,6 +23,17 @@ const nextConfig: NextConfig = {
     "127.0.0.1",
   ],
   turbopack: {},
+  headers: async () => [
+    {
+      source: "/(.*)",
+      headers: [
+        {
+          key: "Cross-Origin-Opener-Policy",
+          value: "same-origin-allow-popups",
+        },
+      ],
+    },
+  ],
 };
 
 export default withPWA(nextConfig);

@@ -26,9 +26,12 @@ export function ProposalsView({ tripId }: { tripId: string }) {
   const { mutate: voteProposal } = useVoteProposal(tripId);
   const { mutate: deleteProposal, isPending: isDeleting } = useDeleteProposal(tripId);
   const { mutate: confirmProposal, isPending: isConfirming } = useConfirmProposal(tripId);
-  
+
   const { currentUser } = useAuthStore();
-  const { data: currentParticipant, isLoading: isLoadingParticipant } = useParticipant(tripId, currentUser?.uid || "");
+  const { data: currentParticipant, isLoading: isLoadingParticipant } = useParticipant(
+    tripId,
+    currentUser?.uid || ""
+  );
   const [activeTab, setActiveTab] = useState("all");
 
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -174,6 +177,7 @@ export function ProposalsView({ tripId }: { tripId: string }) {
       <div className="px-4 flex-1">
         <ProposalList
           proposals={filteredProposals}
+          tripId={tripId}
           currentUserUid={currentUser?.uid || ""}
           canEdit={canEdit}
           canConfirm={canConfirm}
@@ -195,7 +199,11 @@ export function ProposalsView({ tripId }: { tripId: string }) {
         isOpen={isFormOpen}
         onClose={handleCloseForm}
         title={`${proposalToEdit ? "Editar" : "Crear"} Propuesta de ${TABS.find((t) => t.id === formType)?.label}`}
-        description={proposalToEdit ? "Modifica los datos de la propuesta." : "Completa los datos para crear la propuesta."}
+        description={
+          proposalToEdit
+            ? "Modifica los datos de la propuesta."
+            : "Completa los datos para crear la propuesta."
+        }
       >
         <div className="p-4">
           {formType === "activity" && (
@@ -203,7 +211,6 @@ export function ProposalsView({ tripId }: { tripId: string }) {
               tripId={tripId}
               initialData={proposalToEdit}
               onSuccess={handleCloseForm}
-              onCancel={handleCloseForm}
             />
           )}
           {formType === "accommodation" && (
@@ -211,7 +218,6 @@ export function ProposalsView({ tripId }: { tripId: string }) {
               tripId={tripId}
               initialData={proposalToEdit}
               onSuccess={handleCloseForm}
-              onCancel={handleCloseForm}
             />
           )}
           {formType === "transport" && (
@@ -219,7 +225,6 @@ export function ProposalsView({ tripId }: { tripId: string }) {
               tripId={tripId}
               initialData={proposalToEdit}
               onSuccess={handleCloseForm}
-              onCancel={handleCloseForm}
             />
           )}
           {formType === "inventory" && (
@@ -227,7 +232,6 @@ export function ProposalsView({ tripId }: { tripId: string }) {
               tripId={tripId}
               initialData={proposalToEdit}
               onSuccess={handleCloseForm}
-              onCancel={handleCloseForm}
             />
           )}
         </div>
@@ -245,8 +249,8 @@ export function ProposalsView({ tripId }: { tripId: string }) {
         isLoading={isDeleting}
       />
 
-       {/* Confirm To Logistics/Timeline confirmation */}
-       <ConfirmDialog
+      {/* Confirm To Logistics/Timeline confirmation */}
+      <ConfirmDialog
         isOpen={isConfirmDialogOpen}
         onClose={() => setIsConfirmDialogOpen(false)}
         onConfirm={onConfirmSubmit}
@@ -259,5 +263,3 @@ export function ProposalsView({ tripId }: { tripId: string }) {
     </div>
   );
 }
-
-

@@ -86,9 +86,10 @@ export function RegisterForm() {
           <Image
             src="/isologo.png"
             alt="Tripio Logo"
-            width={60}
-            height={60}
-            className="drop-shadow-sm w-auto h-auto"
+            width={50}
+            height={50}
+            className="drop-shadow-sm"
+            style={{ width: "auto", height: "auto" }}
           />
           <h1 className="text-4xl font-black text-primary tracking-tighter">tripio</h1>
         </div>

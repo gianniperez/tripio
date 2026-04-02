@@ -2,6 +2,7 @@ import type { UnifiedProposal } from "@/features/proposals/api/proposalsService"
 
 export interface ProposalCardProps {
   proposal: UnifiedProposal;
+  tripId: string;
   currentUserUid: string;
   canEdit: boolean;
   canConfirm: boolean;

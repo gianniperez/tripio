@@ -23,6 +23,7 @@ export interface UnifiedProposal {
   createdAt: Date;
   updatedAt: Date | null;
   votes: Record<string, string>;
+  estimatedCost: number | null;
   rawData: Record<string, unknown>; // Entire original doc
 }
 
@@ -55,6 +56,7 @@ export const proposalsService = {
           createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(),
           updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : null,
           votes: data.votes || {},
+          estimatedCost: data.estimatedCost ?? data.priceEstimate ?? data.costImpact ?? null,
           rawData: data,
         } as UnifiedProposal;
       });

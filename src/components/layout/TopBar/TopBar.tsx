@@ -42,7 +42,7 @@ export const TopBar = () => {
                 alt="Tripio Logo"
                 width={28}
                 height={28}
-                className="w-auto h-auto"
+                style={{ width: "auto", height: "auto" }}
               />
               <h1 className="text-xl font-black text-primary tracking-tight">tripio</h1>
             </Link>
@@ -65,7 +65,8 @@ export const TopBar = () => {
                 alt="Tripio Logo"
                 width={32}
                 height={32}
-                className="rounded-md w-auto h-auto"
+                className="rounded-md"
+                style={{ width: "auto", height: "auto" }}
               />
               <h1 className="text-2xl font-black text-primary tracking-tight">tripio</h1>
             </Link>
@@ -160,7 +161,8 @@ export const TopBar = () => {
                   alt="Tripio Logo"
                   width={32}
                   height={32}
-                  className="rounded-md w-auto h-auto"
+                  className="rounded-md"
+                  style={{ width: "auto", height: "auto" }}
                 />
               </div>
             )}

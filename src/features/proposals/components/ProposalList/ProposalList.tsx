@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 
 export const ProposalList = ({
   proposals,
+  tripId,
   currentUserUid,
   canEdit,
   canConfirm,
@@ -30,6 +31,7 @@ export const ProposalList = ({
         <ProposalCard
           key={proposal.id}
           proposal={proposal}
+          tripId={tripId}
           currentUserUid={currentUserUid}
           canEdit={canEdit}
           canConfirm={canConfirm}

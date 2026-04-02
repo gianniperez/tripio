@@ -72,7 +72,7 @@ export const FloatingActionButton = ({
 
       <div
         className={cn(
-          "fixed right-6 z-105 flex flex-col items-end gap-4 transition-all duration-300",
+          "fixed right-6 bottom-6 z-105 flex flex-col items-end gap-4 transition-all duration-300",
           isSubPage ? "bottom-24" : "bottom-6",
           className
         )}

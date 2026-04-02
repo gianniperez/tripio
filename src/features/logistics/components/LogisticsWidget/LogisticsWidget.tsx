@@ -129,7 +129,7 @@ export function LogisticsWidget({
       const hasProposals = proposals.some((p) => p.type === "inventory");
       return hasProposals
         ? { status: "discussing", text: "En discusión", color: "text-primary-extralight" }
-        : { status: "empty", text: "Sin ítems todavía", color: "text-gray-400" };
+        : { status: "empty", text: "Sin ítems", color: "text-gray-400" };
     }
 
     const unassignedCount = inventory.filter((item) => !item.assignedTo).length;
@@ -153,11 +153,11 @@ export function LogisticsWidget({
   return (
     <div className="w-full bg-white rounded-tripio p-6 shadow-neumorphic border border-gray-100/50 transition-all duration-300 hover:scale-[1.02]">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Hospedaje */}
+        {/* Alojamiento */}
         <Link href={`/trips/${tripId}/logistics?tab=accommodation`} className="block group/item">
           <StatusItem
             icon="hotel"
-            label="Hospedaje"
+            label="Alojamiento/s"
             value={accommodationStatus.text}
             color={accommodationStatus.color}
           />
@@ -167,7 +167,7 @@ export function LogisticsWidget({
         <Link href={`/trips/${tripId}/logistics?tab=transport`} className="block group/item">
           <StatusItem
             icon="directions_car"
-            label="Transporte"
+            label="Transporte/s"
             value={transportStatus.text}
             color={transportStatus.color}
           />
