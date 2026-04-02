@@ -13,7 +13,8 @@ export default async function TripsTripIdSettingsPage({ params }: { params: { tr
     <div>
       <PageHeader
         title="Configuración"
-        description="Administra los detalles, participantes y características de tu viaje."
+        description="Ajustes y miembros del viaje"
+        mainIcon="settings"
       />
 
       <SettingsClient tripId={tripId} />

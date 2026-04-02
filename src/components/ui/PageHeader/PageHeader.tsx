@@ -1,42 +1,21 @@
 import React from "react";
-import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
+import { Icon } from "@/components/ui/Icon";
+import { PageHeaderProps } from "./PageHeader.types";
 
-interface PageHeaderProps {
-  title: string;
-  description?: string;
-  descriptionIcon?: React.ReactNode;
-  actionButton?: {
-    icon: React.ReactNode;
-    onClick: () => void;
-    ariaLabel?: string;
-  };
-}
-
-export const PageHeader = ({
-  title,
-  description,
-  descriptionIcon,
-  actionButton,
-}: PageHeaderProps) => {
+export const PageHeader = ({ title, description, mainIcon }: PageHeaderProps) => {
   return (
-    <div className="flex justify-between items-center backdrop-blur-md top-0 z-20 pt-4">
-      <div>
-        <h1 className="text-2xl font-black text-primary font-nunito">{title}</h1>
-        <div className="flex items-center gap-1 text-sm text-slate-500 font-inter">
-          {descriptionIcon}
-          {description && <p>{description}</p>}
+    <header className="relative top-0 z-20 flex flex-col pt-6 pb-4 px-4 border-b border-gray-100/50 animate-in fade-in slide-in-from-top-4 duration-500">
+      {/* {mainIcon && (
+        <div className="-z-10 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] text-primary/20">
+          <Icon name={mainIcon} size={120} fill />
         </div>
+      )} */}
+      <div className="flex flex-col items-left text-left">
+        <h1 className="text-3xl font-black text-primary leading-none flex items-left gap-2">
+          {title}
+        </h1>
+        {description && <p className="text-sm font-medium text-main mt-1">{description}</p>}
       </div>
-      {actionButton && (
-        <NeumorphicButton
-          variant="primary"
-          onClick={actionButton.onClick}
-          className="rounded-full w-12 h-12 flex items-center justify-center p-0 shrink-0"
-          aria-label={actionButton.ariaLabel || "Acción"}
-        >
-          {actionButton.icon}
-        </NeumorphicButton>
-      )}
-    </div>
+    </header>
   );
 };

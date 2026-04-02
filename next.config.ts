@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
     "127.0.0.1",
   ],
   turbopack: {},
+  experimental: {
+    optimizePackageImports: ["date-fns", "lucide-react"],
+  },
   headers: async () => [
     {
       source: "/(.*)",

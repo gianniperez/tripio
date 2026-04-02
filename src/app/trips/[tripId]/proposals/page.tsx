@@ -18,7 +18,8 @@ export default async function TripsTripIdProposalsPage({ params }: ProposalsPage
     <div>
       <PageHeader
         title="Propuestas"
-        description="Aquí puedes ver y votar las propuestas de actividades y lugares para tu viaje."
+        description="Vota las actividades y lugares sugeridos"
+        mainIcon="lightbulb"
       />
       <ProposalsView tripId={tripId} />
     </div>

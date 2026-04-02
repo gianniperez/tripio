@@ -29,7 +29,7 @@ export function DecisionHubWidget({ proposals, tripId }: DecisionHubWidgetProps)
       href={`/trips/${tripId}/proposals`}
       className="block w-full transition-all duration-300 hover:scale-[1.02] outline-none"
     >
-      <div className="bg-primary rounded-[32px] p-6 sm:p-8 shadow-cream relative overflow-hidden group">
+      <div className="bg-primary rounded-[32px] p-5 sm:p-6 shadow-cream relative overflow-hidden group">
         {/* Header */}
         <div className="mb-6 relative z-10">
           <h2 className="text-white text-lg font-display font-bold leading-tight">
@@ -41,7 +41,7 @@ export function DecisionHubWidget({ proposals, tripId }: DecisionHubWidgetProps)
         </div>
 
         {/* Grid de Contadores */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 relative z-10">
+        <div className="grid grid-cols-4 gap-2 sm:gap-4 relative z-10">
           <CounterBox count={counts.activity} label="ACTIVIDADES" />
           <CounterBox count={counts.accommodation} label="ALOJAMIENTOS" />
           <CounterBox count={counts.transport} label="TRANSPORTES" />
@@ -56,7 +56,7 @@ function CounterBox({ count, label }: { count: number; label: string }) {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 flex flex-col items-center justify-center border border-white/10 transition-colors group-hover:bg-white/20">
       <span className="text-white font-display font-black leading-none mb-1">{count}</span>
-      <span className="text-white/60 text-[10px] font-bold tracking-widest uppercase text-center">
+      <span className="text-white/60 text-[8px] font-bold tracking-wider uppercase text-center">
         {label}
       </span>
     </div>

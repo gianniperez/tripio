@@ -12,9 +12,9 @@ interface Props {
 
 export default async function TripsTripIdLogisticsPage({ params }: Props) {
   const { tripId } = await params;
-  
+
   return (
-    <div className="min-h-screen bg-background p-4 pt-12">
+    <div>
       <LogisticsClient tripId={tripId} />
     </div>
   );

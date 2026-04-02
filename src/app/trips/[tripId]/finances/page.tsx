@@ -10,8 +10,12 @@ export const metadata: Metadata = {
 export default async function TripsTripIdFinancesPage({ params }: { params: { tripId: string } }) {
   const { tripId } = await params;
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <PageHeader title="Finanzas" description="Administra los gastos y deudas del viaje." />
+    <div className="max-w-3xl mx-auto">
+      <PageHeader
+        title="Finanzas"
+        description="Gestiona tu presupuesto, gastos y deudas"
+        mainIcon="payments"
+      />
       <FinancesView tripId={tripId} />
     </div>
   );

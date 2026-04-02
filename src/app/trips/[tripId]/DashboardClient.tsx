@@ -78,7 +78,7 @@ export function DashboardClient({ tripId }: { tripId: string }) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6 pb-12 mt-4 sm:mt-8 px-4 sm:px-0">
+    <div className="w-full max-w-4xl mx-auto space-y-4 pb-12">
       {/* Widget interactivo principal */}
       <TripStatusWidget trip={trip} />
 

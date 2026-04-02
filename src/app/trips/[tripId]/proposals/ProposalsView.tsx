@@ -165,7 +165,7 @@ export function ProposalsView({ tripId }: { tripId: string }) {
 
   return (
     <div className="flex flex-col h-full pb-24">
-      <div className="px-4 py-3 sticky top-0 z-10">
+      <div className="py-3 sticky top-0 z-10">
         <FilterTabBar
           tabs={TABS}
           activeTab={activeTab}
@@ -174,7 +174,7 @@ export function ProposalsView({ tripId }: { tripId: string }) {
         />
       </div>
 
-      <div className="px-4 flex-1">
+      <div className="flex-1">
         <ProposalList
           proposals={filteredProposals}
           tripId={tripId}

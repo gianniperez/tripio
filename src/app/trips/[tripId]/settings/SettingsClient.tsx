@@ -3,12 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { FilterTabBar } from "@/components/ui/FilterTabBar";
 import { EditTripForm } from "@/features/trips/components/EditTripForm";
-import { ParticipantsPanel } from "@/features/participants/components/ParticipantsPanel";
+import { ParticipantsPanel } from "@/features/participants/components/ParticipantsPanel/ParticipantsPanel";
 import { tripService } from "@/features/trips/api";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { participantService } from "@/features/participants/api/participantService";
 import { Trip } from "@/types/models";
-import { ParticipantWithUser } from "@/features/participants/components/ParticipantsPanel/ParticipantsPanel.types";
+import { ParticipantWithUser } from "@/features/participants/types";
 import { useRouter } from "next/navigation";
 
 export function SettingsClient({ tripId }: { tripId: string }) {

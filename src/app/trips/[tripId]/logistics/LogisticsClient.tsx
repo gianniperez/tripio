@@ -26,6 +26,7 @@ import { Modal } from "@/components/ui/dialog/Modal/Modal";
 import { AccommodationForm } from "@/features/logistics/components/AccommodationForm/AccommodationForm";
 import { TransportForm } from "@/features/logistics/components/TransportForm/TransportForm";
 import { InventoryForm } from "@/features/logistics/components/InventoryForm/InventoryForm";
+import { PageHeader } from "@/components/ui/PageHeader";
 
 interface LogisticsClientProps {
   tripId: string;
@@ -131,9 +132,8 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
 
   return (
     <div className="flex flex-col h-full pb-24">
-      <div className="mb-4 sticky top-0 z-10 bg-background/90 backdrop-blur pb-2">
-        <FilterTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
+      <PageHeader title="Logística" description="Gestiona la logística del viaje" />
+      <FilterTabBar tabs={TABS} activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="flex-1 space-y-4">
         {activeTab === "accommodation" && (

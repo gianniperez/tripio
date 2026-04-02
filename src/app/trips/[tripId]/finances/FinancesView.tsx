@@ -45,18 +45,15 @@ export function FinancesView({ tripId }: { tripId: string }) {
   };
 
   return (
-    <div className="space-y-8 pb-20">
-      <section>
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Mi Presupuesto</h2>
-        <BudgetProgressBar
-          currentAmount={myTotalCost}
-          limitAmount={limit}
-          daysTotal={activeDaysTotal}
-          currency={trip?.currency || "USD"}
-          onUpdateLimit={handleUpdateLimit}
-          isUpdating={updateParticipantMutation.isPending}
-        />
-      </section>
+    <div className="space-y-6 pb-20">
+      <BudgetProgressBar
+        currentAmount={myTotalCost}
+        limitAmount={limit}
+        daysTotal={activeDaysTotal}
+        currency={trip?.currency || "USD"}
+        onUpdateLimit={handleUpdateLimit}
+        isUpdating={updateParticipantMutation.isPending}
+      />
 
       <section>
         <DebtSummary tripId={tripId} />

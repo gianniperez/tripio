@@ -91,22 +91,19 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
   return (
     <div>
       {/* Header del Itinerario */}
-      <header>
-        <PageHeader title="Itinerario" />
-        {trip && (
-          <p className="text-sm text-slate-400 flex items-center gap-1.5">
-            <Icon name="event" size={14} />
-            {trip.startDate ? (
-              <>
-                {format(
-                  trip.startDate instanceof Date
-                    ? trip.startDate
-                    : (trip.startDate as Timestamp).toDate(),
-                  "d 'de' MMM",
-                  { locale: es }
-                )}
-                {" - "}
-                {trip.endDate
+      <PageHeader
+        title="Itinerario"
+        mainIcon="calendar_month"
+        description={
+          trip?.startDate
+            ? `${format(
+                trip.startDate instanceof Date
+                  ? trip.startDate
+                  : (trip.startDate as Timestamp).toDate(),
+                "d 'de' MMM",
+                { locale: es }
+              )} - ${
+                trip.endDate
                   ? format(
                       trip.endDate instanceof Date
                         ? trip.endDate
@@ -114,18 +111,15 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
                       "d 'de' MMM, yyyy",
                       { locale: es }
                     )
-                  : "N/D"}
-              </>
-            ) : (
-              "Fechas no definidas"
-            )}
-          </p>
-        )}
-      </header>
+                  : "N/D"
+              }`
+            : "Fechas no definidas"
+        }
+      />
 
       {/* Selector de Vistas y Contenido condicionado a tener fechas */}
       {!trip?.startDate ? (
-        <div className="mt-8">
+        <div>
           <EmptyState
             title="Aún no hay fechas definidas"
             description="Para visualizar el itinerario y calendario, ve a la configuración del viaje para definir cuándo será."
@@ -138,7 +132,7 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
         </div>
       ) : (
         <>
-          <div className="my-6">
+          <div className="mb-6">
             <FilterTabBar
               tabs={[
                 { id: "timeline", label: "Timeline", icon: "reorder" },
@@ -186,7 +180,6 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
             fetchData();
           }}
         />
-
       </Modal>
     </div>
   );
