@@ -61,3 +61,16 @@ export const formatFirebaseDate = (
     return fallback;
   }
 };
+
+/**
+ * Parsea un string YYYY-MM-DD a un objeto Date que representa
+ * esa fecha a las 00:00:00 en la zona horaria LOCAL del usuario.
+ * Esto evita el desfase de un día al trabajar con UTC.
+ */
+export const parseLocalDate = (dateStr: string | null | undefined): Date | null => {
+  if (!dateStr) return null;
+  // Usar formato ISO con hora local implícita (YYYY-MM-DDTHH:mm:ss)
+  const date = new Date(`${dateStr}T00:00:00`);
+  return isNaN(date.getTime()) ? null : date;
+};
+

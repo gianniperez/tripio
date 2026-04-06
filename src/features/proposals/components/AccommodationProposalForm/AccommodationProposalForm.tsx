@@ -6,6 +6,7 @@ import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Timestamp } from "firebase/firestore";
 import { UnifiedProposal } from "@/features/proposals/api/proposalsService";
+import { parseLocalDate } from "@/utils/date-utils";
 
 interface AccommodationProposalFormProps {
   tripId: string;
@@ -43,7 +44,7 @@ export function AccommodationProposalForm({
           ? initialData.rawData.checkOut.toDate().toISOString().split("T")[0]
           : "",
       estimatedCost: initialData?.estimatedCost || "",
-      notes: initialData?.description || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -56,12 +57,11 @@ export function AccommodationProposalForm({
       const proposalData = {
         title: values.title,
         location: values.location || null,
-        checkIn: values.checkIn ? Timestamp.fromDate(new Date(values.checkIn + "T12:00:00")) : null,
-        checkOut: values.checkOut
-          ? Timestamp.fromDate(new Date(values.checkOut + "T12:00:00"))
-          : null,
+        checkIn: values.checkIn ? Timestamp.fromDate(parseLocalDate(values.checkIn)!) : null,
+        checkOut: values.checkOut ? Timestamp.fromDate(parseLocalDate(values.checkOut)!) : null,
+
         estimatedCost: values.estimatedCost ? Number(values.estimatedCost) : null,
-        notes: values.notes || null,
+        description: values.description || null,
       };
 
       if (isEdit) {
@@ -118,7 +118,7 @@ export function AccommodationProposalForm({
         label="Notas adicionales"
         type="textarea"
         placeholder="Pros, contras, camas disponibles..."
-        {...register("notes")}
+        {...register("description")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

@@ -74,7 +74,7 @@ _Objetivo: Control financiero proyectado según duración del viaje._
   - [x] Configuración de Budget Limit personal.
   - [x] **Split Variable:** Implementar lógica para cargar montos específicos por persona en un gasto.
   - [x] **Simplificación de Deudas (Splitwise style):** Lógica para consolidar pagos entre participantes.
-  - [ ] **Vínculo Bidireccional:** Asociación de gastos con Actividades, Alojamientos, Transportes o Ítems. _(Pospuesto temporalmente hasta finalizar el onboarding logístico)._
+  - [x] **Vínculo Bidireccional:** Asociación de gastos con Actividades, Alojamientos, Transportes o Ítems. _(Pospuesto temporalmente hasta finalizar el onboarding logístico)._
   - [x] Lógica de cálculo del "Total Cost" (incluyendo participación en gastos compartidos).
 
 - [x] **Alertas de Presupuesto:**

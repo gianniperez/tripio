@@ -6,6 +6,7 @@ import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Timestamp } from "firebase/firestore";
 import { UnifiedProposal } from "@/features/proposals/api/proposalsService";
+import { parseLocalDate } from "@/utils/date-utils";
 
 interface TransportProposalFormProps {
   tripId: string;
@@ -44,7 +45,7 @@ export function TransportProposalForm({
           : "",
       estimatedCost: initialData?.estimatedCost || "",
       capacity: initialData?.rawData?.capacity || "4",
-      notes: initialData?.description || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -56,10 +57,9 @@ export function TransportProposalForm({
     try {
       const proposalData = {
         title: values.title,
-        departure: values.departure
-          ? Timestamp.fromDate(new Date(values.departure + "T12:00:00"))
-          : null,
-        arrival: values.arrival ? Timestamp.fromDate(new Date(values.arrival + "T12:00:00")) : null,
+        departure: values.departure ? Timestamp.fromDate(parseLocalDate(values.departure)!) : null,
+        arrival: values.arrival ? Timestamp.fromDate(parseLocalDate(values.arrival)!) : null,
+
         estimatedCost: values.estimatedCost ? Number(values.estimatedCost) : null,
         capacity: Number(values.capacity) || 4,
         description: values.notes || null,
@@ -117,7 +117,7 @@ export function TransportProposalForm({
         label="Notas adicionales"
         type="textarea"
         placeholder="Pros, contras, equipaje..."
-        {...register("notes")}
+        {...register("description")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Trip, Event, AccommodationConfirmed, TransportConfirmed } from "@/types/models";
+import { parseLocalDate } from "@/utils/date-utils";
 
 // Tipos e interfaces globales para la feature trips
 
@@ -35,20 +36,22 @@ export const createTripSchema = z
     name: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     description: z.string().optional(),
     startDate: z
-      .unknown()
-      .optional()
-      .transform((v: unknown) => {
+      .string()
+      .or(z.date())
+      .nullable()
+      .transform((v) => {
         if (!v || v === "") return null;
-        const date = new Date(v as string | number | Date);
-        return isNaN(date.getTime()) ? null : date;
+        if (v instanceof Date) return v;
+        return parseLocalDate(v);
       }),
     endDate: z
-      .unknown()
-      .optional()
-      .transform((v: unknown) => {
+      .string()
+      .or(z.date())
+      .nullable()
+      .transform((v) => {
         if (!v || v === "") return null;
-        const date = new Date(v as string | number | Date);
-        return isNaN(date.getTime()) ? null : date;
+        if (v instanceof Date) return v;
+        return parseLocalDate(v);
       }),
     dailyBudget: z.number().min(0, "El presupuesto debe ser positivo").optional(),
     currency: z.string().min(1, "La moneda es requerida"),
@@ -83,7 +86,15 @@ export const createActivitySchema = z.object({
   title: z.string().min(3, "El título debe tener al menos 3 caracteres"),
   location: z.string().optional().nullable(),
   costImpact: z.number().min(0).optional().nullable(),
-  date: z.date().optional().nullable(),
+  date: z
+    .string()
+    .or(z.date())
+    .nullable()
+    .transform((v) => {
+      if (!v || v === "") return null;
+      if (v instanceof Date) return v;
+      return parseLocalDate(v);
+    }),
   startTime: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   requiresVoting: z.boolean(),

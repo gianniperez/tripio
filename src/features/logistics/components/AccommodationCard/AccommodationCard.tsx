@@ -1,11 +1,13 @@
 import { AccommodationConfirmed } from "@/types/models";
 import { NeumorphicCard } from "@/components/neumorphic/NeumorphicCard";
-import { Icon } from "@/components/ui/Icon";
 import { formatFirebaseDate } from "@/utils/date-utils";
-import React from "react";
+import { useTripCurrency } from "@/features/trips/hooks/useTripCurrency";
+import { NeumorphicActionMenu } from "@/components/neumorphic/NeumorphicActionMenu";
+import { Icon } from "@/components/ui/Icon";
 
 interface AccommodationCardProps {
   accommodation: AccommodationConfirmed;
+  tripId: string;
   onEdit?: (accommodation: AccommodationConfirmed) => void;
   onDelete?: (accommodation: AccommodationConfirmed) => void;
   canEdit?: boolean;
@@ -13,76 +15,77 @@ interface AccommodationCardProps {
 
 export const AccommodationCard = ({
   accommodation,
+  tripId,
   onEdit,
   onDelete,
   canEdit = false,
 }: AccommodationCardProps) => {
+  const currency = useTripCurrency(tripId);
+
   return (
-    <NeumorphicCard className="p-4 relative">
+    <NeumorphicCard>
       <div className="flex items-start justify-between gap-4">
+        <div className="w-12 h-12 rounded-full bg-primary-extralight text-white flex items-center justify-center shrink-0">
+          <Icon name="hotel" fill />
+        </div>
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Icon name="hotel" size={18} fill />
+          {accommodation.location && (
+            <div className="flex items-center gap-0.5 text-xs text-gray-400 -mb-1">
+              <Icon name="location_on" size={14} className="text-gray-400" />
+              <span className="line-clamp-1">{accommodation.location}</span>
             </div>
-            <h3 className="font-bold text-text-main line-clamp-1">{accommodation.title}</h3>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <p className="text-xs text-slate-500 uppercase font-semibold">Check-in</p>
-              <p className="text-sm font-medium text-text-main">
-                {formatFirebaseDate(accommodation.checkIn)}
-              </p>
+          )}
+          <h3 className="font-bold text-main">{accommodation.title}</h3>
+          {accommodation.priceEstimate && (
+            <div className="flex items-center gap-1 text-xs font-bold text-secondary">
+              <span>
+                {currency} {accommodation.priceEstimate}
+              </span>
             </div>
-            <div>
-              <p className="text-xs text-slate-500 uppercase font-semibold">Check-out</p>
-              <p className="text-sm font-medium text-text-main">
-                {formatFirebaseDate(accommodation.checkOut)}
-              </p>
-            </div>
-          </div>
-
-          {accommodation.locationUrl && (
-            <a
-              href={accommodation.locationUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
-            >
-              <Icon name="location_on" size={14} />
-              Ver en Google Maps
-            </a>
           )}
         </div>
 
         {canEdit && (
-          <div className="flex items-center gap-1 bg-surface-main/50 rounded-full p-1 border border-border-main shadow-inner">
-            {onEdit && (
-              <button
-                onClick={() => onEdit(accommodation)}
-                className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-primary transition-colors hover:bg-white rounded-full"
-                title="Editar"
-              >
-                <Icon name="edit" size={16} />
-              </button>
-            )}
-            {onDelete && (
-              <button
-                onClick={() => onDelete(accommodation)}
-                className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-red-500 transition-colors hover:bg-white rounded-full"
-                title="Eliminar"
-              >
-                <Icon name="delete" size={16} />
-              </button>
-            )}
+          <NeumorphicActionMenu
+            options={[
+              {
+                label: "Editar",
+                icon: "edit",
+                onClick: () => onEdit?.(accommodation),
+              },
+              {
+                label: "Eliminar",
+                icon: "delete",
+                onClick: () => onDelete?.(accommodation),
+              },
+            ]}
+          />
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mt-4 px-1">
+        {accommodation.checkIn && (
+          <div>
+            <p className="text-xs font-bold text-gray-800 block uppercase">Check-in</p>
+            <p className="text-xs font-medium text-main">
+              {formatFirebaseDate(accommodation.checkIn)}
+            </p>
+          </div>
+        )}
+        {accommodation.checkOut && (
+          <div>
+            <p className="text-xs font-bold text-gray-800 block uppercase">Check-out</p>
+            <p className="text-xs font-medium text-main">
+              {formatFirebaseDate(accommodation.checkOut)}
+            </p>
           </div>
         )}
       </div>
 
       {accommodation.description && (
-        <div className="mt-4 p-3 bg-white/40 rounded-xl text-sm text-slate-600 border border-border-main/50">
-          {accommodation.description}
+        <div className="flex gap-2 bg-white mt-4 px-1">
+          <span className="text-xs font-bold text-gray-800 block">Notas:</span>
+          <p className="text-xs text-gray-600">{accommodation.description}</p>
         </div>
       )}
     </NeumorphicCard>

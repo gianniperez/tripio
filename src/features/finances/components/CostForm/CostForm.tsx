@@ -11,6 +11,10 @@ import { useTrip } from "@/features/trips/hooks/useTrip";
 import { useAddCost } from "@/features/finances/hooks/useCosts";
 import type { CostFormProps } from "./CostForm.types";
 import { CategoryCost } from "@/types/models";
+import { Icon } from "@/components/ui/Icon";
+import { EntitySelectorModal } from "../EntitySelectorModal/EntitySelectorModal";
+import { LinkableEntity } from "../../hooks/useLinkableEntities";
+
 
 const schema = z.object({
   title: z.string().min(1, "El título es requerido"),
@@ -40,6 +44,7 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -55,6 +60,19 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
 
   // For custom split, we store { [userId]: amount }
   const [customSplit, setCustomSplit] = useState<Record<string, number>>({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState<LinkableEntity | null>(null);
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'activity': return 'local_activity';
+      case 'accommodation': return 'hotel';
+      case 'transport': return 'directions_car';
+      case 'inventory': return 'inventory_2';
+      default: return 'help';
+    }
+  };
+
 
   const handleCustomSplitChange = (uid: string, value: string) => {
     setCustomSplit((prev) => ({
@@ -103,7 +121,8 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
         category: data.category as CategoryCost,
         paidBy: { [currentUser.uid]: data.amount }, // App assumes current user paid 100% for MVP
         splitTo: finalSplit,
-        linkedTo: null, // For MVP simplified directly, but could add combo box
+        linkedTo: selectedEntity?.id || null,
+        linkedType: selectedEntity?.type || null,
       },
       {
         onSuccess: () => {
@@ -160,6 +179,55 @@ export function CostForm({ tripId, onSuccess, onCancel }: CostFormProps) {
           </select>
         </div>
       </div>
+
+      {/* Vínculo (Opcional) */}
+      <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors
+                            ${selectedEntity ? 'bg-brand-500 text-white' : 'bg-gray-200 text-gray-500'}`}>
+              <Icon name={selectedEntity ? getIcon(selectedEntity.type) : "link"} size={20} fill={!!selectedEntity} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Vínculo (Opcional)</p>
+              <p className="text-sm font-bold text-gray-700 dark:text-gray-200 truncate max-w-[150px] md:max-w-[200px]">
+                {selectedEntity ? selectedEntity.title : "Sin actividad vinculada"}
+              </p>
+            </div>
+          </div>
+          
+          <NeumorphicButton 
+            variant="secondary" 
+            type="button" 
+            className="px-4 py-2 w-auto h-auto text-[10px]"
+            onClick={() => setIsModalOpen(true)}
+          >
+            {selectedEntity ? "Cambiar" : "Vincular"}
+          </NeumorphicButton>
+        </div>
+        
+        {selectedEntity && (
+          <button 
+            type="button"
+            onClick={() => setSelectedEntity(null)}
+            className="mt-2 text-[10px] text-brand-500 font-bold uppercase hover:underline"
+          >
+            Eliminar vínculo
+          </button>
+        )}
+      </div>
+
+      <EntitySelectorModal 
+        tripId={tripId}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSelect={(entity: LinkableEntity) => {
+          setSelectedEntity(entity);
+          if (entity.category) {
+            setValue("category", entity.category as CategoryCost);
+          }
+        }}
+      />
 
       <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800">
         <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">

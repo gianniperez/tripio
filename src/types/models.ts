@@ -63,6 +63,7 @@ export interface Cost {
   paidBy: Record<string, number>; // Record<uid, amount>
   splitTo: Record<string, number>; // Record<uid, amount>
   linkedTo: string | null;
+  linkedType: "activity" | "accommodation" | "transport" | "inventory" | null;
   createdBy: string;
   createdAt: Timestamp | Date;
 }
@@ -127,6 +128,7 @@ export interface Transport {
   arrival: Timestamp | Date;
   isPersonal: boolean;
   priceEstimate: number | null;
+  description: string | null;
 }
 
 
@@ -145,6 +147,7 @@ export interface InventoryItem {
   description: string | null;
   category: "general" | "electronica" | "salud" | "comida" | "documentacion" | "equipo" | "other";
   quantity: number;
+  priceEstimate: number | null;
 }
 
 

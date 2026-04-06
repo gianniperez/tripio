@@ -93,13 +93,13 @@ export function EditTripForm({ trip, userRole, onSuccess, onDelete }: EditTripFo
             label="Fecha de Inicio"
             type="date"
             error={errors.startDate?.message?.toString()}
-            {...register("startDate", { valueAsDate: true })}
+            {...register("startDate")}
           />
           <NeumorphicInput
             label="Fecha de Fin"
             type="date"
             error={errors.endDate?.message?.toString()}
-            {...register("endDate", { valueAsDate: true })}
+            {...register("endDate")}
           />
         </div>
 

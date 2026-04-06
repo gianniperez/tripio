@@ -110,12 +110,6 @@ export const ProposalCard = ({
                 <span className="text-xs text-gray-400">({rawData.capacity} personas)</span>
               )}
             </div>
-            {/* {rawData.location && (
-              <div className="flex items-center gap-0.5 text-xs text-gray-400 mb-1">
-                <Icon name="location_on" size={14} className="text-gray-400" />
-                <span className="line-clamp-1">{rawData.location}</span>
-              </div>
-            )} */}
             {proposal.estimatedCost && (
               <div className="flex items-center gap-1 text-xs font-bold text-secondary">
                 <span>
@@ -162,7 +156,7 @@ export const ProposalCard = ({
       </div>
 
       {rawData.location && (
-        <div className="flex items-center gap-0.5 text-xs text-gray-400 mb-1">
+        <div className="flex items-center gap-0.5 text-xs text-gray-400 mb-1 px-2">
           <Icon name="location_on" size={14} className="text-gray-400" />
           <span className="line-clamp-1">{rawData.location}</span>
         </div>
@@ -182,26 +176,28 @@ export const ProposalCard = ({
           </>
         )}
 
-        {proposal.type === "accommodation" && (
-          <>
-            {rawData.checkIn && (
-              <div className="flex flex-col p-2 bg-gray-50 dark:bg-gray-800/20 rounded-lg mb-2">
-                <span className="text-[9px] font-bold text-gray-400 uppercase">Check-in:</span>
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
-                  {formatFirebaseDate(rawData.checkIn)}
-                </span>
-              </div>
-            )}
-            {rawData.checkOut && (
-              <div className="flex flex-col p-2 bg-gray-50 dark:bg-gray-800/20 rounded-lg">
-                <span className="text-[9px] font-bold text-gray-400 uppercase">Check-out:</span>
-                <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
-                  {formatFirebaseDate(rawData.checkOut)}
-                </span>
-              </div>
-            )}
-          </>
-        )}
+        <div className="grid grid-cols-2 gap-4 mt-4 px-2">
+          {proposal.type === "accommodation" && (
+            <>
+              {rawData.checkIn && (
+                <div>
+                  <p className="text-xs font-bold text-gray-800 block uppercase">Check-in</p>
+                  <p className="text-xs font-medium text-main">
+                    {formatFirebaseDate(rawData.checkIn)}
+                  </p>
+                </div>
+              )}
+              {rawData.checkOut && (
+                <div>
+                  <p className="text-xs font-bold text-gray-800 block uppercase">Check-out</p>
+                  <p className="text-xs font-medium text-main">
+                    {formatFirebaseDate(rawData.checkOut)}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         {proposal.type === "transport" && (
           <>

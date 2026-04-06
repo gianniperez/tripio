@@ -36,7 +36,7 @@ export function InventoryProposalForm({
       category: initialData?.rawData?.category || "general",
       quantity: initialData?.rawData?.quantity || "1",
       estimatedCost: initialData?.estimatedCost || "",
-      notes: initialData?.description || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -121,7 +121,7 @@ export function InventoryProposalForm({
         label="Notas adicionales"
         type="textarea"
         placeholder="Ej: Tenemos que comprar 2 bolsas de 3kg"
-        {...register("notes")}
+        {...register("description")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

@@ -7,7 +7,7 @@ export const accommodationSchema = z.object({
   checkIn: z.string().min(1, "Campo requerido"),
   checkOut: z.string().min(1, "Campo requerido"),
   priceEstimate: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   requiresVoting: z.boolean().default(false),
 });
 
@@ -21,7 +21,7 @@ export const transportSchema = z.object({
   isPersonal: z.boolean().default(false),
   capacity: z.string().optional().nullable(),
   priceEstimate: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   requiresVoting: z.boolean().default(false),
 });
 
@@ -33,7 +33,7 @@ export const inventorySchema = z.object({
   category: z.string().default("general"),
   quantity: z.string().min(1, "Mínimo 1").default("1"),
   priceEstimate: z.string().optional().nullable(),
-  notes: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
   requiresVoting: z.boolean().default(false),
 });
 

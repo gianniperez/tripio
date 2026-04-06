@@ -41,6 +41,18 @@ export const logisticsService = {
       );
   },
 
+  async updateAccommodation(
+    tripId: string,
+    id: string,
+    data: Partial<AccommodationConfirmed>
+  ): Promise<void> {
+    const ref = doc(db, `${TRIPS_COLLECTION}/${tripId}/accommodation_confirmed`, id);
+    await updateDoc(ref, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
+  },
+
   async deleteAccommodation(tripId: string, id: string): Promise<void> {
     await deleteDoc(doc(db, `${TRIPS_COLLECTION}/${tripId}/accommodation_confirmed`, id));
   },
@@ -63,6 +75,14 @@ export const logisticsService = {
       .sort(
         (a, b) => ((a.departure as Date)?.getTime() || 0) - ((b.departure as Date)?.getTime() || 0)
       );
+  },
+
+  async updateTransport(tripId: string, id: string, data: Partial<TransportConfirmed>): Promise<void> {
+    const ref = doc(db, `${TRIPS_COLLECTION}/${tripId}/transport_confirmed`, id);
+    await updateDoc(ref, {
+      ...data,
+      updatedAt: serverTimestamp(),
+    });
   },
 
   async updateTransportPassengers(
@@ -99,7 +119,7 @@ export const logisticsService = {
       );
   },
 
-  async updateInventoryStatus(
+  async updateInventory(
     tripId: string,
     inventoryId: string,
     updates: Partial<InventoryConfirmed>
@@ -113,6 +133,14 @@ export const logisticsService = {
 
   async deleteInventory(tripId: string, id: string): Promise<void> {
     await deleteDoc(doc(db, `${TRIPS_COLLECTION}/${tripId}/inventory_confirmed`, id));
+  },
+
+  async updateInventoryStatus(
+    tripId: string,
+    inventoryId: string,
+    updates: Partial<InventoryConfirmed>
+  ): Promise<void> {
+    return this.updateInventory(tripId, inventoryId, updates);
   },
 
   // CREATION METHODS

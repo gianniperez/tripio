@@ -8,18 +8,27 @@ import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { NeumorphicToggle } from "@/components/neumorphic/NeumorphicToggle";
 import { RequiresVotingSelector } from "@/features/trips/components/RequiresVotingSelector";
 import { transportSchema } from "../../types/logisticsSchemas";
-import { logisticsService } from "../../api/logisticsService";
+import { useCreateTransport, useUpdateTransport } from "../../hooks/useLogistics";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+import { toDate } from "@/utils/date-utils";
+
+import { TransportConfirmed } from "@/types/models";
 
 interface TransportFormProps {
   tripId: string;
+  initialData?: TransportConfirmed;
   onSuccess: () => void;
 }
 
-export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
+export function TransportForm({ tripId, initialData, onSuccess }: TransportFormProps) {
   const { currentUser } = useAuthStore();
+  const { mutateAsync: createTrans } = useCreateTransport(tripId);
+  const { mutateAsync: updateTrans } = useUpdateTransport(tripId);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEdit = !!initialData;
 
   const {
     register,
@@ -31,13 +40,13 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
   } = useForm<any>({
     resolver: zodResolver(transportSchema),
     defaultValues: {
-      title: "",
-      departure: "",
-      arrival: "",
-      isPersonal: false,
-      capacity: "4",
-      priceEstimate: "",
-      notes: "",
+      title: initialData?.title || "",
+      departure: toDate(initialData?.departure)?.toISOString().split("T")[0] || "",
+      arrival: toDate(initialData?.arrival)?.toISOString().split("T")[0] || "",
+      isPersonal: initialData?.capacity ? true : false,
+      capacity: initialData?.capacity?.toString() || "4",
+      priceEstimate: initialData?.priceEstimate?.toString() || "",
+      description: initialData?.description || "",
       requiresVoting: false,
     },
   });
@@ -63,11 +72,15 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
         capacity: data.isPersonal ? Number(data.capacity) : null,
       };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await logisticsService.createTransport(tripId, currentUser.uid, formattedData as any);
+      if (isEdit) {
+        await updateTrans({ id: initialData!.id, data: formattedData as any });
+      } else {
+        await createTrans({ userId: currentUser.uid, data: formattedData as any });
+      }
       onSuccess();
     } catch (err) {
-      console.error("Error creating transport:", err);
-      setError("Error al crear. Intenta de nuevo.");
+      console.error(`Error ${isEdit ? "updating" : "creating"} transport:`, err);
+      setError(`Error al ${isEdit ? "actualizar" : "crear"}. Intenta de nuevo.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -137,8 +150,8 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
         label="Notas adicionales"
         type="textarea"
         placeholder="Cualquier detalle extra..."
-        error={errors.notes?.message as string}
-        {...register("notes")}
+        error={errors.description?.message as string}
+        {...register("description")}
       />
 
       <div className="pt-2">
@@ -163,7 +176,7 @@ export function TransportForm({ tripId, onSuccess }: TransportFormProps) {
         className="flex-1 bg-primary text-white"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Guardando..." : "Crear Transporte"}
+        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Crear Transporte"}
       </NeumorphicButton>
     </form>
   );

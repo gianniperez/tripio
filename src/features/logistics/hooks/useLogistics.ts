@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { logisticsService } from "../api/logisticsService";
-import type { InventoryConfirmed } from "@/types/models";
+import { AccommodationConfirmed, TransportConfirmed, InventoryConfirmed } from "@/types/models";
 
 const ACCOMMODATIONS_KEY = "trip-accommodations-confirmed";
 const TRANSPORTS_KEY = "trip-transports-confirmed";
@@ -14,11 +14,59 @@ export const useAccommodations = (tripId: string) => {
   });
 };
 
+export const useCreateAccommodation = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, data }: { userId: string, data: any }) =>
+      logisticsService.createAccommodation(tripId, userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [ACCOMMODATIONS_KEY, tripId] });
+      queryClient.invalidateQueries({ queryKey: ["itinerary-items", tripId] });
+    },
+  });
+};
+
+export const useUpdateAccommodation = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string, data: Partial<AccommodationConfirmed> }) =>
+      logisticsService.updateAccommodation(tripId, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [ACCOMMODATIONS_KEY, tripId] });
+      queryClient.invalidateQueries({ queryKey: ["itinerary-items", tripId] });
+    },
+  });
+};
+
+export const useCreateTransport = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, data }: { userId: string, data: any }) =>
+      logisticsService.createTransport(tripId, userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [TRANSPORTS_KEY, tripId] });
+      queryClient.invalidateQueries({ queryKey: ["itinerary-items", tripId] });
+    },
+  });
+};
+
 export const useTransports = (tripId: string) => {
   return useQuery({
     queryKey: [TRANSPORTS_KEY, tripId],
     queryFn: () => logisticsService.getTransports(tripId),
     enabled: !!tripId,
+  });
+};
+
+export const useUpdateTransport = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string, data: Partial<TransportConfirmed> }) =>
+      logisticsService.updateTransport(tripId, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [TRANSPORTS_KEY, tripId] });
+      queryClient.invalidateQueries({ queryKey: ["itinerary-items", tripId] });
+    },
   });
 };
 
@@ -33,11 +81,33 @@ export const useUpdateTransportPassengers = (tripId: string) => {
   });
 };
 
+export const useCreateInventory = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, data }: { userId: string, data: any }) =>
+      logisticsService.createInventory(tripId, userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [INVENTORY_KEY, tripId] });
+    },
+  });
+};
+
 export const useInventory = (tripId: string) => {
   return useQuery({
     queryKey: [INVENTORY_KEY, tripId],
     queryFn: () => logisticsService.getInventory(tripId),
     enabled: !!tripId,
+  });
+};
+
+export const useUpdateInventory = (tripId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ inventoryId, updates }: { inventoryId: string, updates: Partial<InventoryConfirmed> }) =>
+      logisticsService.updateInventory(tripId, inventoryId, updates),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [INVENTORY_KEY, tripId] });
+    },
   });
 };
 

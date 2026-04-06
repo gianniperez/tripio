@@ -10,6 +10,7 @@ import { createActivitySchema, type CreateActivityInput } from "../../types";
 import { tripService } from "../../api";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Icon } from "@/components/ui/Icon";
+import { z } from "zod";
 
 interface ActivityFormProps {
   tripId: string;
@@ -27,7 +28,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<CreateActivityInput>({
+  } = useForm<z.input<typeof createActivitySchema>>({
     resolver: zodResolver(createActivitySchema),
     defaultValues: {
       requiresVoting: mode === "proposal",
@@ -41,6 +42,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
   });
 
   const onSubmit = async (data: CreateActivityInput) => {
+
     if (!currentUser) {
       setError("Debes estar autenticado");
       return;
@@ -65,7 +67,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
       <NeumorphicInput
         label="Título de la Actividad"
         placeholder="Ej: Cena en el puerto"
@@ -86,7 +88,7 @@ export function ActivityForm({ tripId, mode = "direct", onSuccess }: ActivityFor
           label="Fecha"
           type="date"
           error={errors.date?.message}
-          {...register("date", { valueAsDate: true })}
+          {...register("date")}
         />
         <NeumorphicInput
           label="Hora"

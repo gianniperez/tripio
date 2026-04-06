@@ -7,18 +7,30 @@ import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { RequiresVotingSelector } from "@/features/trips/components/RequiresVotingSelector";
 import { accommodationSchema } from "../../types/logisticsSchemas";
-import { logisticsService } from "../../api/logisticsService";
+import {
+  useCreateAccommodation,
+  useUpdateAccommodation,
+} from "../../hooks/useLogistics";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+import { toDate } from "@/utils/date-utils";
+
+import { AccommodationConfirmed } from "@/types/models";
 
 interface AccommodationFormProps {
   tripId: string;
+  initialData?: AccommodationConfirmed;
   onSuccess: () => void;
 }
 
-export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps) {
+export function AccommodationForm({ tripId, initialData, onSuccess }: AccommodationFormProps) {
   const { currentUser } = useAuthStore();
+  const { mutateAsync: createAcc } = useCreateAccommodation(tripId);
+  const { mutateAsync: updateAcc } = useUpdateAccommodation(tripId);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEdit = !!initialData;
 
   const {
     register,
@@ -29,12 +41,12 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
   } = useForm<any>({
     resolver: zodResolver(accommodationSchema),
     defaultValues: {
-      title: "",
-      location: "",
-      checkIn: "",
-      checkOut: "",
-      priceEstimate: "",
-      notes: "",
+      title: initialData?.title || "",
+      location: initialData?.location || "",
+      checkIn: toDate(initialData?.checkIn)?.toISOString().split("T")[0] || "",
+      checkOut: toDate(initialData?.checkOut)?.toISOString().split("T")[0] || "",
+      priceEstimate: initialData?.priceEstimate?.toString() || "",
+      description: initialData?.description || "",
       requiresVoting: false,
     },
   });
@@ -57,11 +69,15 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         priceEstimate: data.priceEstimate ? Number(data.priceEstimate) : null,
       };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await logisticsService.createAccommodation(tripId, currentUser.uid, formattedData as any);
+      if (isEdit) {
+        await updateAcc({ id: initialData!.id, data: formattedData as any });
+      } else {
+        await createAcc({ userId: currentUser.uid, data: formattedData as any });
+      }
       onSuccess();
     } catch (err) {
-      console.error("Error creating accommodation:", err);
-      setError("Error al crear. Intenta de nuevo.");
+      console.error(`Error ${isEdit ? "updating" : "creating"} accommodation:`, err);
+      setError(`Error al ${isEdit ? "actualizar" : "crear"}. Intenta de nuevo.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -113,8 +129,8 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         label="Notas adicionales"
         type="textarea"
         placeholder="Pros, contras, camas disponibles..."
-        error={errors.notes?.message?.toString()}
-        {...register("notes")}
+        error={errors.description?.message?.toString()}
+        {...register("description")}
       />
 
       <div className="pt-2">
@@ -139,7 +155,7 @@ export function AccommodationForm({ tripId, onSuccess }: AccommodationFormProps)
         className="flex-1 bg-primary text-white"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Guardando..." : "Crear Alojamiento"}
+        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Crear Alojamiento"}
       </NeumorphicButton>
     </form>
   );

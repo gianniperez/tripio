@@ -12,6 +12,7 @@ import { FilterTabBar } from "@/components/ui/FilterTabBar";
 import { Icon } from "@/components/ui/Icon";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { parseLocalDate } from "@/utils/date-utils";
 import { Timestamp } from "firebase/firestore";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FloatingActionButton } from "@/components/ui/FloatingActionButton/FloatingActionButton";
@@ -59,8 +60,8 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
     // En una fase posterior se usará un Modal con DatePicker
     const dateStr = window.prompt("Ingresa la fecha (YYYY-MM-DD) para: " + activity.title);
     if (dateStr) {
-      const date = new Date(dateStr + "T12:00:00");
-      if (!isNaN(date.getTime())) {
+      const date = parseLocalDate(dateStr);
+      if (date && !isNaN(date.getTime())) {
         try {
           await tripService.updateEventDate(tripId, activity.id, date);
           // Refetch data
@@ -146,6 +147,7 @@ export function ActivitiesClient({ tripId }: ActivitiesClientProps) {
           <main>
             {activeView === "timeline" ? (
               <ItineraryTimeline
+                tripId={tripId}
                 items={items}
                 onItemClick={(item: ItineraryItem) => console.log("Click en item:", item)}
               />

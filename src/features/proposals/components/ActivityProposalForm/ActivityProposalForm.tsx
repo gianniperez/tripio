@@ -6,6 +6,7 @@ import { useCreateProposal, useUpdateProposal } from "@/features/proposals/hooks
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { Timestamp } from "firebase/firestore";
 import { UnifiedProposal } from "@/features/proposals/api/proposalsService";
+import { parseLocalDate } from "@/utils/date-utils";
 
 interface ActivityProposalFormProps {
   tripId: string;
@@ -44,7 +45,7 @@ export function ActivityProposalForm({
           ? initialData.rawData.startTime.toDate().toTimeString().slice(0, 5)
           : "",
       estimatedCost: initialData?.estimatedCost || "",
-      notes: initialData?.description || "",
+      description: initialData?.description || "",
     },
   });
 
@@ -58,7 +59,8 @@ export function ActivityProposalForm({
     setIsSubmitting(true);
     setError(null);
     try {
-      let combinedDate: Date | null = values.date ? new Date(values.date + "T12:00:00") : null;
+      let combinedDate: Date | null = parseLocalDate(values.date);
+
       if (combinedDate && values.startTime) {
         const [hours, minutes] = values.startTime.split(":").map(Number);
         combinedDate = new Date(combinedDate);
@@ -130,7 +132,7 @@ export function ActivityProposalForm({
         label="Notas adicionales"
         type="textarea"
         placeholder="Cualquier detalle extra..."
-        {...register("notes")}
+        {...register("description")}
       />
 
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}

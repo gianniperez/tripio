@@ -7,18 +7,26 @@ import { NeumorphicInput } from "@/components/neumorphic/NeumorphicInput";
 import { NeumorphicButton } from "@/components/neumorphic/NeumorphicButton";
 import { RequiresVotingSelector } from "@/features/trips/components/RequiresVotingSelector";
 import { inventorySchema } from "../../types/logisticsSchemas";
-import { logisticsService } from "../../api/logisticsService";
+import { useCreateInventory, useUpdateInventory } from "../../hooks/useLogistics";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
+
+import { InventoryConfirmed } from "@/types/models";
 
 interface InventoryFormProps {
   tripId: string;
+  initialData?: InventoryConfirmed;
   onSuccess: () => void;
 }
 
-export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
+export function InventoryForm({ tripId, initialData, onSuccess }: InventoryFormProps) {
   const { currentUser } = useAuthStore();
+  const { mutateAsync: createInv } = useCreateInventory(tripId);
+  const { mutateAsync: updateInv } = useUpdateInventory(tripId);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const isEdit = !!initialData;
 
   const {
     register,
@@ -29,11 +37,11 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
   } = useForm<any>({
     resolver: zodResolver(inventorySchema),
     defaultValues: {
-      title: "",
-      category: "general",
-      quantity: "1",
-      priceEstimate: "",
-      notes: "",
+      title: initialData?.title || "",
+      category: initialData?.category || "general",
+      quantity: initialData?.quantity?.toString() || "1",
+      priceEstimate: initialData?.priceEstimate?.toString() || "",
+      description: initialData?.description || "",
       requiresVoting: false,
     },
   });
@@ -49,11 +57,15 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
     setError(null);
 
     try {
-      await logisticsService.createInventory(tripId, currentUser.uid, data);
+      if (isEdit) {
+        await updateInv({ inventoryId: initialData!.id, updates: data });
+      } else {
+        await createInv({ userId: currentUser.uid, data });
+      }
       onSuccess();
     } catch (err) {
-      console.error("Error creating inventory item:", err);
-      setError("Error al crear. Intenta de nuevo.");
+      console.error(`Error ${isEdit ? "updating" : "creating"} inventory item:`, err);
+      setError(`Error al ${isEdit ? "actualizar" : "crear"}. Intenta de nuevo.`);
     } finally {
       setIsSubmitting(false);
     }
@@ -103,7 +115,7 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
         label="Notas adicionales"
         type="textarea"
         placeholder="Ej: Traer al menos 2 bolsas"
-        {...register("notes")}
+        {...register("description")}
       />
 
       <div className="pt-2">
@@ -128,7 +140,7 @@ export function InventoryForm({ tripId, onSuccess }: InventoryFormProps) {
         className="flex-1 bg-primary text-white"
         disabled={isSubmitting}
       >
-        {isSubmitting ? "Guardando..." : "Crear Ítem"}
+        {isSubmitting ? "Guardando..." : isEdit ? "Guardar Cambios" : "Crear Ítem"}
       </NeumorphicButton>
     </form>
   );

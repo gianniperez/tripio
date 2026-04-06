@@ -17,6 +17,8 @@ import {
   useDeleteTransport,
   useDeleteInventory,
 } from "@/features/logistics/hooks/useLogistics";
+import { ConfirmDialog } from "@/components/ui/dialog/ConfirmDialog/ConfirmDialog";
+import { AccommodationConfirmed, TransportConfirmed, InventoryConfirmed } from "@/types/models";
 
 import { AccommodationCard } from "@/features/logistics/components/AccommodationCard/AccommodationCard";
 import { TransportCard } from "@/features/logistics/components/TransportCard/TransportCard";
@@ -43,9 +45,9 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
   const { mutate: updatePassengers } = useUpdateTransportPassengers(tripId);
   const { mutate: updateInventory } = useUpdateInventoryStatus(tripId);
 
-  const { mutate: deleteAcc } = useDeleteAccommodation(tripId);
-  const { mutate: deleteTrans } = useDeleteTransport(tripId);
-  const { mutate: deleteInv } = useDeleteInventory(tripId);
+  const { mutate: deleteAcc, isPending: isDeletingAcc } = useDeleteAccommodation(tripId);
+  const { mutate: deleteTrans, isPending: isDeletingTrans } = useDeleteTransport(tripId);
+  const { mutate: deleteInv, isPending: isDeletingInv } = useDeleteInventory(tripId);
 
   const searchParams = useSearchParams();
   const urlTab = searchParams.get("tab");
@@ -59,6 +61,16 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
   const [activeModal, setActiveModal] = useState<
     "accommodation" | "transport" | "inventory" | null
   >(null);
+
+  const [editingItem, setEditingItem] = useState<
+    AccommodationConfirmed | TransportConfirmed | InventoryConfirmed | null
+  >(null);
+
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: string;
+    title: string;
+    type: "accommodation" | "transport" | "inventory";
+  } | null>(null);
 
   const TABS: Tab[] = [
     {
@@ -90,19 +102,28 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
     {
       label: "Crear Alojamiento",
       icon: <Icon name="hotel" fill />,
-      onClick: () => setActiveModal("accommodation"),
+      onClick: () => {
+        setEditingItem(null);
+        setActiveModal("accommodation");
+      },
       variant: "primary" as const,
     },
     {
       label: "Crear Transporte",
       icon: <Icon name="directions_car" fill />,
-      onClick: () => setActiveModal("transport"),
+      onClick: () => {
+        setEditingItem(null);
+        setActiveModal("transport");
+      },
       variant: "secondary" as const,
     },
     {
       label: "Crear Ítem",
       icon: <Icon name="inventory_2" fill />,
-      onClick: () => setActiveModal("inventory"),
+      onClick: () => {
+        setEditingItem(null);
+        setActiveModal("inventory");
+      },
       variant: "secondary" as const,
     },
   ];
@@ -119,6 +140,19 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
       newPass = currentPass.filter((uid) => uid !== currentUser.uid);
     }
     updatePassengers({ transportId, newPassengers: newPass });
+  };
+
+  const handleConfirmDelete = () => {
+    if (!itemToDelete) return;
+
+    if (itemToDelete.type === "accommodation") {
+      deleteAcc(itemToDelete.id);
+    } else if (itemToDelete.type === "transport") {
+      deleteTrans(itemToDelete.id);
+    } else if (itemToDelete.type === "inventory") {
+      deleteInv(itemToDelete.id);
+    }
+    setItemToDelete(null);
   };
 
   if (isLoading) {
@@ -148,10 +182,14 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
                 <AccommodationCard
                   key={acc.id}
                   accommodation={acc}
+                  tripId={tripId}
                   canEdit={isAdminOrOwner}
+                  onEdit={(item) => {
+                    setEditingItem(item);
+                    setActiveModal("accommodation");
+                  }}
                   onDelete={(item) => {
-                    if (window.confirm(`¿Seguro que deseas eliminar ${item.title}?`))
-                      deleteAcc(item.id);
+                    setItemToDelete({ id: item.id, title: item.title, type: "accommodation" });
                   }}
                 />
               ))
@@ -171,12 +209,16 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
                 <TransportCard
                   key={trans.id}
                   transport={trans}
+                  tripId={tripId}
                   currentUserUid={currentUser?.uid || ""}
                   canEdit={isAdminOrOwner}
                   onJoin={handleJoinTransport}
+                  onEdit={(item) => {
+                    setEditingItem(item);
+                    setActiveModal("transport");
+                  }}
                   onDelete={(item) => {
-                    if (window.confirm(`¿Seguro que deseas eliminar ${item.title}?`))
-                      deleteTrans(item.id);
+                    setItemToDelete({ id: item.id, title: item.title, type: "transport" });
                   }}
                 />
               ))
@@ -193,9 +235,12 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
               onStatusChange={(itemId, updates) =>
                 updateInventory({ inventoryId: itemId, updates })
               }
+              onEdit={(item) => {
+                setEditingItem(item);
+                setActiveModal("inventory");
+              }}
               onDelete={(item) => {
-                if (window.confirm(`¿Seguro que deseas eliminar ${item.title}?`))
-                  deleteInv(item.id);
+                setItemToDelete({ id: item.id, title: item.title, type: "inventory" });
               }}
             />
           </div>
@@ -207,30 +252,74 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
       {/* MODALS */}
       <Modal
         isOpen={activeModal === "accommodation"}
-        onClose={() => setActiveModal(null)}
-        title="Nuevo Alojamiento"
-        description="Registra una reserva o crea una propuesta para votar."
+        onClose={() => {
+          setActiveModal(null);
+          setEditingItem(null);
+        }}
+        title={editingItem ? "Editar Alojamiento" : "Nuevo Alojamiento"}
+        description={
+          editingItem
+            ? "Actualiza los detalles de tu alojamiento."
+            : "Registra una reserva o crea una propuesta para votar."
+        }
       >
-        <AccommodationForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
+        <AccommodationForm
+          tripId={tripId}
+          initialData={editingItem as AccommodationConfirmed}
+          onSuccess={() => setActiveModal(null)}
+        />
       </Modal>
 
       <Modal
         isOpen={activeModal === "transport"}
-        onClose={() => setActiveModal(null)}
-        title="Nuevo Transporte"
-        description="Agrega un trayecto compartido o una propuesta."
+        onClose={() => {
+          setActiveModal(null);
+          setEditingItem(null);
+        }}
+        title={editingItem ? "Editar Transporte" : "Nuevo Transporte"}
+        description={
+          editingItem
+            ? "Actualiza los detalles del transporte sugerido."
+            : "Agrega un trayecto compartido o una propuesta."
+        }
       >
-        <TransportForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
+        <TransportForm
+          tripId={tripId}
+          initialData={editingItem as TransportConfirmed}
+          onSuccess={() => setActiveModal(null)}
+        />
       </Modal>
 
       <Modal
         isOpen={activeModal === "inventory"}
-        onClose={() => setActiveModal(null)}
-        title="Nuevo Ítem de Inventario"
-        description="Agrega algo que necesiten llevar o una propuesta."
+        onClose={() => {
+          setActiveModal(null);
+          setEditingItem(null);
+        }}
+        title={editingItem ? "Editar Ítem de Inventario" : "Nuevo Ítem de Inventario"}
+        description={
+          editingItem
+            ? "Actualiza los detalles del ítem."
+            : "Agrega algo que necesiten llevar o una propuesta."
+        }
       >
-        <InventoryForm tripId={tripId} onSuccess={() => setActiveModal(null)} />
+        <InventoryForm
+          tripId={tripId}
+          initialData={editingItem as InventoryConfirmed}
+          onSuccess={() => setActiveModal(null)}
+        />
       </Modal>
+
+      <ConfirmDialog
+        isOpen={!!itemToDelete}
+        onClose={() => setItemToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title={`Eliminar ${itemToDelete?.type === "accommodation" ? "Alojamiento" : itemToDelete?.type === "transport" ? "Transporte" : "Ítem"}`}
+        message={`¿Estás seguro que deseas eliminar "${itemToDelete?.title}"? Esta acción no se puede deshacer.`}
+        confirmLabel="Eliminar"
+        variant="danger"
+        isLoading={isDeletingAcc || isDeletingTrans || isDeletingInv}
+      />
     </div>
   );
 }

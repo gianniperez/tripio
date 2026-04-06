@@ -51,7 +51,7 @@ export const proposalsService = {
           id: doc.id,
           type: type as ProposalType,
           title,
-          description: data.description || null,
+          description: data.description || data.notes || null,
           createdBy: data.createdBy,
           createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate() : new Date(),
           updatedAt: data.updatedAt instanceof Timestamp ? data.updatedAt.toDate() : null,
