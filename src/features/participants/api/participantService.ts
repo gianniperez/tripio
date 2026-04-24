@@ -1,5 +1,5 @@
 import { doc, setDoc, getDoc, collection, getDocs } from "firebase/firestore";
-import { ParticipantWithUser } from "../components/ParticipantsPanel/ParticipantsPanel.types";
+import { ParticipantWithUser } from "../types";
 
 import { db } from "@/lib/firebase";
 import { Participant } from "@/types/models";

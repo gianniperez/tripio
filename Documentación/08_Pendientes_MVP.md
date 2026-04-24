@@ -106,11 +106,11 @@ _Objetivo: Toma de decisiones en contexto y organización de recursos._
 
 _Objetivo: Comunicación y calidad final._
 
-- [ ] **Módulo de Mails:**
-  - [ ] Notificación por nueva invitación.
-  - [ ] Notificación por responsable de ítem asignado o deadline de encuesta.
-- [ ] **Branding Final:**
-  - [ ] Sistema de diseño (colores y tipografía definitiva).
-  - [ ] Logo y Favicon oficial.
+- [x] **Módulo de Mails:**
+  - [x] Notificación por nueva invitación.
+  - [x] Notificación por responsable de ítem asignado o deadline de encuesta.
+- [x] **Branding Final:**
+  - [x] Sistema de diseño (colores y tipografía definitiva).
+  - [x] Logo y Favicon oficial.
 
 ---

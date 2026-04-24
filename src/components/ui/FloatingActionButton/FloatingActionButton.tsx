@@ -7,7 +7,7 @@ export interface FloatingActionItem {
   icon: React.ReactNode;
   label: string;
   onClick: () => void;
-  variant?: "primary" | "secondary" | "terciary" | "danger";
+  variant?: "primary" | "secondary" | "tertiary" | "danger";
 }
 
 interface FloatingActionButtonProps {

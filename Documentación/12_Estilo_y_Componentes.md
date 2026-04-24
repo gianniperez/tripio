@@ -65,11 +65,17 @@ Queda estrictamente prohibido el uso directo de elementos HTML interactivos bás
 **2. Uso de la Suite Neumórfica**
 Toda interacción debe realizarse utilizando los componentes encapsulados de nuestro Design System (ej. `NeumorphicButton`, `NeumorphicInput`, `NeumorphicCard`), ubicados en `src/components/neumorphic`.
 
-**3. Extensibilidad ante Carencias**
+**3. Auditoría de Coherencia Visual (Completada - Fase 4)**
+Se realizó una revisión de la suite neumórfica para asegurar que todos los componentes utilicen los tokens CSS globales en lugar de valores fijos (hardcodeados).
+
+- **`bg-background` vs `bg-white`**: Componentes como `NeumorphicCard` y las vistas principales deben utilizar el token CSS `--color-background` (`bg-background` en Tailwind) en lugar del valor puro `bg-white` para respetar el tono *cream* base (#FFFAF5).
+- **Componentes base**: Se estandarizó el uso de `<NeumorphicButton>`, `<NeumorphicInput>` y `<NeumorphicCard>` en vistas como `ParticipantsPanel` y `LogisticsClient`, eliminando elementos HTML crudos.
+
+**4. Extensibilidad ante Carencias**
 Si un diseño o funcionalidad requiere un comportamiento no contemplado por los componentes del Design System preexistentes:
 
 - **No** se debe abandonar el componente a favor de un elemento HTML con clases ad-hoc.
-- **Se debe** iterar y refactorizar el componente Neumórfico base para permitir su extensión (por ejemplo, asegurando que exponga de manera limpia todas sus _props_ nativas).
+- **Se debe** iterar y refactorizar el componente Neumórfico base para permitir su extensión (por ejemplo, asegurando que exponga de manera limpia todas sus _props* nativas).
 
 **4. Validación en CI**
 Las integraciones continuas y auditorías automáticas marcarán como error sintáctico la presencia de botones, inputs y tarjetas que no deriven de nuestra librería base.

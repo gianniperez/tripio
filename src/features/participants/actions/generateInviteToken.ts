@@ -25,5 +25,5 @@ export async function generateInviteToken(
   // Construye la URL Base Local / Prod
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-  return `${baseUrl}/invite?token=${token}`;
+  return `${baseUrl}/invite/${token}`;
 }

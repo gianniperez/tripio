@@ -136,7 +136,7 @@ export function ProposalsView({ tripId }: { tripId: string }) {
       label: "Sugerir Alojamiento",
       icon: <Icon name="hotel" fill />,
       onClick: () => handleCreate("accommodation"),
-      variant: "terciary" as const,
+      variant: "tertiary" as const,
     },
     {
       label: "Sugerir Transporte",

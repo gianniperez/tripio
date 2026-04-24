@@ -7,6 +7,8 @@ import { FloatingActionButton } from "@/components/ui/FloatingActionButton/Float
 import { Icon } from "@/components/ui/Icon";
 import { useAuthStore } from "@/features/auth/stores/useAuthStore";
 import { useParticipant } from "@/features/participants/hooks/useParticipant";
+import { useParticipants } from "@/features/participants/hooks/useParticipants";
+import { mailService } from "@/features/mail";
 import {
   useAccommodations,
   useTransports,
@@ -37,6 +39,7 @@ interface LogisticsClientProps {
 export function LogisticsClient({ tripId }: LogisticsClientProps) {
   const { currentUser } = useAuthStore();
   const { data: currentParticipant } = useParticipant(tripId, currentUser?.uid || "");
+  const { data: participants } = useParticipants(tripId);
 
   const { data: accommodations, isLoading: loadingAcc } = useAccommodations(tripId);
   const { data: transports, isLoading: loadingTrans } = useTransports(tripId);
@@ -232,9 +235,27 @@ export function LogisticsClient({ tripId }: LogisticsClientProps) {
               items={inventory || []}
               currentUserUid={currentUser?.uid || ""}
               canEdit={isAdminOrOwner}
-              onStatusChange={(itemId, updates) =>
-                updateInventory({ inventoryId: itemId, updates })
-              }
+              onStatusChange={(itemId, updates) => {
+                updateInventory({ inventoryId: itemId, updates });
+
+                // Trigger mail cuando se auto-asigna un ítem
+                if (updates.status === "assigned" && updates.assignedTo) {
+                  const assignee = participants?.find((p) => p.id === updates.assignedTo);
+                  const assigner = participants?.find((p) => p.id === currentUser?.uid);
+                  const item = inventory?.find((i) => i.id === itemId);
+
+                  if (assignee?.email && item) {
+                    mailService.sendItemAssignedMail({
+                      to: assignee.email,
+                      itemName: item.title || "Ítem",
+                      tripName: "el viaje",
+                      assignerName: assigner?.displayName || currentUser?.displayName || "Un participante",
+                      category: item.category,
+                      tripUrl: `${process.env.NEXT_PUBLIC_BASE_URL || window.location.origin}/trips/${tripId}/logistics?tab=inventory`,
+                    });
+                  }
+                }
+              }}
               onEdit={(item) => {
                 setEditingItem(item);
                 setActiveModal("inventory");
